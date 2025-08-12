@@ -27,7 +27,7 @@ cargo_build = custom_target(
     'sh', '-c',
     'cd ' + meson.source_root() + ' && ' +
     'cargo build --release && ' +
-    'cp target/release/' + binary_name + ' ' + meson.build_root() + '/' + binary_name
+    'cp target/release/' + command_name + ' ' + meson.build_root() + '/' + binary_name
   ],
   output: binary_name,
   build_by_default: true,
