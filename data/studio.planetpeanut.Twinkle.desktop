@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Twinkle
+Type=Application
+Exec=twinkle
+Icon=studio.planetpeanut.Twinkle
+Terminal=false
+Categories=Network;FileTransfer;GNOME;GTK;
+X-GNOME-UsesNotifications=true

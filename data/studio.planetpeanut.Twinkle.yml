@@ -1,0 +1,93 @@
+app-id: studio.planetpeanut.Twinkle
+branch: stable
+command: twinkle
+
+runtime: org.gnome.Platform
+runtime-version: '48'
+sdk: org.gnome.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+
+build-options:
+  append-path: /usr/lib/sdk/rust-stable/bin
+  build-args:
+    - --share=network
+  env:
+    RUST_BACKTRACE: '1'
+
+finish-args:
+  - --filesystem=xdg-documents/Twinkle:create
+  - --share=ipc
+  - --share=network
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --talk-name=org.freedesktop.portal.Background
+  - --talk-name=org.freedesktop.portal.Notification
+  - --talk-name=org.gtk.vfs.*
+
+modules:
+  - name: openssh
+    sources:
+      - type: archive
+        url: 'https://ftp.eu.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.0p2.tar.gz'
+        sha256: 021a2e709a0edf4250b1256bd5a9e500411a90dddabea830ed59cef90eb9d85c
+    config-opts:
+      - --without-pie
+    cleanup:
+      - /sbin/sshd
+      - /bin/scp
+      - /bin/sftp
+      - /libexec/sftp-server
+      - /share/man
+
+  - name: git
+    sources:
+      - type: archive
+        url: https://www.kernel.org/pub/software/scm/git/git-2.50.1.tar.gz
+        sha256: 522d1635f8b62b484b0ce24993818aad3cab8e11ebb57e196bda38a3140ea915
+    buildsystem: simple
+    build-commands:
+      - make configure
+      - CFLAGS='-O2 -pipe -march=native' ./configure --prefix=/app
+      - make NO_TCLTK=1 NO_GETTEXT=1 NO_CURL=1 NO_EXPAT=1 NO_OPENSSL=1 NO_ICONV=1 NO_PCRE=1 NO_PERL=1 NO_PYTHON=1
+      - make install
+    cleanup:
+        - /share/doc
+        - /share/man
+        - /share/git-core/templates
+        - /lib/*.la
+        - /lib/pkgconfig
+        - /libexec/git-core/git-daemon
+        - /libexec/git-core/git-http-backend
+        - /libexec/git-core/git-shell
+        - /libexec/git-core/git-upload-pack
+        - /libexec/git-core/git-receive-pack
+        - /libexec/git-core/git-upload-archive
+        - /libexec/git-core/git-instaweb
+
+  - name: git-lfs-amd64
+    only-arches: [x86_64]
+    sources:
+      - type: archive
+        url: https://github.com/git-lfs/git-lfs/releases/download/v3.7.0/git-lfs-linux-amd64-v3.7.0.tar.gz
+        sha256: e7ebba491af8a54e560be3a00666fa97e4cf2bbbb223178a0934b8ef74cf9bed
+    buildsystem: simple
+    build-commands:
+      - cp git-lfs /app/libexec/git-core/
+
+  - name: git-lfs-arm64
+    only-arches: [aarch64]
+    sources:
+      - type: archive
+        url: https://github.com/git-lfs/git-lfs/releases/download/v3.7.0/git-lfs-linux-arm64-v3.7.0.tar.gz
+        sha256: 88c24cb0c772cb6570e70f336ef4bb7b6539c5fb9ebeda563e9a5458ca82a98e
+    buildsystem: simple
+    build-commands:
+      - cp git-lfs /app/libexec/git-core/
+
+  - name: twinkle
+    sources:
+      - type: git
+        url: https://github.com/hbons/Twinkle
+        branch: main
+    buildsystem: meson

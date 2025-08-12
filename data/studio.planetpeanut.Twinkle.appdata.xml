@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+    <name>Twinkle</name>
+    <summary>Automatically sync your files with Git</summary>
+    <developer_name>Hylke Bons</developer_name>
+    <project_license>GPL-3.0+</project_license>
+
+    <url type="homepage">https://www.github.com/hbons/Twinkle</url>
+    <url type="bugtracker">https://www.github.com/hbons/Twinkle/issues</url>
+    <url type="donation">https://planetpeanut.studio/</url>
+
+    <description>
+        <p>SparkleShare is a file sharing and collaboration app. It works just like Dropbox, and you can run it on your own server.</p>
+        <p>SparkleShare is based on the popular version control system Git. It even supports the popular extension Git LFS to deal well with large files. So if you are already using Git repositories in your company, SparkleShare will integrate seamlessly.</p>
+    </description>
+
+    <releases>
+        <release version="3.28.0" date="2018-07-14" urgency="medium">
+            <description>
+                <p>Fixes and improvements:</p>
+                <ul>
+                    <li>Use appindicator as the default status icon and supported by the flatpak</li>
+                    <li>Fix recent changes window showing broken entries with newer versions of Git</li>
+                </ul>
+           </description>
+        </release>
+        <release version="2.0.1" date="2017-12-04" urgency="low">
+            <description>
+                <p>Fixes and improvements:</p>
+                <ul>
+                    <li>Fix files created by conflict resolution being moved to the root folder</li>
+                    <li>On conflicts, both diverging versions plus the original version are now kept</li>
+                </ul>
+           </description>
+        </release>
+        <release version="2.0.0" date="2017-09-10" urgency="medium">
+            <description>
+                <p>SparkleShare 2.0 is a clean break and will be incompatible with the 1.x series. Repositories added using 1.0 will likely not work and will have to be re-synced to take advantage of 2.0 features (1.x and 2.x clients will still be able to sync to the same repository without problems).</p>
+                <ul>
+                    <li>Support for Git LFS managed repositories</li>
+                    <li>Projects are now grouped by host or organisation</li>
+                    <li>In encrypted repositories, name and email metadata is now also encrypted</li>
+                    <li>Change notification preferences from GNOME System Settings</li>
+                    <li>New GitLab preset</li>
+                    <li>New app icon by Sam Hewitt</li>
+                </ul>
+           </description>
+       </release>
+    </releases>
+
+    <screenshots>
+        <screenshot type="default">
+            <caption>Sync projects to your computer</caption>
+            <image type="source" width="1200" height="675">https://raw.githubusercontent.com/hbons/SparkleShare/master/SparkleShare/Linux/Images/gnome-software-screenshot-1.jpg</image>
+        </screenshot>
+        <screenshot>
+            <caption>Projects added to your SparkleShare folder sync automatically</caption>
+            <image type="source" width="1200" height="675">https://raw.githubusercontent.com/hbons/SparkleShare/master/SparkleShare/Linux/Images/gnome-software-screenshot-2.jpg</image>
+        </screenshot>
+        <screenshot>
+            <caption>View your team's file history</caption>
+            <image type="source" width="1200" height="675">https://raw.githubusercontent.com/hbons/SparkleShare/master/SparkleShare/Linux/Images/gnome-software-screenshot-3.jpg</image>
+        </screenshot>
+    </screenshots>
+
+    <id>studio.planetpeanut.Twinkle</id>
+    <launchable type="desktop-id">studio.planetpeanut.Twinkle.desktop</launchable>
+    <provides>
+        <binary>twinkle</binary>
+    </provides>
+
+    <metadata_license>CC0-1.0</metadata_license>
+    <update_contact>hello_AT_planetpeanut.studio</update_contact>
+
+    <content_rating type="oars-1.1">
+        <content_attribute id="social-contacts">intense</content_attribute>
+        <content_attribute id="money-purchasing">mild</content_attribute>
+    </content_rating>
+</component>

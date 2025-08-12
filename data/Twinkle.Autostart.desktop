@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Twinkle
+Type=Application
+Exec=sh -c "type -P twinkle &>/dev/null && twinkle || flatpak run studio.planetpeanut.Twinkle"
+Icon=studio.planetpeanut.Twinkle
+Terminal=false
+X-GNOME-Autostart-enabled=true
+X-AppStream-Ignore=true
