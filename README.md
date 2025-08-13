@@ -34,8 +34,8 @@ sudo ninja install -C build
 
 ## Links
 
-* [@hbons on Mastodon](https://mastodon.social/@hbons)
-* [Planet Peanut Studio](https://planetpeanut.studio/)
+* [@hbons@mastodon.social](https://mastodon.social/@hbons)
+* [planetpeanut.studio](https://planetpeanut.studio)
 
 <br>
 Have fun, make awesome. :)
