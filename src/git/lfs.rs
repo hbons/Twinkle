@@ -10,7 +10,6 @@ use std::ffi::OsStr;
 use std::fs::{ self, Permissions};
 use std::os::unix::fs::PermissionsExt;
 use std::path::{ Path, PathBuf };
-use std::process::Command;
 
 use super::objects::environment::GitEnvironment;
 
@@ -91,8 +90,8 @@ impl GitEnvironment {
 
 
     pub fn lfs_version(&self) -> String {
-        match Command::new("git-lfs").arg("--version").output() {
-            Ok(output) => String::from_utf8_lossy(&output.stdout).trim().into(),
+        match self.run("lfs", &["--version"]) {
+            Ok(output) => output.stdout.trim().into(),
             Err(_) => "\x1b[33mGit LFS not found\x1b[0m".into(),
         }
     }
