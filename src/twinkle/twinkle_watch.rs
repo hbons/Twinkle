@@ -5,6 +5,7 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
+use std::env::consts::OS;
 use std::error::Error;
 use std::thread;
 use std::time::Duration;
@@ -29,10 +30,13 @@ pub fn twinkle_watch(repo: &mut GitRepository, key_pair: &KeyPair) -> Result<(),
         &key_pair.private_key_path.parent().ok_or("No parent")?)?;
 
     ssh_util_test_connection(&repo.remote_url, &host_key, &key_pair)?;
-    log::info(&format!("{} | Connection successful", &repo.remote_url));
+    log::info(&format!("{} | Authenticated", &repo.remote_url));
 
     repo.git.GIT_SSH_COMMAND = twinkle_ssh_command(&key_pair);
     repo.git.lfs_config_filters()?;
+
+    if OS == "macos" { repo.git.config_set("core.ignoreCase", "false")?; }
+    // TODO: rewrite all other config again before doing anything
 
     repo.git.config_set_user(&repo.user)?;
     repo.git.config_set_user_signing_key(&key_pair)?;
@@ -48,7 +52,6 @@ pub fn twinkle_watch(repo: &mut GitRepository, key_pair: &KeyPair) -> Result<(),
         repo.set_has_local_changes(true);
     }
 
-    // TODO: rewrite all config again before doing anything
     let mut start_sync = false;
 
     loop {
@@ -175,11 +178,14 @@ pub fn twinkle_sync_down(repo: &mut GitRepository) -> Result<(), Box<dyn Error>>
     repo.git.fetch("main")?;
     repo.git.lfs_fetch()?;
 
+    if OS == "macos" { repo.git.config_set("core.ignoreCase", "true")?; }
     let merge = repo.git.merge("FETCH_HEAD");
 
     if merge.is_err() {
         twinkle_resolve_changes(repo)?;
     }
+
+    if OS == "macos" { repo.git.config_set("core.ignoreCase", "false")?; }
 
     log::info(&format!("Fetched and merged. Now at {}", repo.current_head()?));
     Ok(())
