@@ -22,8 +22,8 @@ pub fn twinkle_keypair_new(host: &String, key_type: KeyType, keys_dir: &Path) ->
     let key_name = format!("{}.{}.key", host, key_type);
     let key_path = keys_dir.join(&key_name);
 
-    let key_pair = ssh_keygen(&key_path, KeyType::default(), 256)?;
-    log::info(&format!("Keys | Created key `{}`", key_pair.private_key_path.to_string_lossy()));
+    let key_pair = ssh_keygen(&key_path, KeyType::default(), None)?;
+    log::debug(&format!("Keys | Created key `{}`", key_pair.private_key_path.to_string_lossy()));
 
     Ok(key_pair)
 }

@@ -11,7 +11,7 @@ use std::str;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub enum KeyType {
-    #[default] ED25519, // TODO: ED25519(u32)
+    #[default] ED25519,
     RSA,
     ECDSA,
 }

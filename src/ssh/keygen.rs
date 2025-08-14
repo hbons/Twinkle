@@ -17,10 +17,11 @@ use crate::log;
 use super::keys::fingerprint::Fingerprint;
 use super::keys::host_key::HostKey;
 use super::keys::key_pair::KeyPair;
+use super::keys::key_size::KeySize;
 use super::keys::key_type::KeyType;
 
 
-pub fn ssh_keygen(key_path: &Path, key_type: KeyType, key_size: u32) -> Result<KeyPair, Box<dyn Error>> {
+pub fn ssh_keygen(key_path: &Path, key_type: KeyType, key_size: Option<KeySize>) -> Result<KeyPair, Box<dyn Error>> {
     // Docs: https://man.openbsd.org/ssh-keygen
 
     let keys_dir = key_path.parent().ok_or("Could not find parent directory")?;
@@ -28,6 +29,11 @@ pub fn ssh_keygen(key_path: &Path, key_type: KeyType, key_size: u32) -> Result<K
     if !keys_dir.exists() {
         create_dir_all(keys_dir)?;
     }
+
+    let key_size = match key_size {
+        Some(key_size) => key_size,
+        None => KeySize::default(key_type),
+    };
 
     let args = [
         // "-q", // Quiet

@@ -9,6 +9,7 @@ pub mod keys {
     pub mod fingerprint;
     pub mod host_key;
     pub mod key_pair;
+    pub mod key_size;
     pub mod key_type;
 
     pub mod hosts {

@@ -10,6 +10,7 @@ use std::thread;
 use std::time::Duration;
 
 use crate::ssh::keygen::{ ssh_keygen, ssh_keygen_fingerprint };
+use crate::ssh::keys::key_size::KeySize;
 use crate::ssh::keys::key_type::KeyType;
 use crate::ssh::keys::host_key::HostKey;
 
@@ -23,7 +24,7 @@ fn test_ssh_keygen() {
         fs::remove_dir_all(keys_dir).unwrap();
     }
 
-    let key_pair = ssh_keygen(&key_path, KeyType::ED25519, 256).unwrap();
+    let key_pair = ssh_keygen(&key_path, KeyType::ED25519, Some(KeySize::Bits256)).unwrap();
 
     assert_eq!(key_pair.key_type, KeyType::ED25519);
     assert!(key_pair.private_key_path.exists());
