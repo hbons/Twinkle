@@ -19,8 +19,6 @@ use super::output::GitOutput;
 pub struct GitEnvironment {
     pub working_dir:  PathBuf,
 
-    pub HOME:   PathBuf,
-    pub PREFIX: PathBuf,
     pub LANG:   String, // Still needed? Should be overridden by LC_ALL
     pub LC_ALL: String, // Override all locale settings
 
@@ -28,7 +26,7 @@ pub struct GitEnvironment {
     pub GIT_CONFIG_SYSTEM:   String,
     pub GIT_CONFIG_NOSYSTEM: String,
 
-    pub GIT_EXEC_PATH: PathBuf, // Location of `libexec/git-core/`
+    pub GIT_EXEC_PATH: PathBuf,
     pub GIT_PAGER: String,
     pub GIT_SSH_COMMAND: String,
     pub GIT_TERMINAL_PROMPT: String,
@@ -42,8 +40,6 @@ impl Default for GitEnvironment {
         GitEnvironment {
             working_dir,
 
-            HOME: Path::new(".").to_path_buf(),
-            PREFIX: Path::new(".").to_path_buf(), // Don't use the system gitconfig
             LANG:   "en_US.UTF8".to_string(), // Default to English for parsing errors/warnings
             LC_ALL: "en_US.UTF8".to_string(),
 
@@ -71,8 +67,6 @@ impl GitEnvironment {
 
     pub fn get_environment(&self) -> Vec<(String, String)> {
         vec![
-            ("HOME".into(), self.HOME.to_string_lossy().into()),
-            ("PREFIX".into(), self.PREFIX.to_string_lossy().into()),
             ("LANG".into(), self.LANG.clone()),
             ("LC_ALL".into(), self.LC_ALL.clone()),
 
@@ -91,8 +85,7 @@ impl GitEnvironment {
 
 impl GitEnvironment {
     pub fn run(&self, command: &str, args: &[&str]) -> Result<GitOutput, Box<dyn Error>> {
-        let env = Vec::new();
-        self.run_with_env(command, args, env)
+        self.run_with_env(command, args, Vec::new())
     }
 
 
@@ -102,7 +95,6 @@ impl GitEnvironment {
 
         let output = Command::new("git")
             .current_dir(&self.working_dir)
-            // .env_clear() // TODO: PATH is missing and can't find git-lfs
             .envs(self.get_environment())
             .envs(env)
             .arg(command)
