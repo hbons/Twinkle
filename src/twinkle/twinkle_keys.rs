@@ -38,7 +38,7 @@ pub fn twinkle_keypair_for(host: &String, key_type: KeyType, keys_dir: &Path) ->
         Ok(key_pair)
     } else {
         let key_pair = KeyPair::from_file(&key_path)?;
-        log::info(&format!("Keys | Found key `{}`", key_pair.private_key_path.to_string_lossy()));
+        log::debug(&format!("Keys | Found key `{}`", key_pair.private_key_path.to_string_lossy()));
         Ok(key_pair)
     }
 }
@@ -54,7 +54,7 @@ pub fn twinkle_keypair_renew(host: &String, key_type: KeyType, keys_dir: &Path) 
 pub fn twinkle_keypair_delete(key_pair: &KeyPair) -> Result<(), Box<dyn Error>>{
     fs::remove_file(&key_pair.private_key_path)?;
     fs::remove_file(&key_pair.public_key_path)?;
-    log::info(&format!("Keys | Deleted key `{}`", key_pair.private_key_path.to_string_lossy()));
+    log::debug(&format!("Keys | Deleted key `{}`", key_pair.private_key_path.to_string_lossy()));
     Ok(())
 }
 
@@ -69,7 +69,7 @@ pub fn twinkle_hostkey_for(ssh_url: &SshUrl, key_type: KeyType, keys_dir: &Path)
 
     if key_path.exists() {
         host_key = HostKey::from_file(&key_path)?;
-        log::info(&format!("Keys | Found trusted host key `{}`", key_path.to_string_lossy()));
+        log::debug(&format!("Keys | Found trusted host key `{}`", key_path.to_string_lossy()));
     } else {
         host_key = HostKey::for_host(ssh_url, key_type)?;
     }
@@ -84,7 +84,7 @@ pub fn twinkle_hostkey_trust(host_key: &HostKey, keys_dir: &Path) -> Result<(), 
     let key_path = keys_dir.join(key_name);
 
     fs::write(&key_path, host_key.to_string())?;
-    log::info(&format!("Keys | Trusted host key `{}`", key_path.to_string_lossy()));
+    log::debug(&format!("Keys | Trusted host key `{}`", key_path.to_string_lossy()));
 
     Ok(())
 }

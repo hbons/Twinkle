@@ -30,7 +30,7 @@ pub fn twinkle_watch(repo: &mut GitRepository, key_pair: &KeyPair) -> Result<(),
         &key_pair.private_key_path.parent().ok_or("No parent")?)?;
 
     ssh_util_test_connection(&repo.remote_url, &host_key, &key_pair)?;
-    log::info(&format!("{} | Authenticated", &repo.remote_url));
+    log::debug(&format!("{} | Authenticated", &repo.remote_url.host));
 
     repo.git.GIT_SSH_COMMAND = twinkle_ssh_command(&key_pair);
     repo.git.lfs_config_filters()?;

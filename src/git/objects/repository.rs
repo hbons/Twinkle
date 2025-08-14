@@ -16,6 +16,7 @@ use std::sync::{ Arc, Mutex };
 
 use serde::{ Serialize, Deserialize };
 
+use crate::log;
 use crate::ssh::objects::url::SshUrl;
 
 use super::environment::GitEnvironment;
@@ -110,20 +111,20 @@ impl GitRepository { // TwinkleRepository
 impl GitRepository {
     pub fn write_attribute_rules(&self, rules: Vec<String>) -> Result<(), Box<dyn Error>> {
         let attributes_path = self.git.working_dir.join(".git/info/attributes");
-        let mut buffer = File::create(attributes_path)?;
+        let mut buffer = File::create(&attributes_path)?;
         buffer.write_all(rules.join("\n").as_bytes())?;
 
-        // TODO: log here
+        log::debug(&format!("Repository | Created `{}`", &attributes_path.to_string_lossy()));
         Ok(())
     }
 
 
     pub fn write_exclude_rules(&self, rules: Vec<String>) -> Result<(), Box<dyn Error>> {
         let exclude_path = self.git.working_dir.join(".git/info/exclude");
-        let mut buffer = File::create(exclude_path)?;
+        let mut buffer = File::create(&exclude_path)?;
         buffer.write_all(rules.join("\n").as_bytes())?;
 
-        // TODO: log here
+        log::debug(&format!("Repository | Created `{}`", &exclude_path.to_string_lossy()));
         Ok(())
     }
 }
