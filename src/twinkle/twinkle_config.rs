@@ -9,7 +9,9 @@ use std::error::Error;
 use std::path::{ Path, PathBuf };
 
 use crate::config::{ config_init, config_load, config_save };
+
 use crate::git::objects::repository::GitRepository;
+use crate::git::objects::user::{ GitUserName, GitUserEmail };
 
 
 #[derive(Debug)]
@@ -67,10 +69,16 @@ impl TwinkleConfig {
 impl TwinkleConfig {
     // Properties
 
-    pub fn set_user(&mut self, path: &Path, _name: Option<&str>, _email: Option<&str>) -> Result<(), Box<dyn Error>> {
-        let _repo = self.find(path)?;
-        // repo.user.name  = name.unwrap_or_default().to_string(); // TODO
-        // repo.user.email = email.unwrap_or_default().to_string();
+    pub fn set_user(&mut self, path: &Path, name: Option<&str>, email: Option<&str>) -> Result<(), Box<dyn Error>> {
+        let repo = self.find(path)?;
+
+        if let Some(name) = name {
+            repo.user.name = GitUserName::new(name.into())?;
+        }
+
+        if let Some(email) = email {
+            repo.user.email = GitUserEmail::new(email.into())?;
+        }
 
         self.save().map_err(|_| "Could not set user")?;
         Ok(())

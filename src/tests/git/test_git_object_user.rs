@@ -11,34 +11,34 @@ use crate::git::objects::user::GitUser;
 
 #[test]
 fn test_git_object_user_from_str() {
-    let user = GitUser::from_str("Hylke Bons <hi@planetpeanut.studio>").unwrap();
+    let user = GitUser::from_str("Hylke Bons <hello@planetpeanut.studio>").unwrap();
     assert_eq!(user.name(), "Hylke Bons");
-    assert_eq!(user.email(), "hi@planetpeanut.studio");
+    assert_eq!(user.email(), "hello@planetpeanut.studio");
 
     let user = GitUser::from_str("Hylke Bons <@>").unwrap();
     assert_eq!(user.name(), "Hylke Bons");
     assert_eq!(user.email(), "@");
 
-    let result = GitUser::from_str("<hi@planetpeanut.studio>");
+    let result = GitUser::from_str("<hello@planetpeanut.studio>");
     assert!(result.is_err());
 
     let result = GitUser::from_str("Hylke Bons");
     assert!(result.is_err());
 
-    let result = GitUser::from_str("Hylke Bons <hi@planetpeanut.studio");
+    let result = GitUser::from_str("Hylke Bons <hello@planetpeanut.studio");
     assert!(result.is_err());
 }
 
 
 #[test]
 fn test_git_object_user_to_string() {
-    let user = GitUser::from_str("Hylke Bons <hi@planetpeanut.uk>").unwrap();
-    assert_eq!(user.to_string(), "Hylke Bons <hi@planetpeanut.uk>");
+    let user = GitUser::from_str("Hylke Bons <hello@planetpeanut.studio>").unwrap();
+    assert_eq!(user.to_string(), "Hylke Bons <hello@planetpeanut.studio>");
 }
 
 
 #[test]
 fn test_git_object_user_default() {
     let user = GitUser::default();
-    assert_eq!(user.to_string(), "Twinkle <twinkle@localhost>");
+    assert_eq!(user.to_string(), "Unknown <git@localhost>");
 }

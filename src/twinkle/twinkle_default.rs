@@ -119,12 +119,19 @@ pub fn twinkle_default_welcome(url: &SshUrl) -> String {
 pub fn twinkle_default_commit(repo: &GitRepository) -> Result<(), Box<dyn Error>> {
     let name = "TWINKLE.md";
     let path = repo.git.working_dir.join(name);
-
     fs::write(path, twinkle_default_welcome(&repo.remote_url))?;
+
+    let user = twinkle_default_git_user()?;
+
     repo.git.add(Path::new(name))?;
-    repo.git.commit(&GitUser::default(), "Set up Twinkle")?;
+    repo.git.commit(&user, "Set up Twinkle")?;
 
     Ok(())
+}
+
+
+pub fn twinkle_default_git_user() -> Result<GitUser, Box<dyn Error>> {
+    "Twinkle <twinkle@localhost>".parse::<GitUser>()
 }
 
 

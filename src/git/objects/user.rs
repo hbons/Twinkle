@@ -5,7 +5,9 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
+use std::error::Error;
 use std::fmt;
+use std::path::PathBuf;
 use std::str;
 
 use serde::{ Deserialize, Serialize };
@@ -13,12 +15,12 @@ use serde::{ Deserialize, Serialize };
 use crate::ssh::keys::key_pair::KeyPair;
 
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 #[derive(Serialize, Deserialize)]
 pub struct GitUser {
-    name: String,
-    email: String,
-    signing_key: Option<String>,
+    pub name: GitUserName,
+    pub email: GitUserEmail,
+    signing_key: Option<PathBuf>, // TODO: Use this value?
 
     #[serde(skip)] _key_pair: Option<KeyPair>, // TODO
 }
@@ -26,14 +28,14 @@ pub struct GitUser {
 
 impl GitUser {
     pub fn name(&self) -> &str {
-        &self.name
+        &self.name.as_str()
     }
 
     pub fn email(&self) -> &str {
-        &self.email
+        &self.email.as_str()
     }
 
-    pub fn signing_key(&self) -> &Option<String> {
+    pub fn signing_key(&self) -> &Option<PathBuf> {
         &self.signing_key
     }
 
@@ -43,20 +45,8 @@ impl GitUser {
 }
 
 
-impl Default for GitUser {
-    fn default() -> Self {
-        GitUser {
-            name: "Twinkle".into(),
-            email: "twinkle@localhost".into(),
-            _key_pair: None,
-            signing_key: None,
-        }
-    }
-}
-
-
 impl str::FromStr for GitUser {
-    type Err = String;
+    type Err = Box<dyn Error>;
 
     // 'Hylke Bons <hi@planetpeanut.uk>'
     fn from_str(line: &str) -> Result<Self, Self::Err> {
@@ -68,8 +58,8 @@ impl str::FromStr for GitUser {
         }
 
         let user = GitUser {
-            name: name.trim().into(),
-            email: email.trim().into(),
+            name:  GitUserName::new(name.into())?,
+            email: GitUserEmail::new(email.into())?,
             _key_pair: None,
             signing_key: None,
         };
@@ -81,6 +71,56 @@ impl str::FromStr for GitUser {
 
 impl fmt::Display for GitUser {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{} <{}>", self.name, self.email)
+        write!(f, "{} <{}>", self.name.as_str(), self.email.as_str())
+    }
+}
+
+
+#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize)]
+pub struct GitUserName(String);
+
+impl GitUserName {
+    pub fn new(name: String) -> Result<Self, String> {
+        if name.trim().is_empty() {
+            Err("Name cannot be empty".into())
+        } else {
+            Ok(Self(name.trim().into()))
+        }
+    }
+
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+
+impl Default for GitUserName {
+    fn default() -> Self {
+        GitUserName("Unknown".to_string())
+    }
+}
+
+
+#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize)]
+pub struct GitUserEmail(String);
+
+impl GitUserEmail {
+    pub fn new(email: String) -> Result<Self, String> {
+        if email.contains('@') {
+            Ok(Self(email.trim().into()))
+        } else {
+            Err("Invalid email address".into())
+        }
+    }
+
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+
+impl Default for GitUserEmail {
+    fn default() -> Self {
+        GitUserEmail("git@localhost".to_string())
     }
 }
