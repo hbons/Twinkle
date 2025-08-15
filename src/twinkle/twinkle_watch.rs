@@ -17,7 +17,7 @@ use crate::log;
 use crate::ssh::keys::key_pair::KeyPair;
 use crate::ssh::keys::key_type::KeyType;
 use crate::ssh::util::ssh_util_test_connection;
-use crate::twinkle::twinkle_default::twinkle_default_polling_interval;
+use crate::twinkle::twinkle_default::{ twinkle_default_init, twinkle_default_polling_interval };
 use crate::twinkle::twinkle_lfs::twinkle_lfs_track;
 
 use super::twinkle_keys::twinkle_hostkey_for;
@@ -29,17 +29,14 @@ pub fn twinkle_watch(repo: &mut GitRepository, key_pair: &KeyPair) -> Result<(),
     let host_key = twinkle_hostkey_for(&repo.remote_url, KeyType::default(),
         &key_pair.private_key_path.parent().ok_or("No parent")?)?;
 
-    ssh_util_test_connection(&repo.remote_url, &host_key, &key_pair)?;
-    log::debug(&format!("{} | Authenticated", &repo.remote_url.host));
-
     repo.git.GIT_SSH_COMMAND = twinkle_ssh_command(&key_pair);
-    repo.git.lfs_config_filters()?;
 
-    if OS == "macos" { repo.git.config_set("core.ignoreCase", "false")?; }
-    // TODO: rewrite all other config again before doing anything
-
+    twinkle_default_init(repo)?;
     repo.git.config_set_user(&repo.user)?;
     repo.git.config_set_user_signing_key(&key_pair)?;
+
+    ssh_util_test_connection(&repo.remote_url, &host_key, &key_pair)?;
+    log::debug(&format!("{} | Authenticated", &repo.remote_url.host));
 
     // TODO: check if we're on the branch configured in config. if not error/pause
 
