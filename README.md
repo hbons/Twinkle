@@ -38,7 +38,7 @@ sudo ninja install -C build
 * [planetpeanut.studio](https://planetpeanut.studio)
 
 <br>
-Have fun, make awesome. :)
+Have fun, make awesome! :)
 <br>
 <br>
 – Hylke
