@@ -26,6 +26,10 @@ use super::twinkle_util::{ twinkle_commit_message, twinkle_ssh_command };
 
 
 pub fn twinkle_watch(repo: &mut GitRepository, key_pair: &KeyPair) -> Result<(), Box<dyn Error>> {
+    if repo.git.branch_show_current()? != repo.branch {
+        return Err(format!("Repository not on branch as set in config ({})", repo.branch).into())
+    }
+
     let host_key = twinkle_hostkey_for(&repo.remote_url, KeyType::default(),
         &key_pair.private_key_path.parent().ok_or("No parent")?)?;
 
@@ -37,8 +41,6 @@ pub fn twinkle_watch(repo: &mut GitRepository, key_pair: &KeyPair) -> Result<(),
 
     ssh_util_test_connection(&repo.remote_url, &host_key, &key_pair)?;
     log::debug(&format!("{} | Authenticated", &repo.remote_url.host));
-
-    // TODO: check if we're on the branch configured in config. if not error/pause
 
     let repo_c1 = repo.clone();
     let mut repo_c2 = repo.clone();
