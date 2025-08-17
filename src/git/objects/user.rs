@@ -7,7 +7,6 @@
 
 use std::error::Error;
 use std::fmt;
-use std::path::PathBuf;
 use std::str;
 
 use serde::{ Deserialize, Serialize };
@@ -20,9 +19,8 @@ use crate::ssh::keys::key_pair::KeyPair;
 pub struct GitUser {
     pub name: GitUserName,
     pub email: GitUserEmail,
-    signing_key: Option<PathBuf>, // TODO: Use this value?
 
-    #[serde(skip)] _key_pair: Option<KeyPair>, // TODO
+    #[serde(skip)] _key_pair: Option<KeyPair>, // TODO: use this
 }
 
 
@@ -33,10 +31,6 @@ impl GitUser {
 
     pub fn email(&self) -> &str {
         &self.email.as_str()
-    }
-
-    pub fn signing_key(&self) -> &Option<PathBuf> {
-        &self.signing_key
     }
 
     pub fn key_pair(&self) -> &Option<KeyPair> {
@@ -61,7 +55,6 @@ impl str::FromStr for GitUser {
             name:  GitUserName::new(name.into())?,
             email: GitUserEmail::new(email.into())?,
             _key_pair: None,
-            signing_key: None,
         };
 
         Ok(user)
