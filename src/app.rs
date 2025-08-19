@@ -76,7 +76,8 @@ impl Default for App {
 
         // Config
         let config_path = xdg_config_home.join(format!("{command_name}/repos.json"));
-        let config = TwinkleConfig::new(&config_path);
+        let mut config = TwinkleConfig::new(&config_path);
+        _ = config.load();
 
         App {
             id:         app_id.into(),

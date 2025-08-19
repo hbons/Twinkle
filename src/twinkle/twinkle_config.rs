@@ -26,13 +26,10 @@ impl TwinkleConfig {
     // New, Find, Add, Remove, List
 
     pub fn new(config_path: &Path) -> Self {
-        let mut config = TwinkleConfig {
-            config_path: config_path.to_path_buf(),
+        TwinkleConfig {
+            config_path: Some(config_path.to_path_buf()),
             loaded_repos: Vec::new()
-        };
-
-        _ = config.load();
-        config
+        }
     }
 
 
@@ -40,13 +37,13 @@ impl TwinkleConfig {
         self.loaded_repos
             .iter_mut()
             .find(|repo| repo.path == path)
-            .ok_or_else(|| "Path not found in config".into())
+            .ok_or_else(|| format!("Path not in config: `{}`", path.to_string_lossy()).into())
     }
 
 
     pub fn add(&mut self, repo: &GitRepository) -> Result<(), Box<dyn Error>> {
         if self.loaded_repos.iter().any(|r| r.path == repo.path) {
-            return Err(format!("Path `{}` already in config", repo.path.display()).into());
+            return Err(format!("Path already in config: `{}`", repo.path.display()).into());
         }
 
         self.loaded_repos.push(repo.clone());
@@ -56,6 +53,10 @@ impl TwinkleConfig {
 
 
     pub fn remove(&mut self, path: &Path) -> Result<(), Box<dyn Error>> {
+        if self.find(path).is_err() {
+            return Err(format!("Path not in config: `{}`", path.to_string_lossy()).into());
+        }
+
         self.loaded_repos.retain(|repo| repo.path != path);
         self.save()
     }
