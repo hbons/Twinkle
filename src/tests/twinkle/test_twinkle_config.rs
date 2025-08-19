@@ -121,8 +121,10 @@ fn test_twinkle_config_set_user() {
     _ = config.set_user(repo_path, Some("Hylke Bons"), Some("hello@planetpeanut.studio"));
 
     let repo = config.find(repo_path).unwrap();
-
     assert_eq!(repo.user.to_string(), "Hylke Bons <hello@planetpeanut.studio>");
+
+    let result = config.set_user(repo_path, Some("Hylke Bons"), Some(""));
+    assert!(result.is_err());
 }
 
 
