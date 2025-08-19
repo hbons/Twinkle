@@ -162,10 +162,10 @@ impl App {
         let remote = cli_dimmed(&format!("– {}…\n", repo.remote_url.original));
         log::log(&format!("Watching {} {}", cli_bold(&dir), remote));
 
-        let key_pair = twinkle_keypair_for(&repo.remote_url.host,
-            KeyType::default(), &self.app_keys_dir)?;
+        repo.user.key_pair = twinkle_keypair_for(&repo.remote_url.host,
+            KeyType::default(), &self.app_keys_dir).ok();
 
-        twinkle_watch(repo, &key_pair)?;
+        twinkle_watch(repo)?;
         Ok(())
     }
 

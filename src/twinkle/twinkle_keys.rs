@@ -33,14 +33,16 @@ pub fn twinkle_keypair_for(host: &String, key_type: KeyType, keys_dir: &Path) ->
     let key_name = format!("{}.{}.key", host, key_type);
     let key_path = keys_dir.join(&key_name);
 
+    let key_pair;
+
     if !key_path.exists() {
-        let key_pair = twinkle_keypair_new(host, key_type, keys_dir)?;
-        Ok(key_pair)
+        key_pair = twinkle_keypair_new(host, key_type, keys_dir)?;
     } else {
-        let key_pair = KeyPair::from_file(&key_path)?;
+        key_pair = KeyPair::from_file(&key_path)?;
         log::debug(&format!("Keys | Found key `{}`", key_pair.private_key_path.to_string_lossy()));
-        Ok(key_pair)
     }
+
+    Ok(key_pair)
 }
 
 

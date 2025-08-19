@@ -20,7 +20,8 @@ pub struct GitUser {
     pub name: GitUserName,
     pub email: GitUserEmail,
 
-    #[serde(skip)] _key_pair: Option<KeyPair>, // TODO: use this
+    #[serde(skip)]
+    pub key_pair: Option<KeyPair>,
 }
 
 
@@ -34,7 +35,7 @@ impl GitUser {
     }
 
     pub fn key_pair(&self) -> &Option<KeyPair> {
-        &self._key_pair
+        &self.key_pair
     }
 }
 
@@ -54,7 +55,7 @@ impl str::FromStr for GitUser {
         let user = GitUser {
             name:  GitUserName::new(name.into())?,
             email: GitUserEmail::new(email.into())?,
-            _key_pair: None,
+            key_pair: None,
         };
 
         Ok(user)

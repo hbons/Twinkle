@@ -14,7 +14,6 @@ use chrono::Utc;
 
 use crate::git::objects::repository::GitRepository;
 use crate::log;
-use crate::ssh::keys::key_pair::KeyPair;
 use crate::ssh::keys::key_type::KeyType;
 use crate::ssh::util::ssh_util_test_connection;
 use crate::twinkle::twinkle_default::{ twinkle_default_init, twinkle_default_polling_interval };
@@ -25,10 +24,13 @@ use super::twinkle_resolve::twinkle_resolve_changes;
 use super::twinkle_util::{ twinkle_commit_message, twinkle_ssh_command };
 
 
-pub fn twinkle_watch(repo: &mut GitRepository, key_pair: &KeyPair) -> Result<(), Box<dyn Error>> {
+pub fn twinkle_watch(repo: &mut GitRepository) -> Result<(), Box<dyn Error>> {
     if repo.git.branch_show_current()? != repo.branch {
         return Err(format!("Repository not on branch as set in config ({})", repo.branch).into())
     }
+
+    let key_pair = repo.user.key_pair.clone();
+    let key_pair = key_pair.ok_or("No user key pair")?;
 
     let host_key = twinkle_hostkey_for(&repo.remote_url, KeyType::default(),
         &key_pair.private_key_path.parent().ok_or("No parent")?)?;

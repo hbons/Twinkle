@@ -80,12 +80,16 @@ pub fn twinkle_clone_start(url: &SshUrl, key_pair: &KeyPair, path: &Path) -> Res
 
 pub fn twinkle_clone_complete(repo: &mut GitRepository, key_pair: &KeyPair) -> Result<(), Box<dyn Error>> {
     twinkle_default_init(repo)?;
-    repo.git.config_set_core_ssh_command(&key_pair)?;
 
-    repo.user = GitUser::default();
+    repo.user = GitUser {
+        key_pair: Some(key_pair.clone()),
+        ..Default::default()
+    };
+
     repo.git.config_set_user(&repo.user)?;
     repo.git.config_set_user_signing_key(&key_pair)?;
 
+    repo.git.config_set_core_ssh_command(&key_pair)?;
     repo.git.checkout_branch("HEAD")?;
 
     if repo.git.is_repo_empty() {
