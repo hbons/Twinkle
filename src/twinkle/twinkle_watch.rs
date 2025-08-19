@@ -113,11 +113,9 @@ pub fn twinkle_watch_remote(repo: &mut GitRepository) -> Result<(), Box<dyn Erro
         let interval = repo.polling_interval
             .unwrap_or(twinkle_default_polling_interval());
 
-        let local_id = repo.current_head()?;
-
         if !repo.is_syncing() {
             if let Ok(remote_id) = repo.git.ls_remote(&repo.branch) {
-                if remote_id != local_id {
+                if !repo.git.merge_base(&remote_id, &repo.branch)? {
                     repo.set_has_remote_changes(true);
                     log::info("Remote changes detected…");
                 }
