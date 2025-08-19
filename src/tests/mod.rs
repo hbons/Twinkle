@@ -31,6 +31,7 @@ mod git {
 #[cfg(test)]
 mod twinkle {
     mod test_twinkle_commit_message;
+    mod test_twinkle_config;
     mod test_twinkle_default_dir_name;
     mod test_twinkle_default;
     mod test_twinkle_email_is_valid;

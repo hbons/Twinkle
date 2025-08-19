@@ -17,8 +17,19 @@ use crate::git::objects::user::{ GitUserName, GitUserEmail };
 
 #[derive(Debug)]
 pub struct TwinkleConfig {
-    config_path: PathBuf,
+    config_path: Option<PathBuf>,
     loaded_repos: Vec<GitRepository>,
+}
+
+#[cfg(test)]
+impl TwinkleConfig {
+    pub fn config_path(&self) -> Option<PathBuf> {
+        self.config_path.clone()
+    }
+
+    pub fn loaded_repos(&self) -> &Vec<GitRepository> {
+        &self.loaded_repos
+    }
 }
 
 
@@ -48,6 +59,7 @@ impl TwinkleConfig {
 
         self.loaded_repos.push(repo.clone());
         self.save()?;
+
         Ok(())
     }
 
@@ -90,6 +102,7 @@ impl TwinkleConfig {
     pub fn set_interval(&mut self, path: &Path, interval: u64) -> Result<(), Box<dyn Error>>{
         self.find(path)?.polling_interval = Some(interval);
         self.save().map_err(|_| "Could not set interval")?;
+
         Ok(())
     }
 }
@@ -111,17 +124,23 @@ impl TwinkleConfig {
     // Load, Save
 
     pub fn load(&mut self) -> Result<(), Box<dyn Error>> {
-        self.loaded_repos = config_load(&self.config_path)?;
+        let config_path = &self.config_path.clone().ok_or("Missing config path")?;
+        self.loaded_repos = config_load(config_path)?;
+
         Ok(())
     }
 
 
     pub fn save(&self) -> Result<(), Box<dyn Error>> {
-        if !self.config_path.exists() {
-            config_init(&self.config_path)?;
-        }
+        match &self.config_path {
+            Some(path) => {
+                if !path.exists() {
+                    config_init(&path)?;
+                }
 
-        config_save(&self.config_path, self.loaded_repos.clone())?;
-        Ok(())
+                config_save(path, self.loaded_repos.clone())
+            },
+            None => Ok(()),
+        }
     }
 }
