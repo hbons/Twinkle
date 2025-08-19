@@ -80,11 +80,11 @@ impl Default for App {
         _ = config.load();
 
         App {
-            id:         app_id.into(),
-            name:       app_name.into(),
-            command:    command_name.into(),
-            icon:       app_id.into(),
-            version:    version.into(),
+            id:      app_id.into(),
+            name:    app_name.into(),
+            command: command_name.into(),
+            icon:    app_id.into(),
+            version: version.into(),
 
             is_flatpak: app_is_flatpak(),
 
