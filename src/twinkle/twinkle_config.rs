@@ -7,8 +7,9 @@
 
 use std::error::Error;
 use std::path::{ Path, PathBuf };
+use std::str;
 
-use crate::config::{ config_init, config_load, config_save };
+use crate::config::{ config_init, config_load, config_load_string, config_save };
 
 use crate::git::objects::repository::GitRepository;
 use crate::git::objects::user::{ GitUserName, GitUserEmail };
@@ -90,13 +91,18 @@ impl TwinkleConfig {
         self.save().map_err(|_| "Could not set interval")?;
         Ok(())
     }
+}
 
 
-    // pub fn set_paused(&mut self, path: &Path, paused: bool) -> Result<(), Box<dyn Error>> {
-    //     self.find(path)?.is_paused = paused;
-    //     self.save().map_err(|_| "Could not set paused")?;
-    //     Ok(())
-    // }
+impl str::FromStr for TwinkleConfig {
+    type Err = Box<dyn Error>;
+
+    fn from_str(lines: &str) -> Result<Self, Self::Err> {
+        Ok(TwinkleConfig {
+            config_path: None,
+            loaded_repos: config_load_string(&lines)?,
+        })
+    }
 }
 
 

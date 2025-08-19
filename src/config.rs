@@ -53,6 +53,12 @@ pub fn config_load(config_path: &Path) -> Result<Vec<GitRepository>, Box<dyn Err
 }
 
 
+pub fn config_load_string(json: &str) -> Result<Vec<GitRepository>, Box<dyn Error>> {
+    let repos: Vec<GitRepository> = serde_json::from_str(&json)?;
+    Ok(repos)
+}
+
+
 pub fn config_save(config_path: &Path, repos: Vec<GitRepository>) -> Result<(), Box<dyn Error>> {
     let json = serde_json::to_string_pretty(&repos)?;
 
