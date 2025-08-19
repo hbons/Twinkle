@@ -42,7 +42,7 @@ pub fn twinkle_watch(repo: &mut GitRepository) -> Result<(), Box<dyn Error>> {
     repo.git.config_set_user_signing_key(&key_pair)?;
 
     ssh_util_test_connection(&repo.remote_url, &host_key, &key_pair)?;
-    log::debug(&format!("{} | Authenticated", &repo.remote_url.host));
+    log::debug(&format!("Authenticated to {}", &repo.remote_url.host));
 
     let repo_c1 = repo.clone();
     let mut repo_c2 = repo.clone();

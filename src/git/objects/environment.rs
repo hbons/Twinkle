@@ -110,8 +110,7 @@ impl GitEnvironment {
         if output.status.success() {
             Ok(git_output)
         } else {
-            log::error(&git_output.stderr);
-            Err(format!("Could not run git-{}: {}", command, git_output.stderr).into())
+            Err(format!("git-{} errored with output: {}", command, git_output.stderr).into())
         }
     }
 }
