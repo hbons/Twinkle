@@ -1,5 +1,5 @@
 //   Twinkle, automatic syncing with Git
-//   Copyright (C) 2025  Hylke Bons (hi@planetpeanut.uk)
+//   Copyright (C) 2025  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
 //   under the terms of the GNU General Public License v3 or any later version.
@@ -43,7 +43,7 @@ impl GitUser {
 impl str::FromStr for GitUser {
     type Err = Box<dyn Error>;
 
-    // 'Hylke Bons <hi@planetpeanut.uk>'
+    // 'Hylke Bons <hello@planetpeanut.studio>'
     fn from_str(line: &str) -> Result<Self, Self::Err> {
         let (name, rest) = line.split_once('<').ok_or("Missing '<'")?;
         let email = rest.strip_suffix('>').ok_or("Missing '>'")?;
