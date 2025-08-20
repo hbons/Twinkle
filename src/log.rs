@@ -7,7 +7,6 @@
 
 use std::env;
 use std::fmt::Debug;
-use std::path::Path;
 use std::process;
 
 use chrono::Utc;
@@ -46,12 +45,6 @@ pub fn error_and_exit(message: &str) -> ! {
     let app = env!("CARGO_PKG_NAME");
     eprintln!("\x1b[31m{app} error:\x1b[0m {message}");
     process::exit(255);
-}
-
-
-pub fn crash_report(_log: &str, _path: &Path) {
-    // let mut file = File::create(path).unwrap(); // TODO
-    // _ = file.write_all(log.as_bytes())?;
 }
 
 
