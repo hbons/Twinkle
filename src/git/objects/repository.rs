@@ -51,7 +51,6 @@ impl GitRepository {
         GitRepository {
             path: path.to_path_buf(),
             remote_url: remote_url.to_owned(),
-            large_file_storage: path.join(".git/lfs").exists(),
             ..Default::default()
         }
     }
