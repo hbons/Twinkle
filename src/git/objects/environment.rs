@@ -71,9 +71,9 @@ impl GitEnvironment {
             ("GIT_CONFIG_SYSTEM".into(),   self.GIT_CONFIG_SYSTEM.clone()),
             ("GIT_CONFIG_NOSYSTEM".into(), self.GIT_CONFIG_NOSYSTEM.clone()),
 
-            ("GIT_EXEC_PATH".into(), self.GIT_EXEC_PATH.to_string_lossy().into()),
-            ("GIT_PAGER".into(), self.GIT_PAGER.clone()),
-            ("GIT_SSH_COMMAND".into(), self.GIT_SSH_COMMAND.clone()),
+            ("GIT_EXEC_PATH".into(),       self.GIT_EXEC_PATH.to_string_lossy().into()),
+            ("GIT_PAGER".into(),           self.GIT_PAGER.clone()),
+            ("GIT_SSH_COMMAND".into(),     self.GIT_SSH_COMMAND.clone()),
             ("GIT_TERMINAL_PROMPT".into(), self.GIT_TERMINAL_PROMPT.clone()),
         ]
     }
