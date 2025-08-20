@@ -19,7 +19,6 @@ use super::output::GitOutput;
 pub struct GitEnvironment {
     pub working_dir:  PathBuf,
 
-    pub LANG:   String, // Still needed? Should be overridden by LC_ALL
     pub LC_ALL: String, // Override all locale settings
 
     pub GIT_CONFIG_GLOBAL:   String,
@@ -40,8 +39,7 @@ impl Default for GitEnvironment {
         GitEnvironment {
             working_dir,
 
-            LANG:   "en_US.UTF8".to_string(), // Default to English for parsing errors/warnings
-            LC_ALL: "en_US.UTF8".to_string(),
+            LC_ALL: "C".to_string(),
 
             GIT_CONFIG_GLOBAL:   "/dev/null".to_string(), // Don't use the system gitconfig
             GIT_CONFIG_SYSTEM:   "/dev/null".to_string(), // Don't use the system gitconfig
@@ -67,7 +65,6 @@ impl GitEnvironment {
 
     pub fn get_environment(&self) -> Vec<(String, String)> {
         vec![
-            ("LANG".into(), self.LANG.clone()),
             ("LC_ALL".into(), self.LC_ALL.clone()),
 
             ("GIT_CONFIG_GLOBAL".into(),   self.GIT_CONFIG_GLOBAL.clone()),
