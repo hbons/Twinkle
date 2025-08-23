@@ -12,7 +12,7 @@ use crate::twinkle::twinkle_util::twinkle_default_dir_name;
 
 
 #[test]
-fn test_twinkle_default_dir_name_with_repo() {
+fn test_twinkle_default_dir_name() {
     let url = "ssh://git@github.com/hbons/Twinkle".parse::<SshUrl>().unwrap();
     let result = twinkle_default_dir_name(&url);
 
