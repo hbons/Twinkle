@@ -25,9 +25,9 @@ cargo_build = custom_target(
   command_name,
   command: [
     'sh', '-c',
-    'cd ' + meson.source_root() + ' && ' +
+    'cd ' + meson.project_source_root() + ' && ' +
     'cargo build --release && ' +
-    'cp target/release/' + command_name + ' ' + meson.build_root() + '/' + command_name
+    'cp target/release/' + command_name + ' ' + meson.project_build_root() + '/' + command_name
   ],
   output: command_name,
   build_by_default: true,
@@ -44,6 +44,9 @@ cargo_build = custom_target(
 
 
 summary(
-  { 'nightly': get_option('nightly'), },
+  {
+    'nightly': get_option('nightly'),
+    'bindir': get_option('bindir')
+  },
   section: 'Options',
 )
