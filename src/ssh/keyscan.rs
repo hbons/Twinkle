@@ -6,7 +6,6 @@
 
 
 use std::error::Error;
-use std::env;
 use std::process::Command;
 
 use crate::log;
@@ -28,15 +27,11 @@ pub fn ssh_keyscan(host: &str, port: Option<u16>, key_type: KeyType) -> Result<H
 
     log::debug(&format!("ssh-keyscan {}", &args.join(" ")));
 
-    let mut command = Command::new("ssh-keyscan");
+    let ssh_keyscan = Command::new("ssh-keyscan")
+        .args(args)
+        .output();
 
-    if env::var("GITHUB_ACTIONS").is_err() {
-        command.env_clear(); // Causes GitHub Actions to not find the compiled OpenSSH
-    }
-
-    let result = command.args(args).output();
-
-    match result {
+    match ssh_keyscan {
         Ok(output) => {
             if !output.status.success() {
                 log::error(String::from_utf8_lossy(&output.stderr).trim());

@@ -5,7 +5,6 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-use std::env;
 use std::error::Error;
 use std::fs::{ create_dir_all, read_to_string };
 use std::io::Write;
@@ -46,15 +45,11 @@ pub fn ssh_keygen(key_path: &Path, key_type: KeyType, key_size: Option<KeySize>)
 
     log::debug(&format!("ssh-keygen {}", &args.join(" ")));
 
-    let mut command = Command::new("ssh-keygen");
+    let ssh_keygen = Command::new("ssh-keygen")
+        .args(args)
+        .output();
 
-    if env::var("GITHUB_ACTIONS").is_err() {
-        command.env_clear(); // Causes GitHub Actions to not find the compiled OpenSSH
-    }
-
-    let result = command.args(args).output();
-
-    match result {
+    match ssh_keygen {
         Ok(output) => {
             if !output.status.success() {
                 log::error(String::from_utf8_lossy(&output.stderr).trim());
@@ -87,7 +82,6 @@ pub fn ssh_keygen_fingerprint(host_key: &HostKey) -> Result<Fingerprint, Box<dyn
     // Docs: https://man.openbsd.org/ssh-keygen#l
 
     let mut child = Command::new("ssh-keygen")
-        .env_clear()
         .arg("-q") // Quiet
         .arg("-l") // Display fingerprint
         .arg("-E").arg("sha256") // Hash algorithm
