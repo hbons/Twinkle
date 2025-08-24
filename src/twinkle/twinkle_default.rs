@@ -8,6 +8,7 @@
 use std::error::Error;
 use std::fs;
 use std::path::Path;
+use std::time::Duration;
 
 use crate::git::objects::repository::GitRepository;
 use crate::git::objects::user::GitUser;
@@ -134,18 +135,23 @@ pub fn twinkle_default_git_user() -> Result<GitUser, Box<dyn Error>> {
     "Twinkle <twinkle@localhost>".parse::<GitUser>()
 }
 
-
 pub fn twinkle_default_polling_interval() -> u64 {
     90 // seconds
 }
-
 
 pub fn twinkle_default_lfs_threshold() -> u64 {
     3 * 1024 // 3 KB
     // 3 * 1024 * 1024 // 3 MB
 }
 
-
 pub fn twinkle_default_branch() -> &'static str {
     "main"
+}
+
+pub fn twinkle_default_sync_up_delay_max() -> Duration {
+    Duration::from_secs(600)
+}
+
+pub fn twinkle_default_sync_up_delay_bump() -> Duration {
+    Duration::from_secs(15)
 }

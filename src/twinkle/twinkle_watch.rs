@@ -16,7 +16,12 @@ use crate::git::objects::repository::GitRepository;
 use crate::log;
 use crate::ssh::keys::key_type::KeyType;
 use crate::ssh::util::ssh_util_test_connection;
-use crate::twinkle::twinkle_default::{ twinkle_default_init, twinkle_default_polling_interval };
+
+use crate::twinkle::twinkle_default::twinkle_default_init;
+use crate::twinkle::twinkle_default::twinkle_default_polling_interval;
+use crate::twinkle::twinkle_default::twinkle_default_sync_up_delay_max;
+use crate::twinkle::twinkle_default::twinkle_default_sync_up_delay_bump;
+
 use crate::twinkle::twinkle_lfs::twinkle_lfs_track;
 
 use super::twinkle_keys::twinkle_hostkey_for;
@@ -42,7 +47,7 @@ pub fn twinkle_watch(repo: &mut GitRepository) -> Result<(), Box<dyn Error>> {
     repo.git.config_set_user_signing_key(&key_pair)?;
 
     ssh_util_test_connection(&repo.remote_url, &host_key, &key_pair)?;
-    log::debug(&format!("Authenticated to {}", &repo.remote_url.host));
+    log::debug(&format!("✓ Authenticated to {}", &repo.remote_url.host));
 
     let repo_c1 = repo.clone();
     let mut repo_c2 = repo.clone();
@@ -130,11 +135,9 @@ pub fn twinkle_watch_remote(repo: &mut GitRepository) -> Result<(), Box<dyn Erro
 
 
 pub fn twinkle_sync_up(repo: &mut GitRepository) -> Result<(), Box<dyn Error>> {
-    // TODO: Needs exponential backoff on error here
+    let mut attempts = 0;
 
     loop {
-        thread::sleep(Duration::from_secs(1));
-
         repo.git.lfs_config_filters()?;
         repo.git.add_all()?;
         let status = repo.git.status()?;
@@ -149,18 +152,24 @@ pub fn twinkle_sync_up(repo: &mut GitRepository) -> Result<(), Box<dyn Error>> {
             repo.git.config_set_user(&repo.user)?;
             repo.git.commit(&repo.user, &message)?;
 
-            log::info(&format!("Committed. Now at {}", repo.current_head()?));
+            log::info(&format!("✓ Committed. Now at {}", repo.current_head()?));
         } else {
             log::info(&format!("Nothing new to commit. Still at {}", repo.current_head()?));
         }
 
         repo.git.lfs_install_pre_push_hook()?;
+        let push = repo.git.push("origin", &repo.branch);
 
-        match repo.git.push("origin", &repo.branch) {
-            Ok(_)  => log::info(&format!("Pushed. Local and remote at {}", repo.current_head()?)),
+        match push {
+            Ok(_)  => log::info(&format!("✓ Pushed. Local and remote at {}", repo.current_head()?)),
             Err(_) => {
-                log::info("Push failed (remote is ahead). Fetching…");
-                twinkle_sync_down(repo)?;
+                log::info("✗ Push failed. Fetching…");
+                let fetch = twinkle_sync_down(repo);
+
+                if fetch.is_err() {
+                    attempts += 1;
+                    thread::sleep(twinkle_sync_up_delay(attempts));
+                }
             }
         }
 
@@ -170,6 +179,17 @@ pub fn twinkle_sync_up(repo: &mut GitRepository) -> Result<(), Box<dyn Error>> {
     }
 
     Ok(())
+}
+
+
+pub fn twinkle_sync_up_delay(attempts: u64) -> Duration {
+    let max  = twinkle_default_sync_up_delay_max().as_secs();
+    let bump = twinkle_default_sync_up_delay_bump().as_secs();
+
+    let delay = (attempts * bump).saturating_sub(bump).min(max);
+    log::info(&format!("Retrying in {}s…", delay));
+
+    Duration::from_secs(delay)
 }
 
 
@@ -189,7 +209,7 @@ pub fn twinkle_sync_down(repo: &mut GitRepository) -> Result<(), Box<dyn Error>>
 
     if OS == "macos" { repo.git.config_set("core.ignoreCase", "false")?; }
 
-    log::info(&format!("Fetched and merged. Now at {}", repo.current_head()?));
+    log::info(&format!("✓ Fetched and merged. Now at {}", repo.current_head()?));
     Ok(())
 }
 
@@ -215,7 +235,6 @@ pub enum TwinklePushError {
     RemoteAhead(String),
     Unknown(String),
 }
-
 
 pub enum TwinkleFetchError {
     NoNetwork(String),

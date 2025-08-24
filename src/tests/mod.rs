@@ -41,4 +41,5 @@ mod twinkle {
     mod test_twinkle_resolve_paths;
     mod test_twinkle_unique_dir;
     mod test_twinkle_settings_url_for_host;
+    mod test_twinkle_watch;
 }
