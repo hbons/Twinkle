@@ -8,6 +8,7 @@
 use std::error::Error;
 
 use crate::ssh::keys::key_pair::KeyPair;
+use crate::ssh::objects::config::SshConfig;
 
 use super::objects::environment::GitEnvironment;
 use super::objects::output::GitOutput;
@@ -49,16 +50,14 @@ impl GitEnvironment {
 
     // Write a minimal SSH command to the .git/config for debugging purposes
     pub fn config_set_core_ssh_command(&self, key_pair: &KeyPair) -> Result<(), Box<dyn Error>>{
-        let private_key_path = key_pair.private_key_path.to_string_lossy();
-        let known_hosts_path = key_pair.private_key_path.with_extension("key.host");
-        let known_hosts_path = known_hosts_path.to_string_lossy();
+        let config = SshConfig {
+            IdentityFile: key_pair.private_key_path.clone(),
+            UserKnownHostsFile: key_pair.private_key_path.with_extension("key.host"),
+            ..Default::default()
+        };
 
         self.config_set("core.sshCommand",
-            &format!("ssh \
-                -o IdentityFile={private_key_path} \
-                -o StrictHostKeyChecking=yes \
-                -o UserKnownHostsFile={known_hosts_path} \
-                -F /dev/null"))?;
+            &format!("ssh -F /dev/null {config}"))?;
 
         Ok(())
     }

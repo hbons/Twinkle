@@ -11,6 +11,7 @@ use std::path::{ Path, PathBuf };
 use crate::git::objects::change::GitChange;
 use crate::git::objects::file_status::GitFileStatus;
 
+use crate::ssh::objects::config::SshConfig;
 use crate::ssh::objects::url::SshUrl;
 use crate::ssh::keys::key_pair::KeyPair;
 
@@ -96,21 +97,11 @@ pub fn twinkle_settings_url_for(host: String) -> Option<&'static str> {
 
 
 pub fn twinkle_ssh_command(key_pair: &KeyPair) -> String {
-    // Docs: https://man.openbsd.org/ssh_config
+    let config = SshConfig {
+        IdentityFile: key_pair.private_key_path.clone(),
+        UserKnownHostsFile: key_pair.private_key_path.with_extension("key.host"),
+        ..Default::default()
+    };
 
-    let private_key_path = key_pair.private_key_path.display();
-    let known_hosts_path = key_pair.private_key_path.with_extension("key.host");
-    let known_hosts_path = known_hosts_path.display();
-
-    // Note: Can't use "UpdateHostKeys=yes" as it fetches all key
-    //       types which messes with fingerprinting
-    format!("ssh \
-        -F /dev/null \
-        -o BatchMode=yes \
-        -o ConnectTimeout=16 \
-        -o IdentitiesOnly=yes \
-        -o IdentityFile={private_key_path} \
-        -o PasswordAuthentication=no \
-        -o StrictHostKeyChecking=yes \
-        -o UserKnownHostsFile={known_hosts_path}")
+    format!("ssh -F /dev/null {config}")
 }

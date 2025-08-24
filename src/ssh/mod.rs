@@ -23,6 +23,7 @@ pub mod keys {
 }
 
 pub mod objects {
+    pub mod config;
     pub mod url;
 }
 
