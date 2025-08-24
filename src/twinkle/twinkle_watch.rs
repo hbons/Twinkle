@@ -175,7 +175,10 @@ pub fn twinkle_sync_up(repo: &mut GitRepository) -> Result<(), Box<dyn Error>> {
 
 pub fn twinkle_sync_down(repo: &mut GitRepository) -> Result<(), Box<dyn Error>> {
     repo.git.fetch("main")?;
-    repo.git.lfs_fetch()?;
+
+    if repo.large_file_storage {
+        repo.git.lfs_fetch()?;
+    }
 
     if OS == "macos" { repo.git.config_set("core.ignoreCase", "true")?; }
     let merge = repo.git.merge("FETCH_HEAD");
