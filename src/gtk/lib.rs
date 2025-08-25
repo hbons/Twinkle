@@ -63,6 +63,12 @@ impl Gui for App {
     }
 
 
+    fn gui_set_autostart(&self, _value: bool) -> Result<(), Box<dyn Error>> {
+        // set via dbus
+        Ok(())
+    }
+
+
     fn gui_show_main_window(&self) -> Result<(), Box<dyn Error>> {
         // let builder = Builder::new_from_file("resources/main.ui");
         // let window: Window = builder.get_object("main_window")?;

@@ -13,6 +13,7 @@ pub trait Gui {
     fn gui_init(&self) -> Result<(), Box<dyn Error>>;
     fn gui_run(&self) -> Result<(), Box<dyn Error>>;
     fn gui_run_background(&self) -> Result<(), Box<dyn Error>>;
+    fn gui_set_autostart(&self, value: bool) -> Result<(), Box<dyn Error>>;
 
     fn gui_show_main_window(&self) -> Result<(), Box<dyn Error>>;
     fn gui_show_clone_window(&self) -> Result<(), Box<dyn Error>>;
