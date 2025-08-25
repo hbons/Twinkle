@@ -143,12 +143,10 @@ impl GitRepository { // TwinkleRepository
     }
 
     pub fn has_local_changes(&self) -> bool {
-        #[allow(clippy::unwrap_used)]
         *self.has_local_changes.lock().unwrap()
     }
 
     pub fn has_remote_changes(&self) -> bool {
-        #[allow(clippy::unwrap_used)]
         *self.has_remote_changes.lock().unwrap()
     }
 }
@@ -162,7 +160,6 @@ impl GitRepository { // TwinkleRepository
     }
 
     pub fn is_syncing(&self) -> bool {
-        #[allow(clippy::unwrap_used)]
         *self.is_syncing.lock().unwrap()
     }
 }
