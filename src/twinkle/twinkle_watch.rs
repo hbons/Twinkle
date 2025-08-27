@@ -102,13 +102,13 @@ pub fn twinkle_watch_local(repo: &GitRepository) -> Result<(), Box<dyn Error>> {
     loop {
         if !repo.is_syncing() {
             let status = repo.git.status()?;
-            if !status.is_empty() { // TODO: Manual status every 5min or so once we have a FS watcher
+            if !status.is_empty() {
                 repo.set_has_local_changes(true);
                 log::info("Local changes detected…");
             }
         }
 
-        thread::sleep(Duration::from_secs(5));
+        thread::sleep(Duration::from_secs(5)); // TODO: Change to 5m once FS watcher is set up
     }
 }
 
