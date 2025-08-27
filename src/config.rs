@@ -12,8 +12,8 @@ use std::path::Path;
 
 use serde_json;
 
-use crate::git::objects::repository::GitRepository;
 use crate::log;
+use crate::twinkle::objects::twinkle_repository::TwinkleRepository;
 use crate::twinkle::twinkle_pretty::twinkle_pretty_dir;
 
 
@@ -34,7 +34,7 @@ pub fn config_init(config_path: &Path) -> Result<(), Box<dyn Error>> {
 }
 
 
-pub fn config_load(config_path: &Path) -> Result<Vec<GitRepository>, Box<dyn Error>> {
+pub fn config_load(config_path: &Path) -> Result<Vec<TwinkleRepository>, Box<dyn Error>> {
     let mut config = OpenOptions::new()
         .read(true)
         .create(false) // Error if file does not exist
@@ -43,7 +43,7 @@ pub fn config_load(config_path: &Path) -> Result<Vec<GitRepository>, Box<dyn Err
     let mut json = String::new();
     config.read_to_string(&mut json)?;
 
-    let repos: Vec<GitRepository> = serde_json::from_str(&json)?;
+    let repos: Vec<TwinkleRepository> = serde_json::from_str(&json)?;
 
     let count = repos.len();
     let path = twinkle_pretty_dir(config_path);
@@ -53,13 +53,13 @@ pub fn config_load(config_path: &Path) -> Result<Vec<GitRepository>, Box<dyn Err
 }
 
 
-pub fn config_load_string(json: &str) -> Result<Vec<GitRepository>, Box<dyn Error>> {
-    let repos: Vec<GitRepository> = serde_json::from_str(&json)?;
+pub fn config_load_string(json: &str) -> Result<Vec<TwinkleRepository>, Box<dyn Error>> {
+    let repos: Vec<TwinkleRepository> = serde_json::from_str(&json)?;
     Ok(repos)
 }
 
 
-pub fn config_save(config_path: &Path, repos: Vec<GitRepository>) -> Result<(), Box<dyn Error>> {
+pub fn config_save(config_path: &Path, repos: Vec<TwinkleRepository>) -> Result<(), Box<dyn Error>> {
     let json = serde_json::to_string_pretty(&repos)?;
 
     let mut config = OpenOptions::new()

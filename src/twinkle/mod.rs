@@ -5,6 +5,10 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
+pub mod objects {
+    pub mod twinkle_repository;
+}
+
 pub mod twinkle_clone;
 pub mod twinkle_config;
 pub mod twinkle_default;

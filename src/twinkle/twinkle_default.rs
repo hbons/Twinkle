@@ -10,12 +10,13 @@ use std::fs;
 use std::path::Path;
 use std::time::Duration;
 
-use crate::git::objects::repository::GitRepository;
 use crate::git::objects::user::GitUser;
 use crate::ssh::objects::url::SshUrl;
 
+use super::objects::twinkle_repository::TwinkleRepository;
 
-pub fn twinkle_default_init(repo: &GitRepository) -> Result<(), Box<dyn Error>> {
+
+pub fn twinkle_default_init(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
     // .git/config
     for (option, value) in twinkle_default_settings() {
         repo.git.config_set(option, value)?;
@@ -117,7 +118,7 @@ pub fn twinkle_default_welcome(url: &SshUrl) -> String {
 }
 
 
-pub fn twinkle_default_commit(repo: &GitRepository) -> Result<(), Box<dyn Error>> {
+pub fn twinkle_default_commit(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
     let name = "TWINKLE.md";
     let path = repo.git.working_dir.join(name);
     fs::write(path, twinkle_default_welcome(&repo.remote_url))?;

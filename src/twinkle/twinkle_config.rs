@@ -10,15 +10,15 @@ use std::path::{ Path, PathBuf };
 use std::str;
 
 use crate::config::{ config_init, config_load, config_load_string, config_save };
-
-use crate::git::objects::repository::GitRepository;
 use crate::git::objects::user::{ GitUserName, GitUserEmail };
+
+use super::objects::twinkle_repository::TwinkleRepository;
 
 
 #[derive(Debug)]
 pub struct TwinkleConfig {
     config_path: Option<PathBuf>,
-    loaded_repos: Vec<GitRepository>,
+    loaded_repos: Vec<TwinkleRepository>,
 }
 
 #[cfg(test)]
@@ -27,7 +27,7 @@ impl TwinkleConfig {
         self.config_path.clone()
     }
 
-    pub fn loaded_repos(&self) -> &Vec<GitRepository> {
+    pub fn loaded_repos(&self) -> &Vec<TwinkleRepository> {
         &self.loaded_repos
     }
 }
@@ -44,7 +44,7 @@ impl TwinkleConfig {
     }
 
 
-    pub fn find(&mut self, path: &Path) -> Result<&mut GitRepository, Box<dyn Error>> {
+    pub fn find(&mut self, path: &Path) -> Result<&mut TwinkleRepository, Box<dyn Error>> {
         self.loaded_repos
             .iter_mut()
             .find(|repo| repo.path == path)
@@ -52,7 +52,7 @@ impl TwinkleConfig {
     }
 
 
-    pub fn add(&mut self, repo: &GitRepository) -> Result<(), Box<dyn Error>> {
+    pub fn add(&mut self, repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
         if self.loaded_repos.iter().any(|r| r.path == repo.path) {
             return Err(format!("Path already in config: `{}`", repo.path.display()).into());
         }
@@ -74,7 +74,7 @@ impl TwinkleConfig {
     }
 
 
-    pub fn list(&self) -> Result<Vec<GitRepository>, Box<dyn Error>> {
+    pub fn list(&self) -> Result<Vec<TwinkleRepository>, Box<dyn Error>> {
         Ok(self.loaded_repos.clone())
     }
 }

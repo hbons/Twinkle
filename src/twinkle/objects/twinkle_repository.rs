@@ -4,9 +4,6 @@
 //   This program is free software: you can redistribute it and/or modify it
 //   under the terms of the GNU General Public License v3 or any later version.
 
-// TODO: TwinkleRepository. Move to twinkle crate?
-// this way we can use the twinkle_default_* functions
-
 
 use std::error::Error;
 use std::fs::{ self, File };
@@ -16,16 +13,16 @@ use std::sync::{ Arc, Mutex };
 
 use serde::{ Serialize, Deserialize };
 
+use crate::git::objects::environment::GitEnvironment;
+use crate::git::objects::user::GitUser;
+
 use crate::log;
 use crate::ssh::objects::url::SshUrl;
-
-use super::environment::GitEnvironment;
-use super::user::GitUser;
 
 
 #[derive(Clone, Debug, Default)]
 #[derive(Serialize, Deserialize)]
-pub struct GitRepository {
+pub struct TwinkleRepository {
     pub path: PathBuf,
     pub remote_url: SshUrl,
     pub branch: String,
@@ -46,9 +43,9 @@ pub struct GitRepository {
 }
 
 
-impl GitRepository {
-    pub fn new(path: PathBuf, remote_url: SshUrl, branch: String) -> GitRepository {
-        GitRepository {
+impl TwinkleRepository {
+    pub fn new(path: PathBuf, remote_url: SshUrl, branch: String) -> TwinkleRepository {
+        TwinkleRepository {
             path,
             remote_url,
             branch,
@@ -58,7 +55,7 @@ impl GitRepository {
 }
 
 
-impl GitRepository {
+impl TwinkleRepository {
     /// Current long commit hash
     pub fn current_head(&self) -> Result<String, Box<dyn Error>> {
         self.git.rev_parse()
@@ -80,7 +77,7 @@ impl GitRepository {
 }
 
 
-impl GitRepository { // TwinkleRepository
+impl TwinkleRepository { // TwinkleRepository
     pub fn write_config(&self) -> Result<(), Box<dyn Error>> {
         self.git.config_set("twinkle.lastChecked", &self.last_checked.to_string())?;
         self.git.config_set("twinkle.lastSynced", &self.last_synced.to_string())?;
@@ -89,7 +86,7 @@ impl GitRepository { // TwinkleRepository
 }
 
 
-impl GitRepository {
+impl TwinkleRepository {
     pub fn write_attribute_rules(&self, rules: Vec<String>) -> Result<(), Box<dyn Error>> {
         let attributes_path = self.git.working_dir.join(".git/info/attributes");
         let mut buffer = File::create(&attributes_path)?;
@@ -111,7 +108,7 @@ impl GitRepository {
 }
 
 
-impl GitRepository { // TwinkleRepository
+impl TwinkleRepository { // TwinkleRepository
     pub fn set_has_local_changes(&self, value: bool) {
         if let Ok(mut v) = self.has_local_changes.lock() {
             *v = value;
@@ -134,7 +131,7 @@ impl GitRepository { // TwinkleRepository
 }
 
 
-impl GitRepository { // TwinkleRepository
+impl TwinkleRepository { // TwinkleRepository
     pub fn set_is_syncing(&self, value: bool) {
         if let Ok(mut v) = self.is_syncing.lock() {
             *v = value;

@@ -12,17 +12,17 @@ use std::path::Path;
 use chrono::Utc;
 
 use crate::git::objects::environment::GitEnvironment;
-use crate::git::objects::repository::GitRepository;
-
 use crate::git::objects::user::GitUser;
+
 use crate::ssh::keygen::ssh_keygen_fingerprint;
 use crate::ssh::keys::host_key::HostKey;
 use crate::ssh::keys::key_pair::KeyPair;
 use crate::ssh::keys::key_type::KeyType;
 use crate::ssh::objects::url::SshUrl;
 use crate::ssh::util::ssh_util_test_connection;
-use crate::twinkle::twinkle_default::twinkle_default_branch;
 
+use super::objects::twinkle_repository::TwinkleRepository;
+use super::twinkle_default::twinkle_default_branch;
 use super::twinkle_default::twinkle_default_commit;
 use super::twinkle_default::twinkle_default_init;
 use super::twinkle_keys::twinkle_hostkey_for;
@@ -56,7 +56,7 @@ pub fn twinkle_clone_prepare(url: &SshUrl, keys_dir: &Path) -> Result<KeyPair, B
 }
 
 
-pub fn twinkle_clone_start(url: &SshUrl, key_pair: &KeyPair, path: &Path) -> Result<GitRepository, Box<dyn Error>> {
+pub fn twinkle_clone_start(url: &SshUrl, key_pair: &KeyPair, path: &Path) -> Result<TwinkleRepository, Box<dyn Error>> {
     let git = GitEnvironment {
         working_dir: path.to_path_buf(),
         GIT_SSH_COMMAND: twinkle_ssh_command(key_pair),
@@ -68,7 +68,7 @@ pub fn twinkle_clone_start(url: &SshUrl, key_pair: &KeyPair, path: &Path) -> Res
     let target_git = git.clone(&url.to_string_standard(), Some(dir.as_ref()), Some(1))?;
 
     let branch = twinkle_default_branch();
-    let mut repo = GitRepository::new(target_git.working_dir.clone(), url.clone(), branch.into());
+    let mut repo = TwinkleRepository::new(target_git.working_dir.clone(), url.clone(), branch.into());
     repo.git = target_git;
 
     if !repo.git.lfs_ls_files()?.is_empty() {
@@ -80,7 +80,7 @@ pub fn twinkle_clone_start(url: &SshUrl, key_pair: &KeyPair, path: &Path) -> Res
 }
 
 
-pub fn twinkle_clone_complete(repo: &mut GitRepository, key_pair: &KeyPair) -> Result<(), Box<dyn Error>> {
+pub fn twinkle_clone_complete(repo: &mut TwinkleRepository, key_pair: &KeyPair) -> Result<(), Box<dyn Error>> {
     twinkle_default_init(repo)?;
 
     repo.user = GitUser {

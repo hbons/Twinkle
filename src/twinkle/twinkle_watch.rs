@@ -12,24 +12,22 @@ use std::time::Duration;
 
 use chrono::Utc;
 
-use crate::git::objects::repository::GitRepository;
 use crate::log;
 use crate::ssh::keys::key_type::KeyType;
 use crate::ssh::util::ssh_util_test_connection;
 
-use crate::twinkle::twinkle_default::twinkle_default_init;
-use crate::twinkle::twinkle_default::twinkle_default_polling_interval;
-use crate::twinkle::twinkle_default::twinkle_default_sync_up_delay_max;
-use crate::twinkle::twinkle_default::twinkle_default_sync_up_delay_bump;
-
-use crate::twinkle::twinkle_lfs::twinkle_lfs_track;
-
+use super::objects::twinkle_repository::TwinkleRepository;
+use super::twinkle_default::twinkle_default_init;
+use super::twinkle_default::twinkle_default_polling_interval;
+use super::twinkle_default::twinkle_default_sync_up_delay_max;
+use super::twinkle_default::twinkle_default_sync_up_delay_bump;
 use super::twinkle_keys::twinkle_hostkey_for;
+use super::twinkle_lfs::twinkle_lfs_track;
 use super::twinkle_resolve::twinkle_resolve_changes;
 use super::twinkle_util::{ twinkle_commit_message, twinkle_ssh_command };
 
 
-pub fn twinkle_watch(repo: &mut GitRepository) -> Result<(), Box<dyn Error>> {
+pub fn twinkle_watch(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
     if repo.git.branch_show_current()? != repo.branch {
         return Err(format!("Repository not on branch as set in config ({})", repo.branch).into())
     }
@@ -98,7 +96,7 @@ pub fn twinkle_watch(repo: &mut GitRepository) -> Result<(), Box<dyn Error>> {
 }
 
 
-pub fn twinkle_watch_local(repo: &GitRepository) -> Result<(), Box<dyn Error>> {
+pub fn twinkle_watch_local(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
     loop {
         if !repo.is_syncing() {
             let status = repo.git.status()?;
@@ -113,7 +111,7 @@ pub fn twinkle_watch_local(repo: &GitRepository) -> Result<(), Box<dyn Error>> {
 }
 
 
-pub fn twinkle_watch_remote(repo: &mut GitRepository) -> Result<(), Box<dyn Error>> {
+pub fn twinkle_watch_remote(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
     loop {
         let interval = repo.polling_interval
             .unwrap_or(twinkle_default_polling_interval());
@@ -134,7 +132,7 @@ pub fn twinkle_watch_remote(repo: &mut GitRepository) -> Result<(), Box<dyn Erro
 }
 
 
-pub fn twinkle_sync_up(repo: &mut GitRepository) -> Result<(), Box<dyn Error>> {
+pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
     let mut attempts = 0;
 
     loop {
@@ -193,7 +191,7 @@ pub fn twinkle_sync_up_delay(attempts: u64) -> Duration {
 }
 
 
-pub fn twinkle_sync_down(repo: &mut GitRepository) -> Result<(), Box<dyn Error>> {
+pub fn twinkle_sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
     repo.git.fetch("main")?;
 
     if repo.large_file_storage {
@@ -214,7 +212,7 @@ pub fn twinkle_sync_down(repo: &mut GitRepository) -> Result<(), Box<dyn Error>>
 }
 
 
-pub fn twinkle_has_unpushed_commits(repo: &GitRepository) -> bool {
+pub fn twinkle_has_unpushed_commits(repo: &TwinkleRepository) -> bool {
     match repo.git.rev_list_count() {
         Ok(count) => count > 0,
         Err(_) => false,

@@ -7,15 +7,16 @@
 
 use std::error::Error;
 
-use crate::git::objects::repository::GitRepository;
 use crate::git::objects::file_status::GitFileStatus;
 use crate::git::objects::change::GitChange;
 
 use crate::log;
-use crate::twinkle::twinkle_default::twinkle_default_lfs_threshold;
+
+use super::twinkle_default::twinkle_default_lfs_threshold;
+use super::objects::twinkle_repository::TwinkleRepository;
 
 
-pub fn twinkle_lfs_track(repo: &GitRepository, change: &GitChange) -> Result<(), Box<dyn Error>> {
+pub fn twinkle_lfs_track(repo: &TwinkleRepository, change: &GitChange) -> Result<(), Box<dyn Error>> {
     if change.status_x != Some(GitFileStatus::Untracked) &&
        change.status_y != Some(GitFileStatus::Untracked) &&
        change.status_x != Some(GitFileStatus::Added) &&

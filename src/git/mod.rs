@@ -18,7 +18,6 @@ pub mod objects {
     pub mod error;
     pub mod file_status;
     pub mod merge_status;
-    pub mod repository;
     pub mod output;
     pub mod user;
 }

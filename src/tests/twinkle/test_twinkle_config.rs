@@ -8,7 +8,7 @@
 use std::path::{ Path, PathBuf };
 use std::str::FromStr;
 
-use crate::git::objects::repository::GitRepository;
+use crate::twinkle::objects::twinkle_repository::TwinkleRepository;
 use crate::twinkle::twinkle_config::TwinkleConfig;
 
 
@@ -77,7 +77,7 @@ fn test_twinkle_config_add() {
     let json = CONFIG_JSON;
     let mut config = TwinkleConfig::from_str(json).unwrap();
 
-    let mut repo = GitRepository::default();
+    let mut repo = TwinkleRepository::default();
     repo.path = PathBuf::from("/Users/hbons/Projects/twinkle/TwinkleTest 2");
     _ = config.add(&repo).unwrap();
 

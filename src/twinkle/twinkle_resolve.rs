@@ -11,14 +11,15 @@ use std::path::{ Path, PathBuf };
 
 use crate::git::objects::change::GitChange;
 use crate::git::objects::merge_status::GitMergeStatus;
-use crate::git::objects::repository::GitRepository;
 use crate::git::objects::user::GitUser;
 
 use crate::log;
-use crate::twinkle::twinkle_lfs::twinkle_lfs_track;
+
+use super::twinkle_lfs::twinkle_lfs_track;
+use super::objects::twinkle_repository::TwinkleRepository;
 
 
-pub fn twinkle_resolve_changes(repo: &GitRepository) -> Result<(), Box<dyn Error>> {
+pub fn twinkle_resolve_changes(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
     log::info("Resolving conflicts…");
 
     for change in repo.git.status()? {
@@ -32,7 +33,7 @@ pub fn twinkle_resolve_changes(repo: &GitRepository) -> Result<(), Box<dyn Error
 }
 
 
-pub fn twinkle_resolve(repo: &GitRepository, change: &GitChange) -> Result<(), Box<dyn Error>> {
+pub fn twinkle_resolve(repo: &TwinkleRepository, change: &GitChange) -> Result<(), Box<dyn Error>> {
     // Docs: https://git-scm.com/docs/git-merge#_how_to_resolve_conflicts
 
     let merge_status = change.as_merge_status();
