@@ -83,20 +83,18 @@ impl App {
     pub fn cli_command_clone(&mut self, args: &Vec<String>) -> Result<(), Box<dyn Error>>{
         self.cli_require_args(3, args)?;
 
-        let remote_url = args.get(2).ok_or("Missing <user@host:path>")?;
-
+        let ssh_url = args.get(2).ok_or("Missing <user@host:path>")?;
         let path = Path::new(args.get(3).ok_or("Missing <path>")?);
-        let path = self.cli_prepare_path(path)?;
 
-        if let Err(e) = remote_url.parse::<SshUrl>() {
-            println!("Usage: twinkle clone <user@host:path> <path>");
-            println!("               clone <ssh://user@host[:port]/path> <path>");
-            println!();
+        let ssh_url = ssh_url.parse::<SshUrl>().map_err(|_| {
+            Self::cli_command_clone_usage();
+            "Not a valid <user@host:path>"
+        })?;
 
-            return Err(e);
-        }
-
-        let ssh_url = remote_url.parse::<SshUrl>()?;
+        let path = self.cli_prepare_path(path).map_err(|_| {
+            Self::cli_command_clone_usage();
+            "Not a valid <path>"
+        })?;
 
         loop {
             match twinkle_clone_prepare(&ssh_url, &self.app_keys_dir) {
@@ -145,6 +143,12 @@ impl App {
 
             thread::sleep(Duration::from_millis(500));
         }
+    }
+
+    fn cli_command_clone_usage() {
+        println!("Usage: twinkle clone <user@host:path> <path>");
+        println!("               clone <ssh://user@host[:port]/path> <path>");
+        println!();
     }
 
 
