@@ -47,10 +47,11 @@ pub struct GitRepository {
 
 
 impl GitRepository {
-    pub fn new(path: &Path, remote_url: &SshUrl) -> GitRepository {
+    pub fn new(path: PathBuf, remote_url: SshUrl, branch: String) -> GitRepository {
         GitRepository {
-            path: path.to_path_buf(),
-            remote_url: remote_url.to_owned(),
+            path,
+            remote_url,
+            branch,
             ..Default::default()
         }
     }

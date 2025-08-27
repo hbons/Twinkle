@@ -21,6 +21,7 @@ use crate::ssh::keys::key_pair::KeyPair;
 use crate::ssh::keys::key_type::KeyType;
 use crate::ssh::objects::url::SshUrl;
 use crate::ssh::util::ssh_util_test_connection;
+use crate::twinkle::twinkle_default::twinkle_default_branch;
 
 use super::twinkle_default::twinkle_default_commit;
 use super::twinkle_default::twinkle_default_init;
@@ -66,7 +67,8 @@ pub fn twinkle_clone_start(url: &SshUrl, key_pair: &KeyPair, path: &Path) -> Res
     let dir = twinkle_unique_dir(&dir);
     let target_git = git.clone(&url.to_string_standard(), Some(dir.as_ref()), Some(1))?;
 
-    let mut repo = GitRepository::new(&target_git.working_dir, &url.clone());
+    let branch = twinkle_default_branch();
+    let mut repo = GitRepository::new(target_git.working_dir.clone(), url.clone(), branch.into());
     repo.git = target_git;
 
     if !repo.git.lfs_ls_files()?.is_empty() {
