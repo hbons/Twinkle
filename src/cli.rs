@@ -63,7 +63,7 @@ impl App {
         println!("Usage: twinkle <command> [arguments…]");
         println!();
         println!("Commands:");
-        println!("    clone  <user@host:path> [path]");
+        println!("    clone  <user@host:path> <path>");
         println!("    watch  <path> [--interval=60]");
         println!("    remove <path>");
         println!("    status <path>");
@@ -83,14 +83,14 @@ impl App {
     pub fn cli_command_clone(&mut self, args: &Vec<String>) -> Result<(), Box<dyn Error>>{
         self.cli_require_args(3, args)?;
 
-        let path = Path::new(args.get(2).ok_or("Missing <path>")?);
+        let remote_url = args.get(2).ok_or("Missing <user@host:path>")?;
+
+        let path = Path::new(args.get(3).ok_or("Missing <path>")?);
         let path = self.cli_prepare_path(path)?;
 
-        let remote_url = args.get(3).ok_or("Missing <user@host:path>")?;
-
         if let Err(e) = remote_url.parse::<SshUrl>() {
-            println!("Usage: twinkle clone <path> <user@host:path>");
-            println!("               clone <path> <ssh://user@host[:port]/path>");
+            println!("Usage: twinkle clone <user@host:path> <path>");
+            println!("               clone <ssh://user@host[:port]/path> <path>");
             println!();
 
             return Err(e);
@@ -149,7 +149,7 @@ impl App {
 
 
     pub fn cli_command_watch(&mut self, args: &Vec<String>) -> Result<(), Box<dyn Error>> {
-        self.cli_require_args(2, args)?;
+        self.cli_require_args(2, args)?; // TODO: Get --interval=n
 
         let path = Path::new(args.get(2).ok_or("Missing <path>")?);
         let path = self.cli_prepare_path(path)?;
