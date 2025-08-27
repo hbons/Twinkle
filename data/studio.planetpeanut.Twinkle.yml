@@ -22,6 +22,7 @@ finish-args:
   - --socket=wayland
   - --socket=fallback-x11
   - --talk-name=org.freedesktop.portal.Background
+  - --talk-name=org.freedesktop.portal.Desktop
   - --talk-name=org.freedesktop.portal.Notification
   - --talk-name=org.gtk.vfs.*
 
