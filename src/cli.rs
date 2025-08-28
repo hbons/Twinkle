@@ -153,10 +153,14 @@ impl App {
 
 
     pub fn cli_command_watch(&mut self, args: &Vec<String>) -> Result<(), Box<dyn Error>> {
-        self.cli_require_args(2, args)?; // TODO: Get --interval=n
+        self.cli_require_args(2, args)?;
 
         let path = Path::new(args.get(2).ok_or("Missing <path>")?);
         let path = self.cli_prepare_path(path)?;
+
+        let interval = args.get(3)
+            .and_then(|s| s.strip_prefix("--interval="))
+            .and_then(|s| s.parse::<u64>().ok());
 
         let repo = self.config.find(&path)?;
         repo.git.working_dir = repo.path.to_path_buf();
@@ -169,7 +173,7 @@ impl App {
         repo.user.key_pair = twinkle_keypair_for(&repo.remote_url.host,
             KeyType::default(), &self.app_keys_dir).ok();
 
-        twinkle_watch(repo)?;
+        twinkle_watch(repo, interval)?;
         Ok(())
     }
 

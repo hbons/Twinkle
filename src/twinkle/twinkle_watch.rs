@@ -27,7 +27,7 @@ use super::twinkle_resolve::twinkle_resolve_changes;
 use super::twinkle_util::{ twinkle_commit_message, twinkle_ssh_command };
 
 
-pub fn twinkle_watch(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
+pub fn twinkle_watch(repo: &mut TwinkleRepository, interval: Option<u64>) -> Result<(), Box<dyn Error>> {
     if repo.git.branch_show_current()? != repo.branch {
         return Err(format!("Repository not on branch as set in config ({})", repo.branch).into())
     }
@@ -50,7 +50,7 @@ pub fn twinkle_watch(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>>
     let repo_c1 = repo.clone();
     let mut repo_c2 = repo.clone();
     thread::spawn(move || { _ = twinkle_watch_local(&repo_c1); });
-    thread::spawn(move || { _ = twinkle_watch_remote(&mut repo_c2); });
+    thread::spawn(move || { _ = twinkle_watch_remote(&mut repo_c2, interval); });
 
     if twinkle_has_unpushed_commits(repo) {
         repo.set_has_local_changes(true);
@@ -111,10 +111,11 @@ pub fn twinkle_watch_local(repo: &TwinkleRepository) -> Result<(), Box<dyn Error
 }
 
 
-pub fn twinkle_watch_remote(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
+pub fn twinkle_watch_remote(repo: &mut TwinkleRepository, interval: Option<u64>) -> Result<(), Box<dyn Error>> {
     loop {
-        let interval = repo.polling_interval
-            .unwrap_or(twinkle_default_polling_interval());
+        let interval = interval.unwrap_or(
+            repo.polling_interval.unwrap_or(
+                twinkle_default_polling_interval()));
 
         if !repo.is_syncing() {
             if let Ok(remote_id) = repo.git.ls_remote(&repo.branch) {
