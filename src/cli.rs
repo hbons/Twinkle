@@ -242,12 +242,16 @@ impl App {
         let path = git.rev_parse_show_toplevel()?;
 
         match option.as_str() {
-            "user.name"  => { self.config.set_user(&path, Some(value), None)?; },
-            "user.email" => { self.config.set_user(&path, None, Some(value))?; },
             "interval" => {
                 let value = value.parse::<u64>().map_err(|_| "Interval must be a number")?;
                 self.config.set_interval(&path, value)?;
             },
+            "lfs" => {
+                let value = value.as_str() == "true";
+                self.config.set_lfs(&path, value)?;
+            }
+            "user.name"  => { self.config.set_user(&path, Some(value), None)?; },
+            "user.email" => { self.config.set_user(&path, None, Some(value))?; },
             _ => { return Err(format!("Unknown option `{}`", option).into()); }
         }
 

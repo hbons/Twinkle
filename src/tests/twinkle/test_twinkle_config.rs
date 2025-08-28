@@ -18,7 +18,7 @@ pub const CONFIG_JSON: &str = r#"
     "path": "/Users/hbons/Projects/twinkle/TwinkleTest",
     "remote_url": "ssh://git@github.com/hbons/TwinkleTest",
     "branch": "main",
-    "large_file_storage": false,
+    "lfs": false,
     "lfs_threshold": null,
     "polling_interval": null,
     "user": {

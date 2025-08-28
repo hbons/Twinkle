@@ -83,6 +83,22 @@ impl TwinkleConfig {
 impl TwinkleConfig {
     // Properties
 
+    pub fn set_interval(&mut self, path: &Path, interval: u64) -> Result<(), Box<dyn Error>>{
+        self.find(path)?.polling_interval = Some(interval);
+        self.save().map_err(|_| "Could not set interval")?;
+
+        Ok(())
+    }
+
+
+    pub fn set_lfs(&mut self, path: &Path, value: bool) -> Result<(), Box<dyn Error>>{
+        self.find(path)?.lfs = value;
+        self.save().map_err(|_| "Could not set LFS")?;
+
+        Ok(())
+    }
+
+
     pub fn set_user(&mut self, path: &Path, name: Option<&str>, email: Option<&str>) -> Result<(), Box<dyn Error>> {
         let repo = self.find(path)?;
 
@@ -95,14 +111,6 @@ impl TwinkleConfig {
         }
 
         self.save().map_err(|_| "Could not set user")?;
-        Ok(())
-    }
-
-
-    pub fn set_interval(&mut self, path: &Path, interval: u64) -> Result<(), Box<dyn Error>>{
-        self.find(path)?.polling_interval = Some(interval);
-        self.save().map_err(|_| "Could not set interval")?;
-
         Ok(())
     }
 }
