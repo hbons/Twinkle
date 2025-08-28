@@ -238,8 +238,7 @@ impl App {
         let option = args.get(3).ok_or("Missing <option>")?;
         let value  = args.get(4).ok_or("Missing <value>")?;
 
-        let git = GitEnvironment::new(path);
-        let path = git.rev_parse_show_toplevel()?;
+        let path = self.cli_prepare_path(path)?;
 
         match option.as_str() {
             "interval" => {
@@ -274,9 +273,7 @@ impl App {
     /// Finds the toplevel Git repository and returns the absolute path
     fn cli_prepare_path(&self, path: &Path) -> Result<PathBuf, Box<dyn Error>> {
         let path = fs::canonicalize(path)?;
-
-        let git = GitEnvironment::new(&path);
-        git.rev_parse_show_toplevel()
+        GitEnvironment::new(&path).rev_parse_show_toplevel()
     }
 }
 
