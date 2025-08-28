@@ -192,7 +192,7 @@ impl App {
         println!("     {} {}", cli_dimmed("Remote:"), repo.remote_url.to_string_alternate());
         println!("       {} {}", cli_dimmed("User:"), repo.user);
         println!("     {} {}", cli_dimmed("Branch:"), repo.branch);
-        println!("        {} {}", cli_dimmed("LFS:"), twinkle_pretty_bool(repo.large_file_storage));
+        println!("        {} {}", cli_dimmed("LFS:"), twinkle_pretty_bool(repo.lfs));
         println!();
         println!(" {} {}", cli_dimmed("Last check:"), twinkle_pretty_datetime(repo.last_checked));
         println!("  {} {}", cli_dimmed("Last sync:"), twinkle_pretty_datetime(repo.last_synced));

@@ -74,7 +74,7 @@ pub fn twinkle_resolve(repo: &TwinkleRepository, change: &GitChange) -> Result<(
         None => log::debug(&format!("Resolve | No conflict at {}", change.path.display())),
     }
 
-    if repo.large_file_storage {
+    if repo.lfs {
         for change in repo.git.status()? {
             _ = twinkle_lfs_track(repo, &change);
         }

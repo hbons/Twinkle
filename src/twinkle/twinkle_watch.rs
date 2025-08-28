@@ -140,7 +140,7 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
         repo.git.add_all()?;
         let status = repo.git.status()?;
 
-        if repo.large_file_storage {
+        if repo.lfs {
             for change in &status {
                 _ = twinkle_lfs_track(repo, change);
             }
@@ -194,7 +194,7 @@ pub fn twinkle_sync_up_delay(attempts: u64) -> Duration {
 pub fn twinkle_sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
     repo.git.fetch("main")?;
 
-    if repo.large_file_storage {
+    if repo.lfs {
         repo.git.lfs_fetch()?;
     }
 

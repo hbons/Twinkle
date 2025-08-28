@@ -72,7 +72,7 @@ pub fn twinkle_clone_start(url: &SshUrl, key_pair: &KeyPair, path: &Path) -> Res
     repo.git = target_git;
 
     if !repo.git.lfs_ls_files()?.is_empty() {
-        repo.large_file_storage = true;
+        repo.lfs = true;
         repo.git.lfs_fetch()?;
     }
 

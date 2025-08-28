@@ -27,7 +27,7 @@ pub struct TwinkleRepository {
     pub remote_url: SshUrl,
     pub branch: String,
 
-    pub large_file_storage: bool,
+    pub lfs: bool,
     pub lfs_threshold: Option<u64>,
     pub polling_interval: Option<u64>,
 
