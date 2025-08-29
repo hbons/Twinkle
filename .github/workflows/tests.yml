@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install validation tools
+    - name: Install AppStream CLI tools
       run: sudo apt-get install -y appstream
 
     - name: Install dependencies for compiling OpenSSH
