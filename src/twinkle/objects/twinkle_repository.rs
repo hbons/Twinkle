@@ -37,7 +37,7 @@ pub struct TwinkleRepository {
     #[serde(skip)] pub last_checked: i64,
     #[serde(skip)] pub last_synced:  i64,
 
-    #[serde(skip)] is_syncing: Arc<Mutex<bool>>,
+    #[serde(skip)] is_busy: Arc<Mutex<bool>>,
     #[serde(skip)] has_local_changes:  Arc<Mutex<bool>>,
     #[serde(skip)] has_remote_changes: Arc<Mutex<bool>>,
 }
@@ -132,13 +132,13 @@ impl TwinkleRepository { // TwinkleRepository
 
 
 impl TwinkleRepository { // TwinkleRepository
-    pub fn set_is_syncing(&self, value: bool) {
-        if let Ok(mut v) = self.is_syncing.lock() {
+    pub fn set_is_busy(&self, value: bool) {
+        if let Ok(mut v) = self.is_busy.lock() {
             *v = value;
         }
     }
 
-    pub fn is_syncing(&self) -> bool {
-        *self.is_syncing.lock().unwrap()
+    pub fn is_busy(&self) -> bool {
+        *self.is_busy.lock().unwrap()
     }
 }

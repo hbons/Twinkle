@@ -5,35 +5,44 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-use std::path::Path;
+use std::path::PathBuf;
 use std::sync::mpsc::channel;
 use std::time::Duration;
 
 use notify::{ Config, RecommendedWatcher, RecursiveMode, Result, Watcher };
 
+use crate::log;
+use crate::twinkle::objects::twinkle_repository::TwinkleRepository;
 
-pub fn twinkle_notify(path: &Path) -> Result<()> {
+
+pub fn twinkle_notify(repo: &TwinkleRepository) -> Result<()> {
     let (sender, receiver) = channel();
     let mut watcher = RecommendedWatcher::new(sender, Config::default())?;
 
-    watcher.watch(path, RecursiveMode::Recursive)?;
+    watcher.watch(&repo.path, RecursiveMode::Recursive)?;
 
     loop {
         if let Ok(event) = receiver.recv_timeout(Duration::from_millis(500)) {
-            // for path in event.unwrap().paths {
-            //     // if !path.components().any(|c| c.as_os_str() == ".git") {
-            //     //     continue;
-            //     // }
+            if repo.is_busy() {
+                continue;
+            }
 
-            //     // let e = event;
-            //     println!("{:#?}", path);
+            let mut prev_path = PathBuf::new();
 
-            // }
+            for path in event.unwrap().paths {
+                if path.components().any(|c| c.as_os_str() == ".git") {
+                    continue;
+                }
 
-            // TODO: Watch the ~/Twinkle folder and parse subdirs
-            // Only do this when siblings. may need multiple watchers still
+                if path == prev_path {
+                    continue;
+                }
 
-            println!("{:#?}", event);
+                log::debug(&format!("Notify | Detected a change: `{}`", path.to_string_lossy()));
+                repo.set_has_local_changes(true);
+
+                prev_path = path;
+            }
         }
     }
 }

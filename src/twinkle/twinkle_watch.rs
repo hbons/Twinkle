@@ -23,8 +23,10 @@ use super::twinkle_default::twinkle_default_sync_up_delay_max;
 use super::twinkle_default::twinkle_default_sync_up_delay_bump;
 use super::twinkle_keys::twinkle_hostkey_for;
 use super::twinkle_lfs::twinkle_lfs_track;
+use super::twinkle_notify::twinkle_notify;
 use super::twinkle_resolve::twinkle_resolve_changes;
-use super::twinkle_util::{ twinkle_commit_message, twinkle_ssh_command };
+use super::twinkle_util::twinkle_commit_message;
+use super::twinkle_util::twinkle_ssh_command;
 
 
 pub fn twinkle_watch(repo: &mut TwinkleRepository, interval: Option<u64>) -> Result<(), Box<dyn Error>> {
@@ -48,9 +50,11 @@ pub fn twinkle_watch(repo: &mut TwinkleRepository, interval: Option<u64>) -> Res
     log::debug(&format!("✓ Authenticated to {}", &repo.remote_url.host));
 
     let repo_c1 = repo.clone();
-    let mut repo_c2 = repo.clone();
-    thread::spawn(move || { _ = twinkle_watch_local(&repo_c1); });
-    thread::spawn(move || { _ = twinkle_watch_remote(&mut repo_c2, interval); });
+    let repo_c2 = repo.clone();
+    let mut repo_c3 = repo.clone();
+    thread::spawn(move || { _ = twinkle_notify(&repo_c1); });
+    thread::spawn(move || { _ = twinkle_watch_local(&repo_c2); });
+    thread::spawn(move || { _ = twinkle_watch_remote(&mut repo_c3, interval); });
 
     if twinkle_has_unpushed_commits(repo) {
         repo.set_has_local_changes(true);
@@ -68,7 +72,7 @@ pub fn twinkle_watch(repo: &mut TwinkleRepository, interval: Option<u64>) -> Res
             continue;
         }
 
-        repo.set_is_syncing(true);
+        repo.set_is_busy(true);
 
         if repo.has_local_changes() {
             match twinkle_sync_up(repo) {
@@ -90,7 +94,7 @@ pub fn twinkle_watch(repo: &mut TwinkleRepository, interval: Option<u64>) -> Res
             }
         }
 
-        repo.set_is_syncing(false);
+        repo.set_is_busy(false);
         start_sync = false;
     }
 }
@@ -98,7 +102,7 @@ pub fn twinkle_watch(repo: &mut TwinkleRepository, interval: Option<u64>) -> Res
 
 pub fn twinkle_watch_local(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
     loop {
-        if !repo.is_syncing() {
+        if !repo.is_busy() {
             let status = repo.git.status()?;
             if !status.is_empty() {
                 repo.set_has_local_changes(true);
@@ -106,7 +110,7 @@ pub fn twinkle_watch_local(repo: &TwinkleRepository) -> Result<(), Box<dyn Error
             }
         }
 
-        thread::sleep(Duration::from_secs(5)); // TODO: Change to 5m once FS watcher is set up
+        thread::sleep(Duration::from_secs(3 * 60));
     }
 }
 
@@ -117,7 +121,7 @@ pub fn twinkle_watch_remote(repo: &mut TwinkleRepository, interval: Option<u64>)
             repo.polling_interval.unwrap_or(
                 twinkle_default_polling_interval()));
 
-        if !repo.is_syncing() {
+        if !repo.is_busy() {
             if let Ok(remote_id) = repo.git.ls_remote(&repo.branch) {
                 if !repo.git.merge_base(&remote_id, &repo.branch)? {
                     repo.set_has_remote_changes(true);
@@ -172,7 +176,8 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
             }
         }
 
-        if !twinkle_has_unpushed_commits(repo) {
+        let status = repo.git.status()?;
+        if !twinkle_has_unpushed_commits(repo) && status.is_empty() {
             break;
         }
     }
