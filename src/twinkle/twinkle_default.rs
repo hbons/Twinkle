@@ -88,12 +88,12 @@ pub fn twinkle_default_exclude_rules() -> Vec<String> {
 pub fn twinkle_default_attribute_rules() -> Vec<String> {
     // Docs: https://git-scm.com/docs/gitattributes
 
-    let mut rules: Vec<String> = Vec::new();
-    rules.push(twinkle_default_file_warning().into());
-
-    // Treat all files as binary so merges trigger unresolvable conflicts that we can then fix
-    rules.push("* merge=binary".into());
-    rules
+    // Treat all files as binary so merges trigger
+    // unresolvable conflicts that we can commit
+    vec![
+        twinkle_default_file_warning().to_string(),
+        "* merge=binary".to_string()
+    ]
 }
 
 

@@ -29,7 +29,7 @@ impl GitEnvironment {
         ])?;
 
         let files = output.stdout.trim().split("\n");
-        let files = files.map(|f| PathBuf::from(f)).collect();
+        let files = files.map(PathBuf::from).collect();
 
         Ok(files)
     }

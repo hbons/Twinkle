@@ -128,7 +128,7 @@ pub fn app_version() -> String {
     if app_is_flatpak() {
         format!("{s} (Flatpak)")
     } else {
-        s.into()
+        s
     }
 }
 

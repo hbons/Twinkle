@@ -89,10 +89,10 @@ pub fn twinkle_clone_complete(repo: &mut TwinkleRepository, key_pair: &KeyPair) 
     };
 
     repo.git.config_set_user(&repo.user)?;
-    repo.git.config_set_user_signing_key(&key_pair)?;
+    repo.git.config_set_user_signing_key(key_pair)?;
     repo.git.config_set("twinkle.enabled", "true")?;
 
-    repo.git.config_set_core_ssh_command(&key_pair)?;
+    repo.git.config_set_core_ssh_command(key_pair)?;
     repo.git.checkout_branch("HEAD")?;
 
     if repo.git.is_repo_empty() {

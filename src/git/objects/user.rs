@@ -27,15 +27,15 @@ pub struct GitUser {
 
 impl GitUser {
     pub fn name(&self) -> &str {
-        &self.name.as_str()
+        self.name.as_str()
     }
 
     pub fn email(&self) -> &str {
-        &self.email.as_str()
+        self.email.as_str()
     }
 
-    pub fn key_pair(&self) -> &Option<KeyPair> {
-        &self.key_pair
+    pub fn key_pair(&self) -> Option<KeyPair> {
+        self.key_pair.clone()
     }
 }
 

@@ -47,7 +47,7 @@ impl GitEnvironment {
             path.to_str().ok_or("Path is not valid UTF-8")?
         ])?;
 
-        Ok(output.stdout.parse::<GitUser>()?)
+        output.stdout.parse::<GitUser>()
     }
 
 

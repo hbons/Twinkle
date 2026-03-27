@@ -54,7 +54,7 @@ pub fn config_load(config_path: &Path) -> Result<Vec<TwinkleRepository>, Box<dyn
 
 
 pub fn config_load_string(json: &str) -> Result<Vec<TwinkleRepository>, Box<dyn Error>> {
-    let repos: Vec<TwinkleRepository> = serde_json::from_str(&json)?;
+    let repos: Vec<TwinkleRepository> = serde_json::from_str(json)?;
     Ok(repos)
 }
 

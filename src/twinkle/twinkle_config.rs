@@ -27,7 +27,7 @@ impl TwinkleConfig {
         self.config_path.clone()
     }
 
-    pub fn loaded_repos(&self) -> &Vec<TwinkleRepository> {
+    pub fn loaded_repos(&self) -> &[TwinkleRepository] {
         &self.loaded_repos
     }
 }
@@ -122,7 +122,7 @@ impl str::FromStr for TwinkleConfig {
     fn from_str(lines: &str) -> Result<Self, Self::Err> {
         Ok(TwinkleConfig {
             config_path: None,
-            loaded_repos: config_load_string(&lines)?,
+            loaded_repos: config_load_string(lines)?,
         })
     }
 }
@@ -143,7 +143,7 @@ impl TwinkleConfig {
         match &self.config_path {
             Some(path) => {
                 if !path.exists() {
-                    config_init(&path)?;
+                    config_init(path)?;
                 }
 
                 config_save(path, self.loaded_repos.clone())

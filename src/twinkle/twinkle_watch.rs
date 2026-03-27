@@ -38,7 +38,7 @@ pub fn twinkle_watch(repo: &mut TwinkleRepository, interval: Option<u64>) -> Res
     let key_pair = key_pair.ok_or("No user key pair")?;
 
     let host_key = twinkle_hostkey_for(&repo.remote_url, KeyType::default(),
-        &key_pair.private_key_path.parent().ok_or("No parent")?)?;
+        key_pair.private_key_path.parent().ok_or("No parent")?)?;
 
     repo.git.GIT_SSH_COMMAND = twinkle_ssh_command(&key_pair);
 
