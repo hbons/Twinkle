@@ -9,6 +9,7 @@ command_name = 'twinkle'
 configuration = configuration_data()
 configuration.set('TWINKLE_APP_ID', 'studio.planetpeanut.Twinkle')
 
+
 gnome = import('gnome')
 dependency('gtk4')
 dependency('libadwaita-1')
@@ -18,13 +19,16 @@ subdir('data')
 subdir('data/icons')
 subdir('src')
 
-
-cargo = find_program('cargo', required: true)
-cargo_sources = files(
-  'Cargo.toml',
-  'Cargo.lock',
+summary(
+  {
+    'nightly': get_option('nightly'),
+    'bindir': get_option('bindir')
+  },
+  section: 'Options',
 )
 
+
+cargo = find_program('cargo', required: true)
 
 cargo_build = custom_target(
   command_name,
@@ -41,17 +45,16 @@ cargo_build = custom_target(
   install_dir: get_option('bindir'),
 )
 
+test('cargo_test',
+  cargo,
+  args: ['test'],
+  workdir: meson.project_source_root(),
+  timeout: 300,
+)
 
-# gnome.post_install(
-#   gtk_update_icon_cache: true,
-#   update_desktop_database: true,
-# )
 
-
-summary(
-  {
-    'nightly': get_option('nightly'),
-    'bindir': get_option('bindir')
-  },
-  section: 'Options',
+gnome.post_install(
+    # glib_compile_schemas: true,
+    # gtk_update_icon_cache: true,
+    # update_desktop_database: true,
 )
