@@ -11,12 +11,12 @@ use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 
-use super::hosts::bitbucket::*;
-use super::hosts::codeberg::*;
-use super::hosts::github::*;
-use super::hosts::gitlab::*;
-use super::hosts::gnome::*;
-use super::hosts::sourcehut::*;
+use super::known_hosts::bitbucket::*;
+use super::known_hosts::codeberg::*;
+use super::known_hosts::github::*;
+use super::known_hosts::gitlab::*;
+use super::known_hosts::gnome::*;
+use super::known_hosts::sourcehut::*;
 
 use super::fingerprint::Fingerprint;
 use super::key_type::KeyType;
@@ -35,7 +35,7 @@ pub struct HostKey {
 
 
 impl HostKey {
-    pub fn for_host(url: &SshUrl, key_type: KeyType) -> Result<HostKey, Box<dyn Error>> {
+    pub fn for_known_host(url: &SshUrl, key_type: KeyType) -> Result<HostKey, Box<dyn Error>> {
         if key_type == KeyType::ED25519 {
             match url.host.as_str() {
                 "bitbucket.org"    => Ok(ssh_hostkey_bitbucket()),

@@ -11,10 +11,8 @@ use std::path::Path;
 
 use crate::log;
 
+use crate::ssh::keys::prelude::*;
 use crate::ssh::keygen::ssh_keygen;
-use crate::ssh::keys::host_key::HostKey;
-use crate::ssh::keys::key_pair::KeyPair;
-use crate::ssh::keys::key_type::KeyType;
 use crate::ssh::objects::url::SshUrl;
 
 
@@ -73,7 +71,7 @@ pub fn twinkle_hostkey_for(ssh_url: &SshUrl, key_type: KeyType, keys_dir: &Path)
         host_key = HostKey::from_file(&key_path)?;
         log::debug(&format!("Keys | Found trusted host key `{}`", key_path.to_string_lossy()));
     } else {
-        host_key = HostKey::for_host(ssh_url, key_type)?;
+        host_key = HostKey::for_known_host(ssh_url, key_type)?;
     }
 
     // log::debug_struct(&host_key);

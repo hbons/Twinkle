@@ -6,13 +6,7 @@
 
 
 pub mod keys {
-    pub mod fingerprint;
-    pub mod host_key;
-    pub mod key_pair;
-    pub mod key_size;
-    pub mod key_type;
-
-    pub mod hosts {
+    pub mod known_hosts {
         pub mod bitbucket;
         pub mod codeberg;
         pub mod github;
@@ -20,6 +14,13 @@ pub mod keys {
         pub mod gnome;
         pub mod sourcehut;
     }
+
+    pub mod fingerprint;
+    pub mod host_key;
+    pub mod key_pair;
+    pub mod key_size;
+    pub mod key_type;
+    pub mod prelude;
 }
 
 pub mod objects {
