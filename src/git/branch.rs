@@ -12,13 +12,13 @@ use super::objects::environment::GitEnvironment;
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-branch
 
-        pub fn branch_show_current(&self) -> Result<String, Box<dyn Error>> {
-            let output = self.run("branch", &["--show-current"])?;
-            let branch = output.stdout;
+    pub fn branch_show_current(&self) -> Result<String, Box<dyn Error>> {
+        let output = self.run("branch", &["--show-current"])?;
+        let branch = output.stdout;
 
-            match branch.as_str() {
-                "" => Err("No branch found".into()),
-                _  => Ok(branch),
-            }
+        match branch.as_str() {
+            "" => Err("No branch found".into()),
+            _  => Ok(branch),
         }
+    }
 }
