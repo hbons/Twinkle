@@ -1,4 +1,9 @@
-project('Twinkle', 'rust', version: '48.0.0')
+project(
+  'Twinkle',
+  'rust',
+  version: '49.0.0',
+  meson_version: '>=1.1'
+)
 
 command_name = 'twinkle'
 configuration = configuration_data()
