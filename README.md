@@ -9,15 +9,16 @@
 Twinkle is powered by the version control system *Git* and supports the *Large File Storage (LFS)* extension. Collaborate using services like *GitHub*, *GitLab* and *Codeberg* or self-host.
 
 
-<!--## Install on Linux
+<!-- ## Install on Linux
 
 Twinkle is designed and built for the *GNOME* platform. Available on [Flathub](https://flathub.org/).
 
 ```shell
 # Install from Flathub
 flatpak remote-add flathub https://flathub.org/repo/flathub.flatpakrepo
-flatpak install flathub studio.planetpeanut.Twinkle-->
+flatpak install flathub studio.planetpeanut.Twinkle
 ```
+-->
 
 
 ## Build from source
