@@ -1,6 +1,6 @@
 # [Twinkle](https://github.com/hbons/twinkle)
 
-*Automatically sync your files with Git*
+*Sync files with Git*
 
 ![The Twinkle app icon](data/icons/scalable/studio.planetpeanut.Twinkle.svg)
 

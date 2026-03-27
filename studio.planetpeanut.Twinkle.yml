@@ -82,8 +82,11 @@ modules:
       - cp git-lfs /app/libexec/git-core/
 
   - name: twinkle
-    sources:
-      - type: git
-        url: https://github.com/hbons/Twinkle
-        branch: main
     buildsystem: meson
+    builddir: true
+    build-options:
+      build-args:
+        - --share=network
+    sources:
+      - type: dir
+        path: "."

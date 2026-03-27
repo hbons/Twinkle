@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
     <name>Twinkle</name>
-    <summary>Automatically sync your files with Git</summary>
+    <summary>Sync files with Git</summary>
     <id>studio.planetpeanut.twinkle</id>
     <project_license>GPL-3.0+</project_license>
 
