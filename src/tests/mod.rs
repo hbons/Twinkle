@@ -12,6 +12,7 @@
 mod ssh {
     mod test_ssh_keygen;
     mod test_ssh_keyscan;
+    mod test_ssh_known_hosts;
     mod test_ssh_object_hostkey;
     mod test_ssh_object_keytype;
     mod test_ssh_object_url;

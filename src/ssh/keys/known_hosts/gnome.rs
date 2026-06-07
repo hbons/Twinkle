@@ -10,10 +10,10 @@ use super::super::host_key::HostKey;
 use super::super::key_type::KeyType;
 
 
+/// Note: Host keys are listed at ssh.gitlab.gnome.org
 pub fn ssh_hostkey_gnome() -> HostKey {
     // Last updated: March 10, 2025
     // Source: https://gitlab.gnome.org/help/instance_configuration
-    // Note: Host keys are at ssh.gitlab.gnome.org
 
     HostKey {
         host: "gitlab.gnome.org".into(),

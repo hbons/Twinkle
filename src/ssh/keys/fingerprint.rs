@@ -10,7 +10,7 @@ use std::fmt;
 use std::str;
 
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Fingerprint {
     SHA256(String),
 }
