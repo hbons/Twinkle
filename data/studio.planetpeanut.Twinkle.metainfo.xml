@@ -11,6 +11,11 @@
         <url type="homepage">https://planetpeanut.studio</url>
     </developer>
 
+    <branding>
+        <color type="primary" scheme_preference="light">#12868F</color>
+        <color type="primary" scheme_preference="dark">#12868F</color>
+    </branding>
+
     <url type="homepage">https://planetpeanut.studio/twinkle</url>
     <url type="bugtracker">https://www.github.com/hbons/Twinkle/issues</url>
     <url type="donation">https://github.com/sponsors/hbons</url>
