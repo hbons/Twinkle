@@ -19,8 +19,11 @@ pub enum Fingerprint {
 impl str::FromStr for Fingerprint {
     type Err = Box<dyn Error<>>;
 
+    /// "SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU"
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let (algorithm, hash) = s.split_once(':').ok_or("Missing ':'")?;
+        let (algorithm, hash) = s
+            .split_once(':')
+            .ok_or("Missing ':'")?;
 
         match algorithm {
             "SHA256" => {
