@@ -29,7 +29,7 @@ use crate::twinkle::twinkle_keys::twinkle_hostkey_trust;
 use crate::twinkle::twinkle_keys::twinkle_keypair_for;
 use crate::twinkle::twinkle_pretty::{ twinkle_pretty_bool, twinkle_pretty_datetime, twinkle_pretty_dir };
 use crate::twinkle::twinkle_util::twinkle_settings_url_for;
-use crate::twinkle::twinkle_watch::twinkle_watch;
+use crate::twinkle::twinkle_sync::twinkle_sync;
 
 
 impl App {
@@ -40,7 +40,7 @@ impl App {
 
         match command.as_str() {
             "clone"     => self.cli_command_clone(args)?,
-            "watch"     => self.cli_command_watch(args)?,
+            "sync"      => self.cli_command_sync(args)?,
             "status"    => self.cli_command_status(args)?,
             "list"      => self.cli_command_list()?,
             "remove"    => self.cli_command_remove(args)?,
@@ -64,7 +64,7 @@ impl App {
         println!();
         println!("Commands:");
         println!("    clone  <user@host:path> <path>");
-        println!("    watch  <path> [--interval=60]");
+        println!("    sync   <path> [--interval=60]");
         println!("    remove <path>");
         println!("    status <path>");
         println!("    list");
@@ -152,7 +152,7 @@ impl App {
     }
 
 
-    pub fn cli_command_watch(&mut self, args: &Vec<String>) -> Result<(), Box<dyn Error>> {
+    pub fn cli_command_sync(&mut self, args: &Vec<String>) -> Result<(), Box<dyn Error>> {
         self.cli_require_args(2, args)?;
 
         let path = Path::new(args.get(2).ok_or("Missing <path>")?);
@@ -168,12 +168,12 @@ impl App {
         let dir = twinkle_pretty_dir(&repo.path);
 
         let remote = cli_dimmed(&format!("– {}…\n", repo.remote_url.original));
-        log::log(&format!("Watching {} {}", cli_bold(&dir), remote));
+        log::log(&format!("Syncing {} {}", cli_bold(&dir), remote));
 
         repo.user.key_pair = twinkle_keypair_for(&repo.remote_url.host,
             KeyType::default(), &self.app_keys_dir).ok();
 
-        twinkle_watch(repo, interval)?;
+        twinkle_sync(repo, interval)?;
         Ok(())
     }
 

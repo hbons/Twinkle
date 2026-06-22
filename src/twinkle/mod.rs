@@ -18,4 +18,4 @@ pub mod twinkle_notify;
 pub mod twinkle_pretty;
 pub mod twinkle_resolve;
 pub mod twinkle_util;
-pub mod twinkle_watch;
+pub mod twinkle_sync;

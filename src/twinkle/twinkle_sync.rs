@@ -29,7 +29,7 @@ use super::twinkle_util::twinkle_commit_message;
 use super::twinkle_util::twinkle_ssh_command;
 
 
-pub fn twinkle_watch(repo: &mut TwinkleRepository, interval: Option<u64>) -> Result<(), Box<dyn Error>> {
+pub fn twinkle_sync(repo: &mut TwinkleRepository, interval: Option<u64>) -> Result<(), Box<dyn Error>> {
     if repo.git.branch_show_current()? != repo.branch {
         return Err(format!("Repository not on branch as set in config ({})", repo.branch).into())
     }
@@ -75,6 +75,8 @@ pub fn twinkle_watch(repo: &mut TwinkleRepository, interval: Option<u64>) -> Res
         repo.set_is_busy(true);
 
         if repo.has_local_changes() {
+            // TODO: Add (small) configurable delay)
+
             match twinkle_sync_up(repo) {
                 Ok(_) => {
                     repo.set_has_local_changes(false);
