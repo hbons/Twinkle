@@ -5,31 +5,32 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
+use std::env::current_dir;
 use std::error::Error;
 use std::fs;
-use std::io::{ self, Write };
+// use std::io::{ self, Write };
 use std::path::{ Path, PathBuf };
-use std::thread;
 use std::time::Duration;
+// use std::thread;
+// use std::time::Duration;
 
 use crate::app::{ App, app_deps, app_version };
 use crate::git::objects::environment::GitEnvironment;
 use crate::log;
 
 use crate::ssh::objects::url::SshUrl;
-use crate::ssh::keys::key_type::KeyType;
 
-use crate::twinkle::twinkle_clone::TwinkleCloneError;
-use crate::twinkle::twinkle_clone::twinkle_clone_prepare;
-use crate::twinkle::twinkle_clone::twinkle_clone_start;
-use crate::twinkle::twinkle_clone::twinkle_clone_complete;
-
-use crate::twinkle::twinkle_default::twinkle_default_polling_interval;
-use crate::twinkle::twinkle_keys::twinkle_hostkey_trust;
-use crate::twinkle::twinkle_keys::twinkle_keypair_for;
-use crate::twinkle::twinkle_pretty::{ twinkle_pretty_bool, twinkle_pretty_datetime, twinkle_pretty_dir };
-use crate::twinkle::twinkle_util::twinkle_settings_url_for;
+use crate::twinkle::objects::repository::TwinkleRepository;
+use crate::twinkle::twinkle_clone::{ /* TwinkleCloneError, */ twinkle_clone_complete, twinkle_clone_start};
+use crate::twinkle::twinkle_init::twinkle_init;
 use crate::twinkle::twinkle_sync::twinkle_sync;
+// use crate::twinkle::twinkle_clone::twinkle_clone_prepare;
+// use crate::twinkle::twinkle_clone::twinkle_clone_start;
+// use crate::twinkle::twinkle_clone::twinkle_clone_complete;
+// use crate::twinkle::twinkle_keys::twinkle_hostkey_trust;
+use crate::twinkle::twinkle_pretty::{  twinkle_pretty_bool, twinkle_pretty_datetime, twinkle_pretty_dir };
+// use crate::twinkle::twinkle_util::twinkle_settings_url_for;
+
 
 
 impl App {
@@ -40,11 +41,9 @@ impl App {
 
         match command.as_str() {
             "clone"     => self.cli_command_clone(args)?,
+            "init"      => self.cli_command_init(args)?,
             "sync"      => self.cli_command_sync(args)?,
-            "status"    => self.cli_command_status(args)?,
-            "list"      => self.cli_command_list()?,
-            "remove"    => self.cli_command_remove(args)?,
-            "config"    => self.cli_command_config(args)?,
+            "status"    => self.cli_command_status(args)?, // Not displayed
             "--help"    => self.cli_option_help(),
             "--version" => println!("{}", app_version()),
             "--deps"    => println!("{}", app_deps()),
@@ -60,17 +59,20 @@ impl App {
 
 
     pub fn cli_option_help(&self) {
-        println!("Usage: twinkle <command> [arguments…]");
+        println!("Usage: twinkle <command> [args…]");
         println!();
         println!("Commands:");
-        println!("    clone  <user@host:path> <path>");
-        println!("    sync   <path> [--interval=60]");
-        println!("    remove <path>");
-        println!("    status <path>");
-        println!("    list");
+        println!("    clone <user@host:path> [path]");
+        println!("    init  <user@host:path> [path]");
+        println!("    sync  [path] [--interval=60]");
         println!();
-        println!("Configuration:");
-        println!("    config <path> <option> <value>");
+        println!("Support:");
+        println!("    {}",
+            cli_link(
+                "https://sparkleshare.org/support",
+                Some("sparkleshare.org/support"),
+            )
+        );
         println!();
         println!("Options:");
         println!("    --help, --version, --deps, --env");
@@ -80,183 +82,178 @@ impl App {
 
 
 impl App {
-    pub fn cli_command_clone(&mut self, args: &Vec<String>) -> Result<(), Box<dyn Error>>{
-        self.cli_require_args(3, args)?;
+    pub fn cli_command_clone(
+        &mut self,
+        args: &Vec<String>
+    ) -> Result<(), Box<dyn Error>>
+    {
+        self.cli_require_args(2, args).map_err(|_| {
+            Self::cli_command_clone_usage();
+            "Missing <user@host:path>"
+        })?;
 
-        let ssh_url = args.get(2).ok_or("Missing <user@host:path>")?;
-        let path = Path::new(args.get(3).ok_or("Missing <path>")?);
+        let ssh_url = args.get(2)
+            .ok_or("Missing <user@host:path>")?;
 
         let ssh_url = ssh_url.parse::<SshUrl>().map_err(|_| {
             Self::cli_command_clone_usage();
             "Not a valid <user@host:path>"
         })?;
 
-        let path = self.cli_prepare_path(path).map_err(|_| {
+        let path = match args.get(3) {
+            Some(s) => PathBuf::from(s),
+            None => current_dir()?,
+        };
+
+        let path = fs::canonicalize(path).map_err(|_| {
             Self::cli_command_clone_usage();
             "Not a valid <path>"
         })?;
 
-        loop {
-            match twinkle_clone_prepare(&ssh_url, &self.app_keys_dir) {
-                Err(e) => match e.downcast_ref::<TwinkleCloneError>() {
-                    Some(TwinkleCloneError::NeedsNetwork) => {
-                        println!("Could not connect to {}", ssh_url.host);
-                    },
-                    Some(TwinkleCloneError::NeedsTrust(host_key)) => {
-                        let fingerprint = host_key.fingerprint.clone().unwrap_or_else(|| {
-                            log::error_and_exit("No host key fingerprint");
-                        });
+        let mut repo = twinkle_clone_start(&ssh_url, None, &path)?;
+        twinkle_clone_complete(&mut repo, None)?;
 
-                        println!("Connected to {} {} {} ",
-                            host_key.host, cli_dimmed("–"), cli_dimmed(&fingerprint.to_string()));
+        Ok(())
 
-                        io::stdout().flush()?;
-                        twinkle_hostkey_trust(host_key, &self.app_keys_dir)?;
-                    },
-                    Some(TwinkleCloneError::NeedsAuth(host_key, key_pair)) => {
-                        let url = twinkle_settings_url_for(host_key.host.clone());
-                        let url = url.unwrap_or(&host_key.host);
-                        let settings_url = cli_link(url, None);
+        // loop {
+        //     match twinkle_clone_prepare(&ssh_url, &self.app_keys_dir) {
+        //         Err(e) => match e.downcast_ref::<TwinkleCloneError>() {
+        //             Some(TwinkleCloneError::NeedsNetwork) => {
+        //                 println!("Could not connect to {}", ssh_url.host);
+        //             },
+        //             Some(TwinkleCloneError::NeedsTrust(host_key)) => {
+        //                 let fingerprint = host_key.fingerprint.clone().unwrap_or_else(|| {
+        //                     log::error_and_exit("No host key fingerprint");
+        //                 });
 
-                        println!();
-                        println!("First, add this SSH key to {settings_url}:");
-                        println!("{}", cli_bold(&key_pair.public_key));
-                        println!();
-                        print!("Then, press {enter} to clone {url}… ",
-                            enter=cli_bold("[Enter]"),
-                            url=cli_bold(&ssh_url.original));
+        //                 println!("Connected to {} {} {} ",
+        //                     host_key.host, cli_dimmed("–"), cli_dimmed(&fingerprint.to_string()));
 
-                        io::stdout().flush()?;
-                        let mut input = String::new();
-                        io::stdin().read_line(&mut input)?;
-                    },
-                    None => return Err(e),
-                },
-                Ok(key_pair) => {
-                    let mut repo = twinkle_clone_start(&ssh_url, &key_pair, &path)?;
-                    twinkle_clone_complete(&mut repo, &key_pair)?;
-                    self.config.add(&repo)?;
+        //                 io::stdout().flush()?;
+        //                 twinkle_hostkey_trust(host_key, &self.app_keys_dir)?;
+        //             },
+        //             Some(TwinkleCloneError::NeedsAuth(host_key, key_pair)) => {
+        //                 let url = twinkle_settings_url_for(host_key.host.clone());
+        //                 let url = url.unwrap_or(&host_key.host);
+        //                 let settings_url = cli_link(url, None);
 
-                    return Ok(());
-                }
-            };
+        //                 println!();
+        //                 println!("First, add this SSH key to {settings_url}:");
+        //                 println!("{}", cli_bold(&key_pair.public_key));
+        //                 println!();
+        //                 print!("Then, press {enter} to clone {url}… ",
+        //                     enter=cli_bold("[Enter]"),
+        //                     url=cli_bold(&ssh_url.original));
 
-            thread::sleep(Duration::from_millis(500));
-        }
+        //                 io::stdout().flush()?;
+        //                 let mut input = String::new();
+        //                 io::stdin().read_line(&mut input)?;
+        //             },
+        //             None => return Err(e),
+        //         },
+        //         Ok(key_pair) => {
+        //             let mut repo = twinkle_clone_start(&ssh_url, &key_pair, &path)?;
+        //             twinkle_clone_complete(&mut repo, &key_pair)?;
+        //             self.config.add(&repo)?;
+
+        //             return Ok(());
+        //         }
+        //     };
+
+        //     thread::sleep(Duration::from_millis(500));
+        // }
     }
 
     fn cli_command_clone_usage() {
-        println!("Usage: twinkle clone <user@host:path> <path>");
-        println!("               clone <ssh://user@host[:port]/path> <path>");
+        println!("Usage: twinkle clone <user@host:path> [path]");
+        println!("               clone <ssh://user@host[:port]/path> [path]");
+        println!();
+    }
+
+
+    pub fn cli_command_init(&self, args: &Vec<String>) -> Result<(), Box<dyn Error>>{
+        self.cli_require_args(2, args).map_err(|_| {
+            Self::cli_command_clone_usage();
+            "Missing <user@host:path>"
+        })?;
+
+        let ssh_url = args.get(2).ok_or("Missing <user@host:path>")?;
+        let ssh_url = ssh_url.parse::<SshUrl>().map_err(|_| {
+            Self::cli_command_init_usage();
+            "Not a valid <user@host:path>"
+        })?;
+
+        let path = current_dir()?;
+        twinkle_init(&path, &ssh_url, None)?;
+
+        Ok(())
+    }
+
+    fn cli_command_init_usage() {
+        println!("Usage: twinkle init <user@host:path> [path]");
+        println!("               init <ssh://user@host[:port]/path> [path]");
         println!();
     }
 
 
     pub fn cli_command_sync(&mut self, args: &Vec<String>) -> Result<(), Box<dyn Error>> {
-        self.cli_require_args(2, args)?;
+        self.cli_require_args(1, args)?;
 
-        let path = Path::new(args.get(2).ok_or("Missing <path>")?);
+        let default_path = ".".to_string();
+        let path = Path::new(args.get(2).unwrap_or(&default_path));
         let path = self.cli_prepare_path(path)?;
 
         let interval = args.get(3)
             .and_then(|s| s.strip_prefix("--interval="))
-            .and_then(|s| s.parse::<u64>().ok());
+            .and_then(|s| s.parse::<u64>().ok())
+            .map(Duration::from_secs);
 
-        let repo = self.config.find(&path)?;
-        repo.git.working_dir = repo.path.to_path_buf();
+        let mut repo = TwinkleRepository::new(&path);
+
+        if !repo.enabled() {
+            return Err("Repository is disabled".into());
+        }
+
+        // TODO: Stop if no user set or let git commit fail?
 
         let dir = twinkle_pretty_dir(&repo.path);
+        let remote_url = repo.remote_url().ok_or("Missing remote_url")?;
+        let remote = cli_dimmed(&format!("– {}…\n", remote_url.original));
+        let once = false;
 
-        let remote = cli_dimmed(&format!("– {}…\n", repo.remote_url.original));
         log::log(&format!("Syncing {} {}", cli_bold(&dir), remote));
-
-        repo.user.key_pair = twinkle_keypair_for(&repo.remote_url.host,
-            KeyType::default(), &self.app_keys_dir).ok();
-
-        twinkle_sync(repo, interval)?;
-        Ok(())
+        twinkle_sync(&mut repo, interval, once)
     }
+}
 
 
-    pub fn cli_command_status(&mut self, args: &Vec<String>) -> Result<(), Box<dyn Error>>{
-        self.cli_require_args(2, args)?;
+impl App {
+    pub fn cli_command_status(&mut self, args: &Vec<String>) -> Result<(), Box<dyn Error>> {
+        self.cli_require_args(1, args)?;
 
-        let path = Path::new(args.get(2).ok_or("Missing <path>")?);
+        let default_path = ".".to_string();
+        let path = Path::new(args.get(2).unwrap_or(&default_path));
         let path = self.cli_prepare_path(path)?;
 
-        let repo = self.config.find(&path)?;
-        let path = twinkle_pretty_dir(&path);
+        dbg!(&path);
 
-        let interval = repo.polling_interval.unwrap_or(
-            twinkle_default_polling_interval()
-        );
+        let repo = TwinkleRepository::new(&path);
+        let path = twinkle_pretty_dir(&path);
 
         println!();
         println!("       {} {}", cli_dimmed("Path:"), cli_bold(&path));
-        println!("     {} {}", cli_dimmed("Remote:"), repo.remote_url.to_string_alternate());
-        println!("       {} {}", cli_dimmed("User:"), repo.user);
-        println!("     {} {}", cli_dimmed("Branch:"), repo.branch);
-        println!("        {} {}", cli_dimmed("LFS:"), twinkle_pretty_bool(repo.lfs));
+        println!("     {} {}", cli_dimmed("Remote:"), repo.remote_url().unwrap());
+        println!("     {} {}", cli_dimmed("Branch:"), repo.branch().unwrap_or("err".to_string()));
         println!();
-        println!(" {} {}", cli_dimmed("Last check:"), twinkle_pretty_datetime(repo.last_checked));
-        println!("  {} {}", cli_dimmed("Last sync:"), twinkle_pretty_datetime(repo.last_synced));
-        println!("   {} {}s", cli_dimmed("Interval:"), interval);
+        println!("    {} {}", cli_dimmed("Enabled:"), repo.enabled());
+        println!("         {} {}", cli_dimmed("ID:"), repo.id().unwrap());
+        println!("        {} {}", cli_dimmed("LFS:"), twinkle_pretty_bool(repo.lfs_enabled()));
+        // println!("       {} {}", cli_dimmed("User:"), repo.user().unwrap_or("default"));
         println!();
-
-        Ok(())
-    }
-
-
-    pub fn cli_command_list(&self) -> Result<(), Box<dyn Error>>{
+        println!(" {} {}", cli_dimmed("Last check:"), twinkle_pretty_datetime(repo.last_checked().unwrap_or(0)));
+        println!("  {} {}", cli_dimmed("Last sync:"), twinkle_pretty_datetime(repo.last_synced().unwrap_or(0)));
+        println!("   {} {}s", cli_dimmed("Interval:"), repo.polling_interval().as_secs());
         println!();
-
-        for repo in self.config.list()? {
-            let path = twinkle_pretty_dir(&repo.path);
-            let url = repo.remote_url.to_string_with_port();
-
-            println!("       {} {}", cli_dimmed("Path:"), cli_bold(&path));
-            println!("     {} {}", cli_dimmed("Remote:"), url);
-            println!();
-        }
-
-        Ok(())
-    }
-
-
-    pub fn cli_command_remove(&mut self, args: &Vec<String>) -> Result<(), Box<dyn Error>> {
-        self.cli_require_args(2, args)?;
-
-        // Not using cli_prepare_path() to prevent mistakes
-        let path = Path::new(args.get(2).ok_or("Missing <path>")?);
-        let path = fs::canonicalize(path)?;
-
-        self.config.remove(&path)?;
-        Ok(())
-    }
-
-
-    pub fn cli_command_config(&mut self, args: &Vec<String>) -> Result<(), Box<dyn Error>> {
-        self.cli_require_args(4, args)?;
-
-        let path = Path::new(args.get(2).ok_or("Missing <path>")?);
-        let option = args.get(3).ok_or("Missing <option>")?;
-        let value  = args.get(4).ok_or("Missing <value>")?;
-
-        let path = self.cli_prepare_path(path)?;
-
-        match option.as_str() {
-            "interval" => {
-                let value = value.parse::<u64>().map_err(|_| "Interval must be a number")?;
-                self.config.set_interval(&path, value)?;
-            },
-            "lfs" => {
-                let value = value.as_str() == "true";
-                self.config.set_lfs(&path, value)?;
-            }
-            "user.name"  => { self.config.set_user(&path, Some(value), None)?; },
-            "user.email" => { self.config.set_user(&path, None, Some(value))?; },
-            _ => { return Err(format!("Unknown option `{}`", option).into()); }
-        }
 
         Ok(())
     }

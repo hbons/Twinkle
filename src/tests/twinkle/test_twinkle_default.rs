@@ -7,11 +7,10 @@
 
 use crate::ssh::objects::url::SshUrl;
 
-use crate::twinkle::twinkle_default::twinkle_default_attribute_rules;
-use crate::twinkle::twinkle_default::twinkle_default_exclude_rules;
-use crate::twinkle::twinkle_default::twinkle_default_file_warning;
-use crate::twinkle::twinkle_default::twinkle_default_settings;
-use crate::twinkle::twinkle_default::twinkle_default_welcome;
+use crate::twinkle::defaults::info::twinkle_default_info_attributes;
+use crate::twinkle::defaults::info::twinkle_default_info_exclude;
+use crate::twinkle::defaults::config::twinkle_default_settings;
+use crate::twinkle::twinkle_init::init_welcome;
 
 
 #[test]
@@ -23,14 +22,14 @@ fn test_twinkle_default_settings() {
 
 #[test]
 fn test_twinkle_default_exclude_rules() {
-    let rules = twinkle_default_exclude_rules();
+    let rules = twinkle_default_info_exclude();
     assert_eq!(rules.len(), 16);
 }
 
 
 #[test]
 fn test_twinkle_default_attribute_rules() {
-    let rules = twinkle_default_attribute_rules();
+    let rules = twinkle_default_info_attributes();
     assert_eq!(rules.len(), 2);
 }
 
@@ -38,15 +37,8 @@ fn test_twinkle_default_attribute_rules() {
 #[test]
 fn test_twinkle_default_welcome() {
     let url = "git@github.com:hbons/Twinkle".parse::<SshUrl>().unwrap();
-    let message = twinkle_default_welcome(&url);
+    let message = init_welcome(&url);
 
     assert!(message.contains(url.original.as_str()));
     assert!(message.len() > url.original.len());
-}
-
-
-#[test]
-fn test_twinkle_default_file_warning() {
-    let warning = twinkle_default_file_warning();
-    assert!(warning.starts_with("#"));
 }

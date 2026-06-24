@@ -19,22 +19,33 @@ impl GitEnvironment {
     //       https://github.com/git-lfs/git-lfs/security
 
     /// Configures the LFS filters with GIT_SSH_COMMAND
-    pub fn lfs_config_filters(&self) -> Result<(), Box<dyn Error>> {
-        let smudge = "git-lfs smudge -- %f";
-        let smudge = &format!("env GIT_SSH_COMMAND='{}' {}", self.GIT_SSH_COMMAND, smudge);
+    #[allow(non_snake_case)]
+    pub fn lfs_config_filters(&self, GIT_SSH_COMMAND: Option<String>) -> Result<(), Box<dyn Error>> {
+        let git_lfs = Path::new("git-lfs");
 
-        self.config_set("filter.lfs.smudge",   smudge)?; // Runs on file commit
-        self.config_set("filter.lfs.clean",    "git-lfs clean -- %f")?; // Runs on file checkout
-        self.config_set("filter.lfs.process",  "git-lfs filter-process")?; // Prevents spawning many threads
-        self.config_set("filter.lfs.required", "true")?;
+        let env = GIT_SSH_COMMAND
+            .map(|v| format!("env GIT_SSH_COMMAND='{v}' ")) // Note ending space
+            .unwrap_or_default();
+
+        let smudge = &format!("{} smudge -- %f", git_lfs.display());
+        let smudge = &format!("{}{}", env, smudge);
+
+        let clean = &format!("{} clean -- %f", git_lfs.display());
+        let filter_process = &format!("{} filter-process", git_lfs.display());
+
+        self.config_set("filter.lfs.smudge", smudge)?; // Runs on file commit
+        self.config_set("filter.lfs.clean", clean)?; // Runs on file checkout
+        self.config_set("filter.lfs.process", filter_process)?; // Prevents spawning many threads
+        self.config_set("filter.lfs.required", &true.to_string())?;
 
         Ok(())
     }
 
 
     /// Overwrites the pre-push hook and sets GIT_SSH_COMMAND
-    pub fn lfs_install_pre_push_hook(&self) -> Result<(), Box<dyn Error>> {
-        let git_lfs_path = Path::new("git-lfs");
+    #[allow(non_snake_case)]
+    pub fn lfs_install_pre_push_hook(&self, GIT_SSH_COMMAND: Option<String>) -> Result<(), Box<dyn Error>> {
+        let git_lfs = Path::new("git-lfs");
         let hook_path = self.working_dir.join(".git/hooks/pre-push");
 
         if let Some(hook_dir) = hook_path.parent() {
@@ -43,10 +54,14 @@ impl GitEnvironment {
             }
         }
 
+        let env = GIT_SSH_COMMAND
+            .map(|v| format!("env GIT_SSH_COMMAND='{v}' ")) // Note ending space
+            .unwrap_or_default();
+
         let hook = format!(
-            "#!/bin/sh\n\
-            env GIT_SSH_COMMAND='{}' {} pre-push \"$@\"", // $@ passes all args along
-            self.GIT_SSH_COMMAND, git_lfs_path.display()
+            "#!/bin/sh\n{}{} pre-push \"$@\"",
+            env,
+            git_lfs.display()
         );
 
         let user_rwx = Permissions::from_mode(0o700);
@@ -89,10 +104,9 @@ impl GitEnvironment {
     }
 
 
-    pub fn lfs_version(&self) -> String {
-        match self.run("lfs", &["--version"]) {
-            Ok(output) => output.stdout.trim().into(),
-            Err(_) => "\x1b[33mGit LFS not found\x1b[0m".into(),
-        }
+    pub fn lfs_version(&self) -> Option<String> {
+        self.run("lfs", &["--version"])
+            .ok()
+            .map(|v| v.stdout.trim().to_string())
     }
 }

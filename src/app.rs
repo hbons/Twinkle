@@ -12,7 +12,6 @@ use std::process::Command;
 use crate::git::objects::environment::GitEnvironment;
 use crate::log;
 use crate::ssh::version::ssh_version;
-use crate::twinkle::twinkle_config::TwinkleConfig;
 
 
 #[derive(Debug)]
@@ -39,7 +38,7 @@ pub struct App {
     pub app_data_home:   PathBuf,
     pub app_cache_home:  PathBuf,
 
-    pub config: TwinkleConfig,
+    // pub config: TwinkleConfig,
 }
 
 
@@ -74,10 +73,10 @@ impl Default for App {
         if let Ok(var) = env::var("XDG_DATA_HOME") { xdg_data_home = Path::new(&var).into(); }
         if let Ok(var) = env::var("XDG_CACHE_HOME") { xdg_cache_home = Path::new(&var).into(); }
 
-        // Config
-        let config_path = xdg_config_home.join(format!("{command_name}/repos.json"));
-        let mut config = TwinkleConfig::new(&config_path);
-        _ = config.load();
+        // // Config
+        // let config_path = xdg_config_home.join(format!("{command_name}/repos.json"));
+        // let mut config = TwinkleConfig::new(&config_path);
+        // _ = config.load();
 
         App {
             id:      app_id.into(),
@@ -101,7 +100,7 @@ impl Default for App {
             app_data_home:   xdg_data_home.join(format!("{command_name}")),
             app_cache_home:  xdg_cache_home.join(format!("{command_name}")),
 
-            config,
+            // config,
         }
     }
 }
@@ -137,9 +136,10 @@ pub fn app_deps() -> String {
     let git = GitEnvironment::default();
 
     format!("{}\n{}\n{}",
-        ssh_version(),
-        git.version(),
-        git.lfs_version())
+        ssh_version().unwrap_or("\x1b[31mOpenSSH: Not found (required)\x1b[0m".into()), // Red
+        git.version().unwrap_or("\x1b[31mGit: Not found (required)\x1b[0m".into()), // Red
+        git.lfs_version().unwrap_or("\x1b[33mGit LFS: Not found (optional)\x1b[0m".into()), // Yellow
+    )
 }
 
 

@@ -17,7 +17,7 @@ use crate::ssh::keys::host_key::HostKey;
 
 #[test]
 fn test_ssh_keygen() {
-    let keys_dir = Path::new("./src/tests/.tmp");
+    let keys_dir = Path::new("./src/tests/.tmp/keys");
     let key_path = keys_dir.join("test.key");
 
     if keys_dir.exists() {

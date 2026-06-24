@@ -19,6 +19,7 @@ pub mod objects {
     pub mod file_status;
     pub mod merge_status;
     pub mod output;
+    pub mod reference;
     pub mod user;
 }
 
@@ -29,6 +30,7 @@ pub mod clone;
 pub mod commit;
 pub mod config;
 pub mod fetch;
+pub mod init;
 pub mod lfs;
 pub mod log;
 pub mod ls_files;
@@ -39,4 +41,5 @@ pub mod push;
 pub mod rev_parse;
 pub mod rev_list;
 pub mod status;
+pub mod symbolic_ref;
 pub mod version;

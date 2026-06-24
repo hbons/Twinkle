@@ -17,7 +17,7 @@ impl GitEnvironment {
     pub fn rev_parse(&self) -> Result<String, Box<dyn Error>> {
         match self.run("rev-parse", &["--verify", "HEAD"]) {
             Ok(output) => Ok(output.stdout),
-            Err(_) => Err("No commits yet".into()),
+            Err(_) => Err("No commits yet".into()), // FIXME: non-git dirs also error...
         }
     }
 
@@ -27,10 +27,5 @@ impl GitEnvironment {
             Ok(output) => Ok(PathBuf::from(output.stdout.to_string())),
             Err(_) => Err("No commits yet".into()),
         }
-    }
-
-
-    pub fn is_repo_empty(&self) -> bool {
-        self.rev_parse().is_err()
     }
 }

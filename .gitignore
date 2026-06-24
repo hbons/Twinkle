@@ -1,7 +1,3 @@
-SparkleShare*
-ScrubbyScramble*
-TwinkleTest*
-
 /target
 /build
 /repo
@@ -11,4 +7,3 @@ TwinkleTest*
 .DS_Store
 .cache
 .zed
-

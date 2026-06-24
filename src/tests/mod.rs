@@ -31,12 +31,12 @@ mod git {
 
 #[cfg(test)]
 mod twinkle {
-    mod test_twinkle_commit_message;
-    mod test_twinkle_config;
     mod test_twinkle_default_dir_name;
     mod test_twinkle_default;
-    mod test_twinkle_email_is_valid;
+    mod test_twinkle_init;
+    mod test_twinkle_object_repository;
     mod test_twinkle_pretty_bool;
+    mod test_twinkle_pretty_commit_message;
     mod test_twinkle_pretty_datetime;
     mod test_twinkle_pretty_dir;
     mod test_twinkle_resolve_paths;

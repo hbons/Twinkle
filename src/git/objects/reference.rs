@@ -5,12 +5,13 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-use std::process::Command;
+// Docs: https://git-scm.com/book/ms/v2/Git-Internals-Git-References
+pub type GitReference = String;
 
 
-pub fn ssh_version() -> Option<String> {
-    Command::new("ssh").arg("-V")
-        .output()
-        .ok()
-        .map(|v| String::from_utf8_lossy(&v.stderr).trim().into())
-}
+// pub enum GitReference {
+//     Branch(String),
+//     DetachedHead,
+//     Hash(String),
+//     Tag(String),
+// }

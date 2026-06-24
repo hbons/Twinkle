@@ -19,10 +19,12 @@ fn test_ssh_url_to_string() {
 
     let no_user   = "ssh://github.com/hbons/Twinkle".parse::<SshUrl>();
     let no_scheme = "github.com/hbons/Twinkle".parse::<SshUrl>();
+    let no_colon  = "git@github.com/hbons/Twinkle".parse::<SshUrl>();
     let no_path   = "ssh://git@github.com".parse::<SshUrl>();
 
     assert!(no_user.is_err());
     assert!(no_scheme.is_err());
+    assert!(no_colon.is_err());
     assert!(no_path.is_err());
 }
 

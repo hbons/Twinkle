@@ -13,26 +13,30 @@ use crate::twinkle::twinkle_util::twinkle_unique_dir;
 
 #[test]
 fn test_twinkle_unique_dir() {
-    let tmp_dir = Path::new("./src/tests/.tmp");
-    fs::create_dir_all(tmp_dir).unwrap();
+    let path = Path::new("./src/tests/.tmp/unique_dir");
 
+    if path.exists() {
+        fs::remove_dir_all(path).unwrap();
+    }
 
-    let dir = Path::new("./src/tests/.tmp/folder");
+    fs::create_dir_all(path).unwrap();
+
+    let dir = Path::new("./src/tests/.tmp/unique_dir/folder");
     let dir = twinkle_unique_dir(dir);
 
-    assert_eq!(Path::new("./src/tests/.tmp/folder"), dir);
+    assert_eq!(Path::new("./src/tests/.tmp/unique_dir/folder"), dir);
 
 
-    fs::create_dir_all("./src/tests/.tmp/folder").unwrap();
-    let dir = Path::new("./src/tests/.tmp/folder");
+    fs::create_dir_all("./src/tests/.tmp/unique_dir/folder").unwrap();
+    let dir = Path::new("./src/tests/.tmp/unique_dir/folder");
     let dir = twinkle_unique_dir(dir);
 
-    assert_eq!(Path::new("./src/tests/.tmp/folder 2"), dir);
+    assert_eq!(Path::new("./src/tests/.tmp/unique_dir/folder 2"), dir);
 
 
-    fs::create_dir_all("./src/tests/.tmp/folder 2").unwrap();
-    let dir = Path::new("./src/tests/.tmp/folder");
+    fs::create_dir_all("./src/tests/.tmp/unique_dir/folder 2").unwrap();
+    let dir = Path::new("./src/tests/.tmp/unique_dir/folder");
     let dir = twinkle_unique_dir(dir);
 
-    assert_eq!(Path::new("./src/tests/.tmp/folder 3"), dir);
+    assert_eq!(Path::new("./src/tests/.tmp/unique_dir/folder 3"), dir);
 }

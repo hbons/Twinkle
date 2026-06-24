@@ -13,41 +13,75 @@ use std::time::Duration;
 use chrono::Utc;
 
 use crate::log;
-use crate::ssh::keys::key_type::KeyType;
 use crate::ssh::util::ssh_util_test_connection;
+use crate::twinkle::twinkle_init::init_id;
 
-use super::objects::twinkle_repository::TwinkleRepository;
-use super::twinkle_default::twinkle_default_init;
-use super::twinkle_default::twinkle_default_polling_interval;
-use super::twinkle_default::twinkle_default_sync_up_delay_max;
-use super::twinkle_default::twinkle_default_sync_up_delay_bump;
+use super::objects::repository::TwinkleRepository;
+use super::defaults::common::twinkle_default_sync_up_delay_max;
+use super::defaults::common::twinkle_default_sync_up_delay_bump;
+use super::twinkle_init::twinkle_init_common;
 use super::twinkle_keys::twinkle_hostkey_for;
 use super::twinkle_lfs::twinkle_lfs_track;
 use super::twinkle_notify::twinkle_notify;
 use super::twinkle_resolve::twinkle_resolve_changes;
-use super::twinkle_util::twinkle_commit_message;
+use super::twinkle_pretty::twinkle_pretty_commit_message;
 use super::twinkle_util::twinkle_ssh_command;
 
 
-pub fn twinkle_sync(repo: &mut TwinkleRepository, interval: Option<u64>) -> Result<(), Box<dyn Error>> {
-    if repo.git.branch_show_current()? != repo.branch {
-        return Err(format!("Repository not on branch as set in config ({})", repo.branch).into())
+pub fn twinkle_sync_prepare(
+    repo: &mut TwinkleRepository
+) -> Result<(), Box<dyn Error>>
+{
+    // TODO: Error on invalid config. --local or --file
+
+    if repo.lfs_enabled() &&
+       repo.git.lfs_version().is_none() {
+        return Err("Git LFS enabled but not installed".into());
     }
 
-    let key_pair = repo.user.key_pair.clone();
-    let key_pair = key_pair.ok_or("No user key pair")?;
+    if repo.branch().is_none() {
+        return Err("Not on a branch".into());
+    }
 
-    let host_key = twinkle_hostkey_for(&repo.remote_url, KeyType::default(),
-        key_pair.private_key_path.parent().ok_or("No parent")?)?;
+    if repo.id().is_none() {
+        return Err("Missing ID".into());
+    }
 
-    repo.git.GIT_SSH_COMMAND = twinkle_ssh_command(&key_pair);
+    let user = repo.user().ok_or("Missing user")?;
 
-    twinkle_default_init(repo)?;
-    repo.git.config_set_user(&repo.user)?;
-    repo.git.config_set_user_signing_key(&key_pair)?;
+    if let Some(key_pair) = &user.key_pair {
+        let host_key = twinkle_hostkey_for(
+            &repo.remote_url().ok_or("Missing remote_url")?,
+            key_pair.key_type,
+            key_pair.private_key_path.parent().ok_or("No parent")?
+        )?;
 
-    ssh_util_test_connection(&repo.remote_url, &host_key, &key_pair)?;
-    log::debug(&format!("✓ Authenticated to {}", &repo.remote_url.host));
+        twinkle_init_common(repo, Some(key_pair))?;
+
+        repo.set_user(&user)?;
+        repo.set_user_signing_key(key_pair)?;
+        repo.set_commit_gpg_sign(true)?;
+        repo.set_tag_gpg_sign(true)?;
+
+        repo.git.GIT_SSH_COMMAND = twinkle_ssh_command(Some(key_pair));
+
+        let remote_url = repo.remote_url().ok_or("Missing remote_url")?;
+        ssh_util_test_connection(&remote_url, &host_key, key_pair)?;
+
+        log::debug(&format!("✓ Authenticated to {}", &remote_url.host));
+    }
+
+    Ok(())
+}
+
+
+pub fn twinkle_sync(
+    repo: &mut TwinkleRepository,
+    interval: Option<Duration>,
+    once: bool,
+) -> Result<(), Box<dyn Error>>
+{
+    twinkle_sync_prepare(repo)?;
 
     let repo_c1 = repo.clone();
     let repo_c2 = repo.clone();
@@ -62,6 +96,7 @@ pub fn twinkle_sync(repo: &mut TwinkleRepository, interval: Option<u64>) -> Resu
 
     let mut start_sync = false;
 
+    // This is the main loop
     loop {
         if repo.has_local_changes() || repo.has_remote_changes() {
             start_sync = true;
@@ -80,7 +115,7 @@ pub fn twinkle_sync(repo: &mut TwinkleRepository, interval: Option<u64>) -> Resu
             match twinkle_sync_up(repo) {
                 Ok(_) => {
                     repo.set_has_local_changes(false);
-                    repo.last_synced = Utc::now().timestamp();
+                    repo.set_last_synced(Utc::now().timestamp())?;
                 },
                 Err(e) => log::error(&e.to_string()),
             }
@@ -90,7 +125,7 @@ pub fn twinkle_sync(repo: &mut TwinkleRepository, interval: Option<u64>) -> Resu
             match twinkle_sync_down(repo) {
                 Ok(_) => {
                     repo.set_has_remote_changes(false);
-                    repo.last_synced = Utc::now().timestamp();
+                    repo.set_last_synced(Utc::now().timestamp())?;
                 },
                 Err(e) => log::error(&e.to_string()),
             }
@@ -98,6 +133,10 @@ pub fn twinkle_sync(repo: &mut TwinkleRepository, interval: Option<u64>) -> Resu
 
         repo.set_is_busy(false);
         start_sync = false;
+
+        if once {
+            return Ok(());
+        }
     }
 }
 
@@ -117,24 +156,26 @@ pub fn twinkle_watch_local(repo: &TwinkleRepository) -> Result<(), Box<dyn Error
 }
 
 
-pub fn twinkle_watch_remote(repo: &mut TwinkleRepository, interval: Option<u64>) -> Result<(), Box<dyn Error>> {
+pub fn twinkle_watch_remote(repo: &mut TwinkleRepository, interval: Option<Duration>) -> Result<(), Box<dyn Error>> {
     loop {
         let interval = interval.unwrap_or(
-            repo.polling_interval.unwrap_or(
-                twinkle_default_polling_interval()));
+            repo.polling_interval()
+        );
 
         if !repo.is_busy() {
-            if let Ok(remote_id) = repo.git.ls_remote(&repo.branch) {
-                if !repo.git.merge_base(&remote_id, &repo.branch)? {
+            let branch = repo.branch().ok_or("Not on a branch")?;
+
+            if let Ok(remote_id) = repo.git.ls_remote(&branch) {
+                if !repo.git.merge_base(&remote_id, &branch)? {
                     repo.set_has_remote_changes(true);
                     log::info("Remote changes detected…");
                 }
             }
 
-            repo.last_checked = Utc::now().timestamp();
+            repo.set_last_checked(Utc::now().timestamp())?;
         }
 
-        thread::sleep(Duration::from_secs(interval));
+        thread::sleep(interval);
     }
 }
 
@@ -143,27 +184,33 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
     let mut attempts = 0;
 
     loop {
-        repo.git.lfs_config_filters()?;
+        init_id(repo)?;
+        repo.git.lfs_config_filters(Some(repo.git.GIT_SSH_COMMAND.clone()))?;
+
         repo.git.add_all()?;
         let status = repo.git.status()?;
 
-        if repo.lfs {
+        if repo.lfs_enabled() {
             for change in &status {
                 _ = twinkle_lfs_track(repo, change);
             }
         }
 
-        if let Some(message) = twinkle_commit_message(&status) {
-            repo.git.config_set_user(&repo.user)?;
-            repo.git.commit(&repo.user, &message)?;
+        if let Some(message) = twinkle_pretty_commit_message(&status) {
+            let user = repo.user().ok_or("User not set")?;
+
+            repo.set_user(&user)?;
+            repo.git.commit(Some(user), &message)?;
 
             log::info(&format!("✓ Committed. Now at {}", repo.current_head()?));
         } else {
             log::info(&format!("Nothing new to commit. Still at {}", repo.current_head()?));
         }
 
-        repo.git.lfs_install_pre_push_hook()?;
-        let push = repo.git.push("origin", &repo.branch);
+        let branch = repo.branch().ok_or("Not on a branch")?;
+
+        repo.git.lfs_install_pre_push_hook(Some(repo.git.GIT_SSH_COMMAND.clone()))?;
+        let push = repo.git.push("origin", &branch);
 
         match push {
             Ok(_)  => log::info(&format!("✓ Pushed. Local and remote at {}", repo.current_head()?)),
@@ -202,7 +249,7 @@ pub fn twinkle_sync_up_delay(attempts: u64) -> Duration {
 pub fn twinkle_sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
     repo.git.fetch("main")?;
 
-    if repo.lfs {
+    if repo.lfs_enabled() {
         repo.git.lfs_fetch()?;
     }
 
@@ -228,19 +275,18 @@ pub fn twinkle_has_unpushed_commits(repo: &TwinkleRepository) -> bool {
 }
 
 
-pub enum TwinkleStatus {
-    UpToDate(i64), //(last check)
-    Error(String),
-    UnpushedChanges,
-}
+// pub enum TwinkleStatus {
+//     UpToDate(i64), //(last check)
+//     Error(String),
+//     UnpushedChanges,
+// }
 
-
-pub enum TwinklePushError {
-    NoNetwork(String),
-    NoAuth(String),
-    RemoteAhead(String),
-    Unknown(String),
-}
+// pub enum TwinklePushError {
+//     NoNetwork(String),
+//     NoAuth(String),
+//     RemoteAhead(String),
+//     Unknown(String),
+// }
 
 pub enum TwinkleFetchError {
     NoNetwork(String),

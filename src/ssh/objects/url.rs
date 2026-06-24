@@ -10,8 +10,8 @@ use std::fmt;
 use std::path::PathBuf;
 use std::str;
 
-use serde::ser::{ Serialize, Serializer };
-use serde::de::{ Deserialize, Deserializer };
+// use serde::ser::{ Serialize, Serializer };
+// use serde::de::{ Deserialize, Deserializer };
 
 
 #[derive(Clone, Debug, Default)]
@@ -143,22 +143,22 @@ impl SshUrl {
 }
 
 
-impl Serialize for SshUrl {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where S: Serializer,
-    {
-        serializer.serialize_str(&self.original)
-    }
-}
+// impl Serialize for SshUrl {
+//     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+//     where S: Serializer,
+//     {
+//         serializer.serialize_str(&self.original)
+//     }
+// }
 
 
-impl<'de> Deserialize<'de> for SshUrl {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where D: Deserializer<'de>,
-    {
-        let s = String::deserialize(deserializer)?;
-        let url =  s.parse::<SshUrl>().map_err(serde::de::Error::custom)?;
+// impl<'de> Deserialize<'de> for SshUrl {
+//     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+//     where D: Deserializer<'de>,
+//     {
+//         let s = String::deserialize(deserializer)?;
+//         let url =  s.parse::<SshUrl>().map_err(serde::de::Error::custom)?;
 
-        Ok(url)
-    }
-}
+//         Ok(url)
+//     }
+// }

@@ -21,8 +21,8 @@ impl GitEnvironment {
         ])?;
 
         match output.exit_code {
-            0   => {}, // Fetch completed successfully
-            1   => {},
+            0   => (), // Fetch completed successfully
+            1   => (),
             2   => return Err("Error: ...".into()),
             128 => return Err("Error: No connection".into()),
             _   => return Err("Error: Unknown error".into()),

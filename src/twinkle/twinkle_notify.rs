@@ -12,7 +12,7 @@ use std::time::Duration;
 use notify::{ Config, RecommendedWatcher, RecursiveMode, Result, Watcher };
 
 use crate::log;
-use crate::twinkle::objects::twinkle_repository::TwinkleRepository;
+use crate::twinkle::objects::repository::TwinkleRepository;
 
 
 pub fn twinkle_notify(repo: &TwinkleRepository) -> Result<()> {

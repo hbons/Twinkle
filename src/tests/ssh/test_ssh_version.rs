@@ -10,6 +10,6 @@ use crate::ssh::version::ssh_version;
 
 #[test]
 fn test_ssh_version() {
-    let ssh_version = ssh_version();
+    let ssh_version = ssh_version().unwrap();
     assert!(ssh_version.starts_with("OpenSSH"));
 }

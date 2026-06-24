@@ -7,8 +7,8 @@
 
 use std::time::Duration;
 
-use crate::twinkle::twinkle_default::twinkle_default_sync_up_delay_bump;
-use crate::twinkle::twinkle_default::twinkle_default_sync_up_delay_max;
+use crate::twinkle::defaults::common::twinkle_default_sync_up_delay_bump;
+use crate::twinkle::defaults::common::twinkle_default_sync_up_delay_max;
 use crate::twinkle::twinkle_sync::twinkle_sync_up_delay;
 
 

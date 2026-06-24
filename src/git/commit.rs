@@ -15,20 +15,30 @@ use super::objects::user::GitUser;
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-commit
 
-    pub fn commit(&self, author: &GitUser, message: &str) -> Result<(), Box<dyn Error>> {
-        let env: Vec<(String, String)> = vec![
-            ("GIT_AUTHOR_NAME".into(), author.name().into()),
-            ("GIT_AUTHOR_EMAIL".into(), author.email().into()),
-            ("GIT_COMMITTER_NAME".into(), author.name().into()),
-            ("GIT_COMMITTER_EMAIL".into(), author.email().into()),
-        ];
-
+    pub fn commit(&self, author: Option<GitUser>, message: &str) -> Result<(), Box<dyn Error>> {
         let path = ".git/COMMIT_EDITMSG".to_string();
         let abs_path = self.working_dir.join(&path);
         fs::write(&abs_path, message)?; // Use a file to prevent encoding problems
 
-        let file_arg = &format!("--file={}", path);
-        self.run_with_env("commit", &[file_arg, "--no-edit"], env)?;
+        let args = &[
+            &format!("--file={}", path),
+            "--no-edit",
+        ];
+
+        match author {
+            Some(user) =>{
+                let env: Vec<(String, String)> = vec![
+                    ("GIT_AUTHOR_NAME".into(), user.name().into()),
+                    ("GIT_AUTHOR_EMAIL".into(), user.email().into()),
+                    ("GIT_COMMITTER_NAME".into(), user.name().into()),
+                    ("GIT_COMMITTER_EMAIL".into(), user.email().into()),
+                ];
+
+                self.run_with_env("commit", args, env)
+            },
+            None => self.run("commit", args),
+        }?;
+
         fs::remove_file(abs_path)?;
 
         Ok(())

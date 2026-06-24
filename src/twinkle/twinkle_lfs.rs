@@ -12,9 +12,10 @@ use crate::git::objects::change::GitChange;
 
 use crate::log;
 
-use super::twinkle_default::twinkle_default_lfs_threshold;
-use super::objects::twinkle_repository::TwinkleRepository;
+use super::objects::repository::TwinkleRepository;
 
+
+pub const TWINKLE_LFS_THRESHOLD: u64 = 1024 * 1024 * 3; // 3 MB;
 
 pub fn twinkle_lfs_track(repo: &TwinkleRepository, change: &GitChange) -> Result<(), Box<dyn Error>> {
     if change.status_x != Some(GitFileStatus::Untracked) &&
@@ -24,11 +25,10 @@ pub fn twinkle_lfs_track(repo: &TwinkleRepository, change: &GitChange) -> Result
         return Err("Nothing to track".into())
     }
 
-    let threshold = repo.lfs_threshold
-        .unwrap_or(twinkle_default_lfs_threshold());
+    let threshold = repo.lfs_size_threshold();
 
     if repo.size_of(&change.path) >= Some(threshold) {
-        _ = repo.git.lfs_track(&change.path);
+        repo.git.lfs_track(&change.path)?;
         log::info(&format!("Tracking with LFS: `{}`", &change.path.to_string_lossy()));
     }
 

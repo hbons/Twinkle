@@ -6,18 +6,20 @@
 
 
 use std::error::Error;
+
 use super::objects::environment::GitEnvironment;
+use super::objects::reference::GitReference;
 
 
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-branch
 
-    pub fn branch_show_current(&self) -> Result<String, Box<dyn Error>> {
+    pub fn branch_show_current(&self) -> Result<GitReference, Box<dyn Error>> {
         let output = self.run("branch", &["--show-current"])?;
         let branch = output.stdout;
 
         match branch.as_str() {
-            "" => Err("No branch found".into()),
+            "" => Err("Not on a branch".into()),
             _  => Ok(branch),
         }
     }

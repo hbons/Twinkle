@@ -9,13 +9,12 @@ use std::path::Path;
 
 use crate::git::objects::change::GitChange;
 use crate::git::objects::file_status::GitFileStatus;
-use crate::twinkle::twinkle_util::twinkle_commit_message;
-
+use crate::twinkle::twinkle_pretty::twinkle_pretty_commit_message;
 
 #[test]
-fn test_twinkle_commit_message() {
+fn test_twinkle_pretty_commit_message() {
     let empty_status = vec![];
-    assert_eq!(twinkle_commit_message(&empty_status), None);
+    assert_eq!(twinkle_pretty_commit_message(&empty_status), None);
 
     let status = vec![
         GitChange {
@@ -25,14 +24,14 @@ fn test_twinkle_commit_message() {
         }
     ];
 
-    assert_eq!(twinkle_commit_message(&status), Some("+ \"test.txt\"".to_string()));
+    assert_eq!(twinkle_pretty_commit_message(&status), Some("+ \"test.txt\"".to_string()));
 }
 
 
 #[test]
-fn test_twinkle_commit_message_renamed() {
+fn test_twinkle_pretty_commit_message_renamed() {
     let empty_status = vec![];
-    assert_eq!(twinkle_commit_message(&empty_status), None);
+    assert_eq!(twinkle_pretty_commit_message(&empty_status), None);
 
     let status = vec![
         GitChange {
@@ -42,14 +41,14 @@ fn test_twinkle_commit_message_renamed() {
         }
     ];
 
-    assert_eq!(twinkle_commit_message(&status), Some("+1, −1".to_string()));
+    assert_eq!(twinkle_pretty_commit_message(&status), Some("+1, −1".to_string()));
 }
 
 
 #[test]
-fn test_twinkle_commit_message_copied() {
+fn test_twinkle_pretty_commit_message_copied() {
     let empty_status = vec![];
-    assert_eq!(twinkle_commit_message(&empty_status), None);
+    assert_eq!(twinkle_pretty_commit_message(&empty_status), None);
 
     let status = vec![
         GitChange {
@@ -59,12 +58,12 @@ fn test_twinkle_commit_message_copied() {
         }
     ];
 
-    assert_eq!(twinkle_commit_message(&status), Some("+ \"test.txt\"".to_string()));
+    assert_eq!(twinkle_pretty_commit_message(&status), Some("+ \"test.txt\"".to_string()));
 }
 
 
 #[test]
-fn test_twinkle_commit_message_multiple() {
+fn test_twinkle_pretty_commit_message_multiple() {
     let status = vec![
         GitChange {
             status_x: Some(GitFileStatus::Added),
@@ -78,12 +77,12 @@ fn test_twinkle_commit_message_multiple() {
         },
     ];
 
-    assert_eq!(twinkle_commit_message(&status), Some("+2".to_string()));
+    assert_eq!(twinkle_pretty_commit_message(&status), Some("+2".to_string()));
 }
 
 
 #[test]
-fn test_twinkle_commit_message_various_2() {
+fn test_twinkle_pretty_commit_message_various_2() {
     let status = vec![
         GitChange {
             status_x: Some(GitFileStatus::Added),
@@ -97,12 +96,12 @@ fn test_twinkle_commit_message_various_2() {
         },
     ];
 
-    assert_eq!(twinkle_commit_message(&status), Some("+1, −1".to_string()));
+    assert_eq!(twinkle_pretty_commit_message(&status), Some("+1, −1".to_string()));
 }
 
 
 #[test]
-fn test_twinkle_commit_message_various_3() {
+fn test_twinkle_pretty_commit_message_various_3() {
     let status = vec![
         GitChange {
             status_x: Some(GitFileStatus::Added),
@@ -121,5 +120,5 @@ fn test_twinkle_commit_message_various_3() {
         },
     ];
 
-    assert_eq!(twinkle_commit_message(&status), Some("+1, ~1, −1".to_string()));
+    assert_eq!(twinkle_pretty_commit_message(&status), Some("+1, ~1, −1".to_string()));
 }

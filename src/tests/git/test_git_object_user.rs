@@ -40,5 +40,5 @@ fn test_git_object_user_to_string() {
 #[test]
 fn test_git_object_user_default() {
     let user = GitUser::default();
-    assert_eq!(user.to_string(), "Unknown <git@localhost>");
+    assert_eq!(user.to_string(), "??? <git@localhost>");
 }

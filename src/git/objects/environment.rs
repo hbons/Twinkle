@@ -10,19 +10,18 @@ use std::path::{ Path, PathBuf };
 use std::process::Command;
 
 use crate::log;
-
 use super::output::GitOutput;
 
 
 #[derive(Clone, Debug)]
 #[allow(non_snake_case)]
 pub struct GitEnvironment {
-    pub working_dir:  PathBuf,
+    pub working_dir: PathBuf,
 
-    pub LC_ALL: String, // Override all locale settings
+    pub LC_ALL: String,
 
-    pub GIT_CONFIG_GLOBAL:   String,
-    pub GIT_CONFIG_SYSTEM:   String,
+    pub GIT_CONFIG_GLOBAL: String,
+    pub GIT_CONFIG_SYSTEM: String,
     pub GIT_CONFIG_NOSYSTEM: String,
 
     pub GIT_EXEC_PATH: PathBuf,
@@ -34,18 +33,18 @@ pub struct GitEnvironment {
 
 impl Default for GitEnvironment {
     fn default() -> Self {
-        let working_dir  = Path::new(".").to_path_buf();
+        let working_dir  = PathBuf::from(".");
 
         GitEnvironment {
             working_dir,
 
-            LC_ALL: "C".to_string(),
+            LC_ALL: "C".to_string(), // Override all locale settings
 
-            GIT_CONFIG_GLOBAL:   "/dev/null".to_string(), // Don't use the system gitconfig
+            GIT_CONFIG_GLOBAL:   "/dev/null".to_string(), // Don't use the global gitconfig
             GIT_CONFIG_SYSTEM:   "/dev/null".to_string(), // Don't use the system gitconfig
             GIT_CONFIG_NOSYSTEM: "1".to_string(), // Don't use the system gitconfig
 
-            GIT_EXEC_PATH: Path::new("/app/share/libexec/git-core").to_path_buf(),
+            GIT_EXEC_PATH: PathBuf::from("/app/share/libexec/git-core"),
             GIT_PAGER: "".to_string(), // Don't use a pager for large output
             GIT_SSH_COMMAND: "ssh".to_string(), // Use a custom SSH command
             GIT_TERMINAL_PROMPT: "false".to_string(), // Don't hang on prompts
@@ -55,7 +54,7 @@ impl Default for GitEnvironment {
 
 
 impl GitEnvironment {
-    pub fn new(path: &Path) -> GitEnvironment {
+    pub fn new(path: &Path) -> Self {
         Self {
             working_dir: path.into(),
             ..Default::default()
@@ -107,7 +106,11 @@ impl GitEnvironment {
         if output.status.success() {
             Ok(git_output)
         } else {
-            Err(format!("git-{} errored with output: {}", command, git_output.stderr).into())
+            Err(format!(
+                "git-{} errored with output: {}",
+                command,
+                git_output.stderr
+            ).into())
         }
     }
 }

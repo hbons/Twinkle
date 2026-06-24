@@ -5,13 +5,19 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
+pub mod defaults {
+    pub mod common;
+    pub mod config;
+    pub mod hosts;
+    pub mod info;
+}
+
 pub mod objects {
-    pub mod twinkle_repository;
+    pub mod repository;
 }
 
 pub mod twinkle_clone;
-pub mod twinkle_config;
-pub mod twinkle_default;
+pub mod twinkle_init;
 pub mod twinkle_keys;
 pub mod twinkle_lfs;
 pub mod twinkle_notify;

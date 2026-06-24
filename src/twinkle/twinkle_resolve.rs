@@ -16,7 +16,7 @@ use crate::git::objects::user::GitUser;
 use crate::log;
 
 use super::twinkle_lfs::twinkle_lfs_track;
-use super::objects::twinkle_repository::TwinkleRepository;
+use super::objects::repository::TwinkleRepository;
 
 
 pub fn twinkle_resolve_changes(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
@@ -26,7 +26,7 @@ pub fn twinkle_resolve_changes(repo: &TwinkleRepository) -> Result<(), Box<dyn E
         twinkle_resolve(repo, &change)?;
     }
 
-    repo.git.commit(&repo.user, "Twinkle: Resolve conflicts")?;
+    repo.git.commit(repo.user(), "Twinkle: Resolve conflicts")?;
     log::info("Conflicts resolved");
 
     Ok(())
@@ -47,14 +47,15 @@ pub fn twinkle_resolve(repo: &TwinkleRepository, change: &GitChange) -> Result<(
         Some(status) => match status {
             GitMergeStatus::AA | GitMergeStatus::AU |
             GitMergeStatus::UA | GitMergeStatus::UU => {
+                let our_user = repo.user().ok_or("Missing user")?;
                 let their_user = repo.git.merge_blame(path)?;
-                let (ours, theirs) = twinkle_resolve_path_names(path, &repo.user, &their_user)?;
+                let (ours, theirs) = twinkle_resolve_path_names(path, &our_user, &their_user)?;
 
                 repo.git.checkout_ours(path)?;
-                fs::rename(repo.path(path), repo.path(&ours))?;
+                fs::rename(repo.abs_path(path), repo.abs_path(&ours))?;
 
                 repo.git.checkout_theirs(path)?;
-                fs::rename(repo.path(path), repo.path(&theirs))?;
+                fs::rename(repo.abs_path(path), repo.abs_path(&theirs))?;
 
                 repo.git.checkout_original(path)?;
 
@@ -74,8 +75,9 @@ pub fn twinkle_resolve(repo: &TwinkleRepository, change: &GitChange) -> Result<(
         None => log::debug(&format!("Resolve | No conflict at {}", change.path.display())),
     }
 
-    if repo.lfs {
+    if repo.lfs_enabled() {
         for change in repo.git.status()? {
+            // Discard any errors (file may have been deleted)
             _ = twinkle_lfs_track(repo, &change);
         }
     }
@@ -100,8 +102,8 @@ pub fn twinkle_resolve_path_names(path: &Path, our_user: &GitUser, their_user: &
     let mut file_name_a = format!("{file_name} ({clue_a})");
     let mut file_name_b = format!("{file_name} ({clue_b})");
 
-    if let Some(extension) = path.extension() {
-        let ext = extension.to_str().ok_or("Could not parse extension")?;
+    if let Some(ext) = path.extension() {
+        let ext = ext.to_str().ok_or("Could not parse extension")?;
         file_name_a.push_str(&format!(".{}", ext));
         file_name_b.push_str(&format!(".{}", ext));
     }

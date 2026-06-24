@@ -5,15 +5,15 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
+use std::error::Error;
 use super::objects::environment::GitEnvironment;
 
 
 impl GitEnvironment {
-    // Docs: https://git-scm.com/docs/git-version
+    // Docs: https://git-scm.com/docs/git-init
 
-    pub fn version(&self) -> Option<String> {
-        self.run("--version", &[])
-            .ok()
-            .map(|v| v.stdout.trim().to_string())
+    pub fn init(&self) -> Result<(), Box<dyn Error>> {
+        self.run("init", &["--quiet"])?;
+        Ok(())
     }
 }

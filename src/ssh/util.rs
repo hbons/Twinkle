@@ -22,8 +22,9 @@ pub fn ssh_util_test_connection(url: &SshUrl, host_key: &HostKey, key_pair: &Key
     let hostkey_path = hostkey_path.join(hostkey_name);
 
     let config = SshConfig {
-        IdentityFile: key_pair.private_key_path.clone(),
-        UserKnownHostsFile: hostkey_path,
+        IdentitiesOnly: true,
+        IdentityFile: Some(key_pair.private_key_path.clone()),
+        UserKnownHostsFile: Some(hostkey_path),
         ..Default::default()
     };
 

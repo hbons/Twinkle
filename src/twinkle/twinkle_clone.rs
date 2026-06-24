@@ -9,10 +9,7 @@ use std::error::Error;
 use std::fmt;
 use std::path::Path;
 
-use chrono::Utc;
-
 use crate::git::objects::environment::GitEnvironment;
-use crate::git::objects::user::GitUser;
 
 use crate::ssh::keygen::ssh_keygen_fingerprint;
 use crate::ssh::keys::host_key::HostKey;
@@ -20,11 +17,11 @@ use crate::ssh::keys::key_pair::KeyPair;
 use crate::ssh::keys::key_type::KeyType;
 use crate::ssh::objects::url::SshUrl;
 use crate::ssh::util::ssh_util_test_connection;
+use crate::twinkle::twinkle_init::init_id;
 
-use super::objects::twinkle_repository::TwinkleRepository;
-use super::twinkle_default::twinkle_default_branch;
-use super::twinkle_default::twinkle_default_commit;
-use super::twinkle_default::twinkle_default_init;
+use super::objects::repository::TwinkleRepository;
+use super::twinkle_init::init_first_commit;
+use super::twinkle_init::twinkle_init_common;
 use super::twinkle_keys::twinkle_hostkey_for;
 use super::twinkle_keys::twinkle_keypair_for;
 use super::twinkle_util::twinkle_default_dir_name;
@@ -32,7 +29,11 @@ use super::twinkle_util::twinkle_ssh_command;
 use super::twinkle_util::twinkle_unique_dir;
 
 
-pub fn twinkle_clone_prepare(url: &SshUrl, keys_dir: &Path) -> Result<KeyPair, Box<dyn Error>> {
+pub fn twinkle_clone_prepare_keys(
+    url: &SshUrl,
+    keys_dir: &Path,
+) -> Result<KeyPair, Box<dyn Error>>
+{
     let key_pair = twinkle_keypair_for(&url.host, KeyType::default(), keys_dir)?;
 
     let mut host_key = match twinkle_hostkey_for(url, KeyType::default(), keys_dir) {
@@ -56,52 +57,58 @@ pub fn twinkle_clone_prepare(url: &SshUrl, keys_dir: &Path) -> Result<KeyPair, B
 }
 
 
-pub fn twinkle_clone_start(url: &SshUrl, key_pair: &KeyPair, path: &Path) -> Result<TwinkleRepository, Box<dyn Error>> {
+pub fn twinkle_clone_start(
+    url: &SshUrl,
+    key_pair: Option<&KeyPair>,
+    path: &Path
+) -> Result<TwinkleRepository, Box<dyn Error>>
+{
     let git = GitEnvironment {
         working_dir: path.to_path_buf(),
         GIT_SSH_COMMAND: twinkle_ssh_command(key_pair),
         ..Default::default()
     };
 
+    if git.rev_parse_show_toplevel().is_ok() {
+        return Err("Already inside a Git repository".into());
+    }
+
     let dir = twinkle_default_dir_name(url)?;
     let dir = twinkle_unique_dir(&dir);
-    let target_git = git.clone(&url.to_string_standard(), Some(dir.as_ref()), Some(1))?;
 
-    let branch = twinkle_default_branch();
-    let mut repo = TwinkleRepository::new(target_git.working_dir.clone(), url.clone(), branch.into());
+    let target_git = git.clone(
+        &url.to_string_standard(),
+        Some(dir.as_ref()),
+        Some(1)
+    )?;
+
+    let mut repo = TwinkleRepository::new(&target_git.working_dir);
     repo.git = target_git;
 
-    if !repo.git.lfs_ls_files()?.is_empty() {
-        repo.lfs = true;
-        repo.git.lfs_fetch()?;
+    if let Ok(lfs_files) = repo.git.lfs_ls_files() {
+        if !lfs_files.is_empty() {
+            repo.set_lfs_enabled(true)?;
+            repo.git.lfs_fetch()?;
+        }
     }
 
     Ok(repo)
 }
 
 
-pub fn twinkle_clone_complete(repo: &mut TwinkleRepository, key_pair: &KeyPair) -> Result<(), Box<dyn Error>> {
-    twinkle_default_init(repo)?;
+pub fn twinkle_clone_complete(
+    repo: &mut TwinkleRepository,
+    key_pair: Option<&KeyPair>,
+) -> Result<(), Box<dyn Error>>
+{
+    twinkle_init_common(repo, key_pair)?;
 
-    repo.user = GitUser {
-        key_pair: Some(key_pair.clone()),
-        ..Default::default()
-    };
-
-    repo.git.config_set_user(&repo.user)?;
-    repo.git.config_set_user_signing_key(key_pair)?;
-    repo.git.config_set("twinkle.enabled", "true")?;
-
-    repo.git.config_set_core_ssh_command(key_pair)?;
     repo.git.checkout_branch("HEAD")?;
+    init_id(repo)?;
 
-    if repo.git.is_repo_empty() {
-        twinkle_default_commit(repo)?;
+    if repo.is_empty() {
+        init_first_commit(repo)?;
     }
-
-    repo.branch = repo.git.branch_show_current()?;
-    repo.last_checked = Utc::now().timestamp();
-    repo.last_synced  = Utc::now().timestamp();
 
     Ok(())
 }
