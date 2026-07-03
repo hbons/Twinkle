@@ -10,15 +10,15 @@ use super::super::host_key::HostKey;
 use super::super::key_type::KeyType;
 
 
-pub fn ssh_hostkey_savannah() -> HostKey {
+pub fn ssh_hostkey_gitee() -> HostKey {
     // Last updated: July 3, 2026
-    // Source: https://savannah.gnu.org/maintenance/SshAccess
+    // Source: https://help.gitee.com/account/gitees-ssh-key-fingerprints
 
     HostKey {
-        host: "git.savannah.gnu.org".into(),
+        host: "gitee.com".into(),
         is_trusted: true,
         key_type: KeyType::ED25519,
-        public_key: "AAAAC3NzaC1lZDI1NTE5AAAAIMnMLHxGS/b6Su98mL/J58FkpEJY/X1mONqhPBuFX5sJ".into(),
-        fingerprint: Some(Fingerprint::SHA256("o/oI4CKKcWc4cZvDFEdmOXsE3tiPP8bWa04h4bQjtV4".into())),
+        public_key: "AAAAC3NzaC1lZDI1NTE5AAAAIEKxHSJ7084RmkJ4YdEi5tngynE8aZe2uEoVVsB/OvYN".into(),
+        fingerprint: Some(Fingerprint::SHA256("+ULzij2u99B9eWYFTw1Q4ErYG/aepHLbu96PAUCoV88".into())),
     }
 }

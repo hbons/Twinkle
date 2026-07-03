@@ -11,6 +11,7 @@ pub fn twinkle_host_ssh_settings_url(host: String) -> Option<&'static str> {
         "bitbucket.org"        => Some("https://bitbucket.org/account/settings/ssh-keys/"),
         "codeberg.org"         => Some("https://codeberg.org/user/settings/keys"),
         "github.com"           => Some("https://github.com/settings/keys"),
+        "gitee.com"            => Some("https://gitee.com/profile/sshkeys"),
         "gitlab.com"           => Some("https://gitlab.com/-/user_settings/ssh_keys"),
         "gitlab.gnome.org"     => Some("https://gitlab.gnome.org/-/user_settings/ssh_keys"),
         "git.sr.ht"            => Some("https://meta.sr.ht/keys/ssh-keys"),

@@ -11,14 +11,14 @@ use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 
-use crate::ssh::keys::known_hosts::savannah::ssh_hostkey_savannah;
-
-use super::known_hosts::bitbucket::*;
+use super::known_hosts::bitbucket::*; // TODO: Use prelude
 use super::known_hosts::codeberg::*;
+use super::known_hosts::gitee::*;
 use super::known_hosts::github::*;
 use super::known_hosts::gitlab::*;
 use super::known_hosts::gnome::*;
 use super::known_hosts::sourcehut::*;
+use super::known_hosts::savannah::*;
 
 use super::fingerprint::Fingerprint;
 use super::key_type::KeyType;
@@ -42,6 +42,7 @@ impl HostKey {
             match url.host.as_str() { // TODO: Use an enum so we cover all cases
                 "bitbucket.org"    => Ok(ssh_hostkey_bitbucket()),
                 "codeberg.org"     => Ok(ssh_hostkey_codeberg()),
+                "gitee.com"        => Ok(ssh_hostkey_gitee()),
                 "github.com"       => Ok(ssh_hostkey_github()),
                 "gitlab.com"       => Ok(ssh_hostkey_gitlab()),
                 "gitlab.gnome.org" => Ok(ssh_hostkey_gnome()),
