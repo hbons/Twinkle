@@ -13,6 +13,7 @@ pub mod keys {
         pub mod github;
         pub mod gitlab;
         pub mod gnome;
+        pub mod launchpad;
         pub mod savannah;
         pub mod sourceforge;
         pub mod sourcehut;
