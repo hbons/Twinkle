@@ -9,6 +9,7 @@ pub mod keys {
     pub mod known_hosts {
         pub mod bitbucket;
         pub mod codeberg;
+        pub mod devops;
         pub mod gitee;
         pub mod github;
         pub mod gitlab;

@@ -15,6 +15,7 @@ use crate::ssh::keys::known_hosts::launchpad::ssh_hostkey_launchpad;
 use crate::ssh::keys::known_hosts::savannah::ssh_hostkey_savannah;
 use crate::ssh::keys::known_hosts::sourceforge::ssh_hostkey_sourceforge;
 use crate::ssh::keys::known_hosts::sourcehut::ssh_hostkey_sourcehut;
+use crate::ssh::keys::known_hosts::devops::ssh_hostkey_devops;
 
 use crate::ssh::keyscan::ssh_keyscan;
 use crate::ssh::keys::key_type::KeyType;
@@ -115,6 +116,16 @@ fn test_ssh_known_hostkey_sourceforge() {
 #[test]
 fn test_ssh_known_hostkey_launchpad() {
     let pinned_key = ssh_hostkey_launchpad();
+    let remote_key = ssh_keyscan(&pinned_key.host, None, KeyType::RSA).unwrap();
+
+    assert_eq!(pinned_key.fingerprint, remote_key.fingerprint);
+    assert_eq!(pinned_key.public_key, remote_key.public_key);
+}
+
+
+#[test]
+fn test_ssh_known_hostkey_devops() {
+    let pinned_key = ssh_hostkey_devops();
     let remote_key = ssh_keyscan(&pinned_key.host, None, KeyType::RSA).unwrap();
 
     assert_eq!(pinned_key.fingerprint, remote_key.fingerprint);
