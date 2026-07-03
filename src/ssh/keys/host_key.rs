@@ -11,6 +11,8 @@ use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 
+use crate::ssh::keys::known_hosts::savannah::ssh_hostkey_savannah;
+
 use super::known_hosts::bitbucket::*;
 use super::known_hosts::codeberg::*;
 use super::known_hosts::github::*;
@@ -37,13 +39,14 @@ pub struct HostKey {
 impl HostKey {
     pub fn for_known_host(url: &SshUrl, key_type: KeyType) -> Result<HostKey, Box<dyn Error>> {
         if key_type == KeyType::ED25519 {
-            match url.host.as_str() {
+            match url.host.as_str() { // TODO: Use an enum so we cover all cases
                 "bitbucket.org"    => Ok(ssh_hostkey_bitbucket()),
                 "codeberg.org"     => Ok(ssh_hostkey_codeberg()),
                 "github.com"       => Ok(ssh_hostkey_github()),
                 "gitlab.com"       => Ok(ssh_hostkey_gitlab()),
                 "gitlab.gnome.org" => Ok(ssh_hostkey_gnome()),
                 "git.sr.ht"        => Ok(ssh_hostkey_sourcehut()),
+                "git.savannah.org" => Ok(ssh_hostkey_savannah()),
                 _ => ssh_keyscan(url.host.as_str(), url.port, KeyType::ED25519),
             }
          } else {

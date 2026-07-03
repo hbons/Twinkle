@@ -7,13 +7,14 @@
 
 
 pub fn twinkle_host_ssh_settings_url(host: String) -> Option<&'static str> {
-    match host.as_str() {
-        "bitbucket.org"    => Some("https://bitbucket.org/account/settings/ssh-keys/"),
-        "codeberg.org"     => Some("https://codeberg.org/user/settings/keys"),
-        "github.com"       => Some("https://github.com/settings/keys"),
-        "gitlab.com"       => Some("https://gitlab.com/-/user_settings/ssh_keys"),
-        "gitlab.gnome.org" => Some("https://gitlab.gnome.org/-/user_settings/ssh_keys"),
-        "git.sr.ht"        => Some("https://meta.sr.ht/keys/ssh-keys"),
+    match host.as_str() { // TODO: Use an enum to cover all cases
+        "bitbucket.org"        => Some("https://bitbucket.org/account/settings/ssh-keys/"),
+        "codeberg.org"         => Some("https://codeberg.org/user/settings/keys"),
+        "github.com"           => Some("https://github.com/settings/keys"),
+        "gitlab.com"           => Some("https://gitlab.com/-/user_settings/ssh_keys"),
+        "gitlab.gnome.org"     => Some("https://gitlab.gnome.org/-/user_settings/ssh_keys"),
+        "git.sr.ht"            => Some("https://meta.sr.ht/keys/ssh-keys"),
+        "git.savannah.gnu.org" => Some("https://savannah.gnu.org/my/admin/editsshkeys.php"),
         _ => None
     }
 }
