@@ -151,7 +151,7 @@ pub fn twinkle_watch_local(repo: &TwinkleRepository) -> Result<(), Box<dyn Error
             }
         }
 
-        thread::sleep(Duration::from_secs(3 * 60));
+        thread::sleep(Duration::from_secs(3 * 60)); // TODO: Make configurable
     }
 }
 
@@ -205,7 +205,7 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
             log::info(&format!("✓ Committed. Now at {}", repo.current_head()?));
         } else {
             log::info(&format!("Nothing new to commit. Still at {}", repo.current_head()?));
-            return Ok(());
+            return Ok(()); // TODO: Also check unpushed commits
         }
 
         let branch = repo.branch().ok_or("Not on a branch")?;
