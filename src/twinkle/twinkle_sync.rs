@@ -208,6 +208,10 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
             return Ok(()); // TODO: Also check unpushed commits
         }
 
+        if repo.read_only() {
+            return Ok(());
+        }
+
         let branch = repo.branch().ok_or("Not on a branch")?;
 
         repo.git.lfs_install_pre_push_hook(Some(repo.git.GIT_SSH_COMMAND.clone()))?;

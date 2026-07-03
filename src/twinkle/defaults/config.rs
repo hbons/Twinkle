@@ -13,6 +13,7 @@ fn _twinkle_default_settings()
     vec![
         ("twinkle.enabled", "true"),
         ("twinkle.id", "80fa2cca2f73dd2105185daec982df7f20ac372ab5209bece55fdd04dc110c53"),
+        ("twinkle.readOnly", "false"),
 
         ("twinkle.pollingInterval", "3m"),
         ("twinkle.localInterval", "5m"),

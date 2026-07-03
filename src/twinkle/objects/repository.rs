@@ -96,6 +96,29 @@ impl TwinkleRepository {
 }
 
 
+// read_only
+impl TwinkleRepository {
+    pub fn read_only(&self) -> bool {
+        if let Ok(output) = self.git.config_get(&setting("readOnly")) {
+            if let Ok(value) = output.stdout.parse::<bool>() {
+                return value;
+            }
+        }
+
+        false
+    }
+
+    pub fn set_read_only(&self, value: bool) -> Result<(), Box<dyn Error>>{
+        self.git.config_set(
+            &setting("readOnly"),
+            &value.to_string()
+        )?;
+
+        Ok(())
+    }
+}
+
+
 // remote_url
 impl TwinkleRepository {
     pub fn remote_url(&self) -> Option<SshUrl> {
