@@ -16,6 +16,7 @@ pub fn twinkle_host_ssh_settings_url(host: String) -> Option<&'static str> {
         "gitlab.gnome.org"     => Some("https://gitlab.gnome.org/-/user_settings/ssh_keys"),
         "git.sr.ht"            => Some("https://meta.sr.ht/keys/ssh-keys"),
         "git.savannah.gnu.org" => Some("https://savannah.gnu.org/my/admin/editsshkeys.php"),
+        "git.code.sf.net"      => None, // TODO: Don't have a SourceForge account
         _ => None
     }
 }

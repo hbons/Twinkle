@@ -12,6 +12,7 @@ use crate::ssh::keys::known_hosts::github::ssh_hostkey_github;
 use crate::ssh::keys::known_hosts::gitlab::ssh_hostkey_gitlab;
 use crate::ssh::keys::known_hosts::gnome::ssh_hostkey_gnome;
 use crate::ssh::keys::known_hosts::savannah::ssh_hostkey_savannah;
+use crate::ssh::keys::known_hosts::sourceforge::ssh_hostkey_sourceforge;
 use crate::ssh::keys::known_hosts::sourcehut::ssh_hostkey_sourcehut;
 
 use crate::ssh::keyscan::ssh_keyscan;
@@ -93,6 +94,16 @@ fn test_ssh_known_savannah() {
 #[test]
 fn test_ssh_known_hostkey_gitee() {
     let pinned_key = ssh_hostkey_gitee();
+    let remote_key = ssh_keyscan(&pinned_key.host, None, KeyType::ED25519).unwrap();
+
+    assert_eq!(pinned_key.fingerprint, remote_key.fingerprint);
+    assert_eq!(pinned_key.public_key, remote_key.public_key);
+}
+
+
+#[test]
+fn test_ssh_known_hostkey_sourceforge() {
+    let pinned_key = ssh_hostkey_sourceforge();
     let remote_key = ssh_keyscan(&pinned_key.host, None, KeyType::ED25519).unwrap();
 
     assert_eq!(pinned_key.fingerprint, remote_key.fingerprint);

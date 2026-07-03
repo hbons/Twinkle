@@ -14,6 +14,7 @@ pub mod keys {
         pub mod gitlab;
         pub mod gnome;
         pub mod savannah;
+        pub mod sourceforge;
         pub mod sourcehut;
     }
 
