@@ -9,13 +9,13 @@ use crate::ssh::objects::url::SshUrl;
 
 use crate::twinkle::defaults::info::twinkle_default_info_attributes;
 use crate::twinkle::defaults::info::twinkle_default_info_exclude;
-use crate::twinkle::defaults::config::twinkle_default_settings;
+use crate::twinkle::defaults::config::twinkle_default_git_settings;
 use crate::twinkle::twinkle_init::init_welcome;
 
 
 #[test]
 fn test_twinkle_default_settings() {
-    let settings = twinkle_default_settings();
+    let settings = twinkle_default_git_settings();
     assert_eq!(settings.len(), 18);
 }
 

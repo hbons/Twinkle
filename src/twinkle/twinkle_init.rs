@@ -19,7 +19,7 @@ use super::objects::repository::TwinkleRepository;
 use super::defaults::info::twinkle_default_info_attributes;
 use super::defaults::info::twinkle_default_info_exclude;
 use super::defaults::common::{ COMMON_FIRST_COMMIT_MESSAGE, COMMON_FIRST_FILE };
-use super::defaults::config::twinkle_default_settings;
+use super::defaults::config::twinkle_default_git_settings;
 
 
 pub fn twinkle_init(
@@ -131,7 +131,7 @@ fn init_config(
     repo: &TwinkleRepository,
 ) -> Result<(), Box<dyn Error>>
 {
-    for (option, value) in twinkle_default_settings() {
+    for (option, value) in twinkle_default_git_settings() {
         repo.git.config_set(option, value)?;
     }
 

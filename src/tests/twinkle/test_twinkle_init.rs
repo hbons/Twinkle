@@ -11,7 +11,7 @@ use std::path::Path;
 use crate::git::objects::environment::GitEnvironment;
 use crate::ssh::objects::url::SshUrl;
 
-use crate::twinkle::defaults::config::twinkle_default_settings;
+use crate::twinkle::defaults::config::twinkle_default_git_settings;
 use crate::twinkle::defaults::info::twinkle_default_info_attributes;
 use crate::twinkle::defaults::info::twinkle_default_info_exclude;
 use crate::twinkle::twinkle_init::twinkle_init;
@@ -40,7 +40,7 @@ fn test_twinkle_init() {
     assert!(git.config_get("twinkle.id").is_ok());
     assert_eq!(git.config_get("remote.origin.url").unwrap().stdout, remote_url.to_string_standard());
 
-    for rule in twinkle_default_settings() {
+    for rule in twinkle_default_git_settings() {
         assert_eq!(git.config_get(rule.0).unwrap().stdout, rule.1);
     }
 

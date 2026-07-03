@@ -5,8 +5,33 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
+fn _twinkle_default_settings()
+-> Vec<(&'static str, &'static str)>
+{
+    // Just here to document all the settings
+
+    vec![
+        ("twinkle.enabled", "true"),
+        ("twinkle.id", "80fa2cca2f73dd2105185daec982df7f20ac372ab5209bece55fdd04dc110c53"),
+
+        ("twinkle.pollingInterval", "3m"),
+        ("twinkle.localInterval", "5m"),
+
+        ("twinkle.firstSync", "0"),
+        ("twinkle.lastSync", "0"),
+        ("twinkle.lastCheck", "0"),
+
+        ("twinkle.notify.enabled", "true"),
+        ("twinkle.notify.url", "wws://notify.sparkleshare.org"),
+
+        ("twinkle.lfs.enabled", "true"),
+        ("twinkle.lfs.sizeThreshold", "1m"),
+    ]
+}
+
+
 /// Docs: https://git-scm.com/docs/git-config#_variables
-pub fn twinkle_default_settings()
+pub fn twinkle_default_git_settings()
 -> Vec<(&'static str, &'static str)>
 {
     vec![
