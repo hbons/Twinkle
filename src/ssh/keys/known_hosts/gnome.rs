@@ -17,7 +17,7 @@ pub fn ssh_hostkey_gnome() -> HostKey {
 
     HostKey {
         host: "gitlab.gnome.org".into(),
-        is_trusted: true,
+        is_trusted: true, // TODO: TrustedHostKey type
         key_type: KeyType::ED25519,
         public_key: "AAAAC3NzaC1lZDI1NTE5AAAAIHG6b3deoYMPwKEu9Sj+y6MBHYYUKQiAnta/go3aNv7R".into(),
         fingerprint: Some(Fingerprint::SHA256("Y9G4dWiIfi53LR3InJWsIbv4lekUHonq/HrqTTm/rcw".into())),

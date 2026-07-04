@@ -11,6 +11,10 @@ use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 
+use crate::ssh::keys::known_hosts::devops::ssh_hostkey_devops;
+use crate::ssh::keys::known_hosts::launchpad::ssh_hostkey_launchpad;
+use crate::ssh::keys::known_hosts::sourceforge::ssh_hostkey_sourceforge;
+
 use super::known_hosts::bitbucket::*; // TODO: Use prelude
 use super::known_hosts::codeberg::*;
 use super::known_hosts::gitee::*;
@@ -39,15 +43,18 @@ pub struct HostKey {
 impl HostKey {
     pub fn for_known_host(url: &SshUrl, key_type: KeyType) -> Result<HostKey, Box<dyn Error>> {
         if key_type == KeyType::ED25519 {
-            match url.host.as_str() { // TODO: Use an enum so we cover all cases
-                "bitbucket.org"    => Ok(ssh_hostkey_bitbucket()),
-                "codeberg.org"     => Ok(ssh_hostkey_codeberg()),
-                "gitee.com"        => Ok(ssh_hostkey_gitee()),
-                "github.com"       => Ok(ssh_hostkey_github()),
-                "gitlab.com"       => Ok(ssh_hostkey_gitlab()),
-                "gitlab.gnome.org" => Ok(ssh_hostkey_gnome()),
-                "git.sr.ht"        => Ok(ssh_hostkey_sourcehut()),
-                "git.savannah.org" => Ok(ssh_hostkey_savannah()),
+            match url.host.as_str() { // TODO: Use .parse and an enum so we cover all cases
+                "bitbucket.org"     => Ok(ssh_hostkey_bitbucket()),
+                "codeberg.org"      => Ok(ssh_hostkey_codeberg()),
+                "gitee.com"         => Ok(ssh_hostkey_gitee()),
+                "github.com"        => Ok(ssh_hostkey_github()),
+                "gitlab.com"        => Ok(ssh_hostkey_gitlab()),
+                "gitlab.gnome.org"  => Ok(ssh_hostkey_gnome()),
+                "git.sr.ht"         => Ok(ssh_hostkey_sourcehut()),
+                "git.savannah.org"  => Ok(ssh_hostkey_savannah()),
+                "launchpad.net"     => Ok(ssh_hostkey_launchpad()),
+                "ssh.dev.azure.com" => Ok(ssh_hostkey_devops()),
+                "git.code.sf.net"   => Ok(ssh_hostkey_sourceforge()),
                 _ => ssh_keyscan(url.host.as_str(), url.port, KeyType::ED25519),
             }
          } else {
