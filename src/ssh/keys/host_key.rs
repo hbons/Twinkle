@@ -11,16 +11,16 @@ use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 
-use crate::ssh::keys::known_hosts::devops::ssh_hostkey_devops;
-use crate::ssh::keys::known_hosts::launchpad::ssh_hostkey_launchpad;
-use crate::ssh::keys::known_hosts::sourceforge::ssh_hostkey_sourceforge;
-
 use super::known_hosts::bitbucket::*; // TODO: Use prelude
 use super::known_hosts::codeberg::*;
+use super::known_hosts::devops::*;
 use super::known_hosts::gitee::*;
 use super::known_hosts::github::*;
 use super::known_hosts::gitlab::*;
 use super::known_hosts::gnome::*;
+use super::known_hosts::kde::*;
+use super::known_hosts::launchpad::*;
+use super::known_hosts::sourceforge::*;
 use super::known_hosts::sourcehut::*;
 use super::known_hosts::savannah::*;
 
@@ -52,6 +52,7 @@ impl HostKey {
                 "gitlab.gnome.org"  => Ok(ssh_hostkey_gnome()),
                 "git.sr.ht"         => Ok(ssh_hostkey_sourcehut()),
                 "git.savannah.org"  => Ok(ssh_hostkey_savannah()),
+                "invent.kde.org"    => Ok(ssh_hostkey_kde()),
                 "launchpad.net"     => Ok(ssh_hostkey_launchpad()),
                 "ssh.dev.azure.com" => Ok(ssh_hostkey_devops()),
                 "git.code.sf.net"   => Ok(ssh_hostkey_sourceforge()),

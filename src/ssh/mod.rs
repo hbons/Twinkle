@@ -14,6 +14,7 @@ pub mod keys {
         pub mod github;
         pub mod gitlab;
         pub mod gnome;
+        pub mod kde;
         pub mod launchpad;
         pub mod savannah;
         pub mod sourceforge;
@@ -22,6 +23,7 @@ pub mod keys {
 
     pub mod fingerprint;
     pub mod host_key;
+    pub mod known_host;
     pub mod key_pair;
     pub mod key_size;
     pub mod key_type;

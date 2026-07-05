@@ -5,7 +5,6 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-
 pub fn twinkle_host_ssh_settings_url(host: String) -> Option<&'static str> {
     match host.as_str() { // TODO: Use an enum to cover all cases
         "bitbucket.org"        => Some("https://bitbucket.org/account/settings/ssh-keys/"),
@@ -18,6 +17,7 @@ pub fn twinkle_host_ssh_settings_url(host: String) -> Option<&'static str> {
         "github.com"           => Some("https://github.com/settings/keys"),
         "gitlab.com"           => Some("https://gitlab.com/-/user_settings/ssh_keys"),
         "gitlab.gnome.org"     => Some("https://gitlab.gnome.org/-/user_settings/ssh_keys"),
+        "invent.kde.org"       => Some("https://invent.kde.org/-/user_settings/ssh_keys"),
         "ssh.dev.azure.com"    => None, // No universal link available
         _ => None
     }
