@@ -22,3 +22,15 @@ fn test_git_object_environment_run() {
     let result = git.run("versiasdfgasdfg", &["--build-options"]);
     assert!(result.is_err());
 }
+
+
+#[test]
+fn test_git_object_environment_run_with_env() {
+    let git = GitEnvironment::default();
+    let env: Vec<(String, String)> = vec![
+        ("GIT_CONFIG_PARAMETERS".into(), "'user.name=Test Bot'".into()),
+    ];
+
+    let result = git.run_with_env("config", &["user.name"], env);
+    assert_eq!(result.unwrap().stdout.trim(), "Test Bot");
+}
