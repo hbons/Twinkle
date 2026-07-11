@@ -181,6 +181,6 @@ fn init_lfs(
 pub fn init_welcome(url: &SshUrl) -> String {
     format!(
         "# Hello!\nSync with `{}` was successfully set up.",
-        url.original.to_string()
+        url.original
     )
 }

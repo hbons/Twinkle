@@ -14,6 +14,9 @@ impl GitEnvironment {
     pub fn version(&self) -> Option<String> {
         self.run("--version", &[])
             .ok()
-            .map(|v| v.stdout.trim().to_string())
+            .map(|v| v.stdout
+                .trim()
+                .to_string()
+            )
     }
 }
