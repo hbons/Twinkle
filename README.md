@@ -19,7 +19,7 @@ cargo install --path .
 ## 2. Setup
 
 > [!CAUTION]
-> Twinkle is still in preview. Data loss is unlikely but possible. Run commands with `DEBUG=1 twinkle <COMMAND>` to see what's going on under the hood.
+> ***Twinkle is still in preview***. Data loss is unlikely but possible. Run commands with `DEBUG=1 twinkle <COMMAND>` to see what's going on under the hood.
 
 
 ### 2.1. Starting with a remote repository
