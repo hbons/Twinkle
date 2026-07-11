@@ -107,6 +107,9 @@ impl GitEnvironment {
     pub fn lfs_version(&self) -> Option<String> {
         self.run("lfs", &["--version"])
             .ok()
-            .map(|v| v.stdout.trim().to_string())
+            .map(|v| v.stdout
+                .trim()
+                .to_string()
+            )
     }
 }

@@ -11,6 +11,7 @@ use std::path::Path;
 
 use crate::git::objects::environment::GitEnvironment;
 
+use crate::log;
 use crate::ssh::keygen::ssh_keygen_fingerprint;
 use crate::ssh::keys::host_key::HostKey;
 use crate::ssh::keys::key_pair::KeyPair;
@@ -87,6 +88,7 @@ pub fn twinkle_clone_start(
 
     if let Ok(lfs_files) = repo.git.lfs_ls_files() {
         if !lfs_files.is_empty() {
+            log::info("LFS files detected. Fetching…");
             repo.set_lfs_enabled(true)?;
             repo.git.lfs_fetch()?;
         }

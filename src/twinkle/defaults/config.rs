@@ -39,16 +39,15 @@ fn _twinkle_default_settings()
         (key(K_ENABLED), "true"),
         (key(K_ID), "80fa2cca2f73dd2105185daec982df7f20ac372ab5209bece55fdd04dc110c53"),
         (key(K_READONLY), "false"),
-
         (key(K_POLLING_INTERVAL), "3m"),
-        // ("twinkle.localInterval", "5m"), // TODO: remove?
-
         (key(K_LAST_SYNC), "0"),
         (key(K_LAST_CHECK), "0"),
 
+        // Notify
         (key(K_NOTIFY_ENABLED), "true"),
         (key(K_NOTIFY_URL), "wss://notify.sparkleshare.org"),
 
+        // LFS
         (key(K_LFS_ENABLED), "true"),
         (key(K_LFS_SIZE_THRESHOLD), "1m"),
     ]
