@@ -113,6 +113,10 @@ impl App {
         let mut repo = twinkle_clone_start(&ssh_url, None, &path)?;
         twinkle_clone_complete(&mut repo, None)?;
 
+        if repo.git.lfs_version().is_none() {
+            log::warning("git-lfs command not found");
+        }
+
         Ok(())
 
         // loop {

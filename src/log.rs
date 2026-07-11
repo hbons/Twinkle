@@ -36,6 +36,11 @@ pub fn debug_base(message: &str) {
 }
 
 
+pub fn warning(message: &str) {
+    let app = env!("CARGO_PKG_NAME");
+    eprintln!("\x1b[93m{app} warning:\x1b[0m {message}");
+}
+
 pub fn error(message: &str) {
     let app = env!("CARGO_PKG_NAME");
     eprintln!("\x1b[31m{app} error:\x1b[0m {message}");
