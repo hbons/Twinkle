@@ -23,7 +23,6 @@ pub mod keys {
 
     pub mod fingerprint;
     pub mod host_key;
-    pub mod known_host;
     pub mod key_pair;
     pub mod key_size;
     pub mod key_type;

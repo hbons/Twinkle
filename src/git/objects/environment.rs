@@ -38,16 +38,16 @@ impl Default for GitEnvironment {
         GitEnvironment {
             working_dir,
 
-            LC_ALL: "C".to_string(), // Override all locale settings
+            LC_ALL: "C".into(), // Override all locale settings
 
-            GIT_CONFIG_GLOBAL:   "/dev/null".to_string(), // Don't use the global gitconfig
-            GIT_CONFIG_SYSTEM:   "/dev/null".to_string(), // Don't use the system gitconfig
-            GIT_CONFIG_NOSYSTEM: "1".to_string(), // Don't use the system gitconfig
+            GIT_CONFIG_GLOBAL:   "/dev/null".into(), // Don't use the global gitconfig
+            GIT_CONFIG_SYSTEM:   "/dev/null".into(), // Don't use the system gitconfig
+            GIT_CONFIG_NOSYSTEM: "1".into(), // Don't use the system gitconfig
 
             GIT_EXEC_PATH: PathBuf::from("/app/share/libexec/git-core"),
-            GIT_PAGER: "".to_string(), // Don't use a pager for large output
-            GIT_SSH_COMMAND: "ssh".to_string(), // Use a custom SSH command
-            GIT_TERMINAL_PROMPT: "false".to_string(), // Don't hang on prompts
+            GIT_PAGER: "".into(), // Don't use a pager for large output
+            GIT_SSH_COMMAND: "ssh".into(), // Use a custom SSH command
+            GIT_TERMINAL_PROMPT: "false".into(), // Don't hang on prompts
         }
     }
 }

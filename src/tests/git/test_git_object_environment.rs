@@ -5,7 +5,17 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
+use std::path::Path;
 use crate::git::objects::environment::GitEnvironment;
+
+
+#[test]
+fn test_git_object_environment_new() {
+    let path = Path::new("/test/path");
+    let git = GitEnvironment::new(path);
+
+    assert_eq!(git.working_dir, path);
+}
 
 
 #[test]
@@ -33,4 +43,13 @@ fn test_git_object_environment_run_with_env() {
 
     let result = git.run_with_env("config", &["user.name"], env);
     assert_eq!(result.unwrap().stdout.trim(), "Test Bot");
+}
+
+
+#[test]
+fn test_git_object_environment_get_environment() {
+    let git = GitEnvironment::default();
+    let env = git.get_environment();
+
+    assert_eq!(env.len(), 8);
 }
