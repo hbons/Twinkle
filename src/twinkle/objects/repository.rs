@@ -37,9 +37,6 @@ use crate::twinkle::defaults::config::{
 use crate::twinkle::twinkle_lfs::TWINKLE_LFS_THRESHOLD;
 
 
-
-
-
 #[derive(Clone, Debug, Default)]
 pub struct TwinkleRepository {
     pub path: PathBuf,

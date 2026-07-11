@@ -11,7 +11,7 @@ pub const COMMON_APP_NAME: &str = "Twinkle";
 pub const COMMON_MAINTAINER_NAME: &str = "Hylke";
 pub const COMMON_MAINTAINER_URL: &str = "https://mastodon.social/@hbons";
 
-pub const COMMON_ID_FILE: &str = ".twinkle.conf";
+pub const COMMON_CONFIG_FILE: &str = ".twinkle/config";
 
 pub const COMMON_FIRST_FILE: &str = "TWINKLE.md";
 pub const COMMON_FIRST_COMMIT_MESSAGE: &str = "Set up Twinkle";

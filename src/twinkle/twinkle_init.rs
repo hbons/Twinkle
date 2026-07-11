@@ -12,7 +12,8 @@ use std::path::Path;
 use crate::ssh::keys::key_pair::KeyPair;
 use crate::ssh::objects::url::SshUrl;
 use crate::git::objects::user::GitUser;
-use crate::twinkle::defaults::common::COMMON_ID_FILE;
+use crate::twinkle::defaults::common::COMMON_CONFIG_FILE;
+use crate::twinkle::defaults::config::{ K_ID, key };
 use crate::twinkle::twinkle_util::twinkle_random_id;
 
 use super::objects::repository::TwinkleRepository;
@@ -50,25 +51,29 @@ pub fn init_id(
     repo: &TwinkleRepository,
 ) -> Result<(), Box<dyn Error>>
 {
-    let id_file = Path::new(COMMON_ID_FILE);
-    let abs_id_file = repo.git.working_dir.join(id_file);
-    let name = &format!("{}.id", "twinkle"); // TODO: Use a const
+    let config_file = Path::new(COMMON_CONFIG_FILE);
+    let abs_config_file = repo.git.working_dir.join(config_file);
 
-    let id = if abs_id_file.exists() {
+    let id =
+        if abs_config_file.exists() {
             repo.git.config_file_get(
-                id_file,
-                name
+                config_file,
+                &key(K_ID),
             )?.stdout // TODO: validate type, twinkleID
         } else {
+            if let Some(parent) = abs_config_file.parent() {
+                fs::create_dir_all(parent)?;
+            }
+
             let new_id = twinkle_random_id()?;
 
             repo.git.config_file_set(
-                id_file,
-                name,
+                config_file,
+                &key(K_ID),
                 &new_id,
             )?;
 
-            repo.git.add(id_file)?;
+            repo.git.add(config_file)?;
             new_id
         };
 
@@ -85,10 +90,10 @@ pub fn init_first_commit(
         init_welcome(&repo.remote_url().ok_or("Missing remote.url")?)
     )?;
 
-    let id_file = Path::new(COMMON_ID_FILE);
+    let config_file = Path::new(COMMON_CONFIG_FILE);
 
-    if repo.abs_path(id_file).exists() {
-        repo.git.add(id_file)?;
+    if repo.abs_path(config_file).exists() {
+        repo.git.add(config_file)?;
     }
 
     repo.git.add(Path::new(COMMON_FIRST_FILE))?;

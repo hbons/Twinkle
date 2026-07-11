@@ -61,7 +61,7 @@ fn test_twinkle_init() {
     );
 
 
-    let path = Path::new("/tmp/twinkle_tests/.twinkle.conf");
+    let path = Path::new("/tmp/twinkle_tests/.twinkle/config"); // TODO: use the const
     assert!(path.exists());
 
     let path = Path::new("/tmp/twinkle_tests/TWINKLE.md");
