@@ -187,7 +187,7 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
         init_id(repo)?;
         repo.git.lfs_config_filters(Some(repo.git.GIT_SSH_COMMAND.clone()))?;
 
-        repo.git.add_all()?;
+        repo.git.add_all()?; // TODO: Loop through files and add one-by-one
         let status = repo.git.status()?;
 
         if repo.lfs_enabled() {

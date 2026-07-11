@@ -33,7 +33,7 @@ use super::super::objects::url::SshUrl;
 #[derive(Clone, Debug, Default)]
 pub struct HostKey {
     pub host: String,
-    pub is_trusted: bool,
+    pub is_trusted: bool, // TODO: TrustedHostKey and UntrustedHostKey types
     pub key_type: KeyType,
     pub public_key: String,
     pub fingerprint: Option<Fingerprint>,

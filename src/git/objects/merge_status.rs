@@ -69,6 +69,7 @@ impl fmt::Display for GitMergeStatus {
             GitMergeStatus::QQ => "??",
             GitMergeStatus::XX => "!!",
         };
+
         write!(f, "{}", status)
     }
 }
