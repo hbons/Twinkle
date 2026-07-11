@@ -11,6 +11,7 @@ pub const K_READONLY: &str = "readonly";
 pub const K_POLLING_INTERVAL: &str = "pollingInterval";
 pub const K_LAST_SYNC: &str = "lastSync";
 pub const K_LAST_CHECK: &str = "lastCheck";
+pub const K_MAX_FILE_SIZE: &str = "maxFileSize";
 
 // Notify
 pub const K_NOTIFY_ENABLED: &str = "notify.enabled";
@@ -19,6 +20,7 @@ pub const K_NOTIFY_URL: &str = "notify.url";
 // LFS
 pub const K_LFS_ENABLED: &str = "lfs.enabled";
 pub const K_LFS_SIZE_THRESHOLD: &str = "lfs.sizeThreshold";
+pub const K_LFS_MAX_FILE_SIZE: &str = "lfs.maxFileSize";
 
 
 const SECTION: &str = "twinkle"; // TODO
