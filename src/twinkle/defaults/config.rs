@@ -5,26 +5,25 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-pub const C_ENABLED: &str = "enabled";
-pub const C_ID: &str = "id";
-pub const C_READONLY: &str = "readonly";
-pub const C_POLLING_INTERVAL: &str = "pollingInterval";
-pub const C_FIRST_SYNC: &str = "firstSync";
-pub const C_LAST_SYNC: &str = "lastSync";
-pub const C_LAST_CHECK: &str = "lastCheck";
+pub const K_ENABLED: &str = "enabled";
+pub const K_ID: &str = "id";
+pub const K_READONLY: &str = "readonly";
+pub const K_POLLING_INTERVAL: &str = "pollingInterval";
+pub const K_LAST_SYNC: &str = "lastSync";
+pub const K_LAST_CHECK: &str = "lastCheck";
 
 // Notify
-pub const C_NOTIFY_ENABLED: &str = "notify.enabled";
-pub const C_NOTIFY_URL: &str = "notify.url";
+pub const K_NOTIFY_ENABLED: &str = "notify.enabled";
+pub const K_NOTIFY_URL: &str = "notify.url";
 
 // LFS
-pub const C_LFS_ENABLED: &str = "lfs.enabled";
-pub const C_LFS_SIZE_THRESHOLD: &str = "lfs.sizeThreshold";
+pub const K_LFS_ENABLED: &str = "lfs.enabled";
+pub const K_LFS_SIZE_THRESHOLD: &str = "lfs.sizeThreshold";
 
 
 const SECTION: &str = "twinkle"; // TODO
 
-pub fn setting(setting: &str) -> String {
+pub fn key(setting: &str) -> String {
     format!("{SECTION}.{setting}")
 }
 
@@ -35,22 +34,21 @@ fn _twinkle_default_settings()
     // Just here to document all the settings
 
     vec![
-        (setting(C_ENABLED), "true"),
-        (setting(C_ID), "80fa2cca2f73dd2105185daec982df7f20ac372ab5209bece55fdd04dc110c53"),
-        (setting(C_READONLY), "false"),
+        (key(K_ENABLED), "true"),
+        (key(K_ID), "80fa2cca2f73dd2105185daec982df7f20ac372ab5209bece55fdd04dc110c53"),
+        (key(K_READONLY), "false"),
 
-        (setting(C_POLLING_INTERVAL), "3m"),
+        (key(K_POLLING_INTERVAL), "3m"),
         // ("twinkle.localInterval", "5m"), // TODO: remove?
 
-        (setting(C_FIRST_SYNC), "0"),
-        (setting(C_LAST_SYNC), "0"),
-        (setting(C_LAST_CHECK), "0"),
+        (key(K_LAST_SYNC), "0"),
+        (key(K_LAST_CHECK), "0"),
 
-        (setting(C_NOTIFY_ENABLED), "true"),
-        (setting(C_NOTIFY_URL), "wss://notify.sparkleshare.org"),
+        (key(K_NOTIFY_ENABLED), "true"),
+        (key(K_NOTIFY_URL), "wss://notify.sparkleshare.org"),
 
-        (setting(C_LFS_ENABLED), "true"),
-        (setting(C_LFS_SIZE_THRESHOLD), "1m"),
+        (key(K_LFS_ENABLED), "true"),
+        (key(K_LFS_SIZE_THRESHOLD), "1m"),
     ]
 }
 

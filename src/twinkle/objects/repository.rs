@@ -23,15 +23,15 @@ use crate::ssh::objects::config::SshConfig;
 use crate::ssh::objects::url::SshUrl;
 use crate::twinkle::defaults::common::twinkle_default_polling_interval;
 use crate::twinkle::defaults::config::{
-    C_ENABLED,
-    C_ID,
-    C_LAST_CHECK,
-    C_LAST_SYNC,
-    C_LFS_ENABLED,
-    C_LFS_SIZE_THRESHOLD,
-    C_POLLING_INTERVAL,
-    C_READONLY,
-    setting
+    K_ENABLED,
+    K_ID,
+    K_LAST_CHECK,
+    K_LAST_SYNC,
+    K_LFS_ENABLED,
+    K_LFS_SIZE_THRESHOLD,
+    K_POLLING_INTERVAL,
+    K_READONLY,
+    key
 };
 
 use crate::twinkle::twinkle_lfs::TWINKLE_LFS_THRESHOLD;
@@ -65,7 +65,7 @@ impl TwinkleRepository {
 // enabled
 impl TwinkleRepository {
     pub fn enabled(&self) -> bool {
-        if let Ok(output) = self.git.config_get(&setting(C_ENABLED)) {
+        if let Ok(output) = self.git.config_get(&key(K_ENABLED)) {
             if let Ok(value) = output.stdout.parse::<bool>() {
                 return value;
             }
@@ -76,7 +76,7 @@ impl TwinkleRepository {
 
     pub fn set_enabled(&self, value: bool) -> Result<(), Box<dyn Error>>{
         self.git.config_set(
-            &setting(C_ENABLED),
+            &key(K_ENABLED),
             &value.to_string()
         )?;
 
@@ -89,13 +89,13 @@ impl TwinkleRepository {
 impl TwinkleRepository {
     /// Random SHA-256 stored in .git/config
     pub fn id(&self) -> Option<String> {
-        self.git.config_get(&setting(C_ID)).ok()
+        self.git.config_get(&key(K_ID)).ok()
             .map(|r| r.stdout)
     }
 
     pub fn set_id(&self, value: &String) -> Result<(), Box<dyn Error>>{
         self.git.config_set(
-            &setting(C_ID),
+            &key(K_ID),
             value
         )?;
 
@@ -107,7 +107,7 @@ impl TwinkleRepository {
 // read_only
 impl TwinkleRepository {
     pub fn read_only(&self) -> bool {
-        if let Ok(output) = self.git.config_get(&setting(C_READONLY)) {
+        if let Ok(output) = self.git.config_get(&key(K_READONLY)) {
             if let Ok(value) = output.stdout.parse::<bool>() {
                 return value;
             }
@@ -118,7 +118,7 @@ impl TwinkleRepository {
 
     pub fn set_read_only(&self, value: bool) -> Result<(), Box<dyn Error>>{
         self.git.config_set(
-            &setting(C_READONLY),
+            &key(K_READONLY),
             &value.to_string()
         )?;
 
@@ -173,7 +173,7 @@ impl TwinkleRepository {
     pub fn polling_interval(&self) -> Duration {
         let default = twinkle_default_polling_interval().as_secs();
 
-        match self.git.config_get(&setting(C_POLLING_INTERVAL)) {
+        match self.git.config_get(&key(K_POLLING_INTERVAL)) {
             Ok(output) => Duration::from_mins(parse_polling_interval(&output.stdout)),
             Err(_) => Duration::from_secs(default),
         }
@@ -181,7 +181,7 @@ impl TwinkleRepository {
 
     pub fn set_polling_interval(&self, value: Duration) -> Result<(), Box<dyn Error>>{
         self.git.config_set(
-            &setting(C_POLLING_INTERVAL),
+            &key(K_POLLING_INTERVAL),
             &value.as_secs().to_string(),
         )?;
 
@@ -204,7 +204,7 @@ pub fn parse_polling_interval(s: &str) -> u64 {
 // last_synced, last_checked
 impl TwinkleRepository {
     pub fn last_checked(&self) -> Option<i64> {
-        self.git.config_get(&setting(C_LAST_CHECK))
+        self.git.config_get(&key(K_LAST_CHECK))
             .ok()
             .and_then(|v|
                 v.stdout.parse::<i64>().ok()
@@ -213,7 +213,7 @@ impl TwinkleRepository {
 
     pub fn set_last_checked(&self, value: i64) -> Result<(), Box<dyn Error>>{
         self.git.config_set(
-            &setting(C_LAST_CHECK),
+            &key(K_LAST_CHECK),
             &value.to_string(),
         )?;
 
@@ -222,7 +222,7 @@ impl TwinkleRepository {
 
 
     pub fn last_synced(&self) -> Option<i64> {
-        self.git.config_get(&setting(C_LAST_SYNC))
+        self.git.config_get(&key(K_LAST_SYNC))
             .ok()
             .and_then(|v|
                 v.stdout.parse::<i64>().ok()
@@ -231,7 +231,7 @@ impl TwinkleRepository {
 
     pub fn set_last_synced(&self, value: i64) -> Result<(), Box<dyn Error>>{
         self.git.config_set(
-            &setting(C_LAST_SYNC),
+            &key(K_LAST_SYNC),
             &value.to_string(),
         )?;
 
@@ -243,7 +243,7 @@ impl TwinkleRepository {
 // lfs
 impl TwinkleRepository {
     pub fn lfs_enabled(&self) -> bool {
-        if let Ok(output) = self.git.config_get(&setting(C_LFS_ENABLED)) {
+        if let Ok(output) = self.git.config_get(&key(K_LFS_ENABLED)) {
             if let Ok(value) = output.stdout.parse::<bool>() {
                 return value;
             }
@@ -254,7 +254,7 @@ impl TwinkleRepository {
 
     pub fn set_lfs_enabled(&self, value: bool) -> Result<(), Box<dyn Error>>{
         self.git.config_set(
-            &setting(C_LFS_ENABLED),
+            &key(K_LFS_ENABLED),
             &value.to_string(),
         )?;
 
@@ -265,7 +265,7 @@ impl TwinkleRepository {
     pub fn lfs_size_threshold(&self) -> u64 {
         let default = TWINKLE_LFS_THRESHOLD;
 
-        match self.git.config_get(&setting(C_LFS_SIZE_THRESHOLD)) {
+        match self.git.config_get(&key(K_LFS_SIZE_THRESHOLD)) {
             Ok(output) => parse_lfs_size(&output.stdout),
             Err(_) => default,
         }
@@ -273,7 +273,7 @@ impl TwinkleRepository {
 
     pub fn set_lfs_size_threshold(&self, value: u64) -> Result<(), Box<dyn Error>>{
         self.git.config_set(
-            &setting(C_LFS_SIZE_THRESHOLD),
+            &key(K_LFS_SIZE_THRESHOLD),
             &value.to_string(),
         )?;
 
