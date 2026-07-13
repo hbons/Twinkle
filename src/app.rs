@@ -94,11 +94,11 @@ impl Default for App {
 
             // Runtime
             repos_home:      xdg_documents_dir.join(app_name),
-            app_config_home: xdg_config_home.join(format!("{command_name}")),
+            app_config_home: xdg_config_home.join(command_name),
             app_keys_dir:    xdg_config_home.join(format!("{command_name}/keys")),
             repos_file:      xdg_config_home.join(format!("{command_name}/repos.json")),
-            app_data_home:   xdg_data_home.join(format!("{command_name}")),
-            app_cache_home:  xdg_cache_home.join(format!("{command_name}")),
+            app_data_home:   xdg_data_home.join(command_name),
+            app_cache_home:  xdg_cache_home.join(command_name),
 
             // config,
         }

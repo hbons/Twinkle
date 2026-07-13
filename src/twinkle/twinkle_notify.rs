@@ -29,19 +29,21 @@ pub fn twinkle_notify(repo: &TwinkleRepository) -> Result<()> {
 
             let mut prev_path = PathBuf::new();
 
-            for path in event.unwrap().paths {
-                if path.components().any(|c| c.as_os_str() == ".git") {
-                    continue;
+            if let Ok(event) = event {
+                for path in event.paths {
+                    if path.components().any(|c| c.as_os_str() == ".git") {
+                        continue;
+                    }
+
+                    if path == prev_path {
+                        continue;
+                    }
+
+                    log::debug(&format!("Notify | Detected a change: `{}`", path.to_string_lossy()));
+                    repo.set_has_local_changes(true);
+
+                    prev_path = path;
                 }
-
-                if path == prev_path {
-                    continue;
-                }
-
-                log::debug(&format!("Notify | Detected a change: `{}`", path.to_string_lossy()));
-                repo.set_has_local_changes(true);
-
-                prev_path = path;
             }
         }
     }

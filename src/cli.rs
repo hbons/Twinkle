@@ -246,11 +246,11 @@ impl App {
 
         println!();
         println!("       {} {}", cli_dimmed("Path:"), cli_bold(&path));
-        println!("     {} {}", cli_dimmed("Remote:"), repo.remote_url().unwrap());
+        println!("     {} {}", cli_dimmed("Remote:"), repo.remote_url().map(|u| u.to_string()).unwrap_or_else(|| "–".to_string()));
         println!("     {} {}", cli_dimmed("Branch:"), repo.branch().unwrap_or("err".to_string()));
         println!();
         println!("    {} {}", cli_dimmed("Enabled:"), repo.enabled());
-        println!("         {} {}", cli_dimmed("ID:"), repo.id().unwrap());
+        println!("         {} {}", cli_dimmed("ID:"), repo.id().unwrap_or("–".into()));
         println!("        {} {}", cli_dimmed("LFS:"), twinkle_pretty_bool(repo.lfs_enabled()));
         // println!("       {} {}", cli_dimmed("User:"), repo.user().unwrap_or("default"));
         println!();
