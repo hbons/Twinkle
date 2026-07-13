@@ -5,8 +5,8 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-use crate::twinkle::objects::repository::parse_lfs_size;
-use crate::twinkle::objects::repository::parse_polling_interval;
+use crate::twinkle::objects::repository_config::parse_lfs_size;
+use crate::twinkle::objects::repository_config::parse_polling_interval;
 
 
 #[test]

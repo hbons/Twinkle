@@ -14,6 +14,9 @@ pub mod defaults {
 
 pub mod objects {
     pub mod repository;
+    pub mod repository_files;
+    pub mod repository_config;
+    pub mod repository_notify;
 }
 
 pub mod twinkle_clone;
