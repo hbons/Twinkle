@@ -8,7 +8,8 @@
 use std::error::Error;
 use std::fs;
 use std::path::{ Path, PathBuf };
-use std::sync::{ Arc, Mutex };
+use std::sync::Arc;
+use std::sync::atomic::{ AtomicBool, Ordering };
 
 use crate::git::objects::environment::GitEnvironment;
 use crate::git::objects::reference::GitReference;
@@ -19,9 +20,9 @@ pub struct TwinkleRepository {
     pub path: PathBuf,
     pub git: GitEnvironment,
 
-    is_busy: Arc<Mutex<bool>>,
-    has_local_changes:  Arc<Mutex<bool>>,
-    has_remote_changes: Arc<Mutex<bool>>,
+    is_busy: Arc<AtomicBool>,
+    has_local_changes: Arc<AtomicBool>,
+    has_remote_changes: Arc<AtomicBool>,
 }
 
 
@@ -77,34 +78,28 @@ impl TwinkleRepository {
 // Sync
 impl TwinkleRepository {
     pub fn is_busy(&self) -> bool {
-        *self.is_busy.lock().unwrap()
+        self.is_busy.load(Ordering::Acquire)
     }
 
     pub fn set_is_busy(&self, value: bool) {
-        if let Ok(mut v) = self.is_busy.lock() {
-            *v = value;
-        }
+        self.is_busy.store(value, Ordering::Release);
     }
 
 
     pub fn has_local_changes(&self) -> bool {
-        *self.has_local_changes.lock().unwrap()
+        self.has_local_changes.load(Ordering::Acquire)
     }
 
     pub fn set_has_local_changes(&self, value: bool) {
-        if let Ok(mut v) = self.has_local_changes.lock() {
-            *v = value;
-        }
+        self.has_local_changes.store(value, Ordering::Release);
     }
 
 
     pub fn has_remote_changes(&self) -> bool {
-        *self.has_remote_changes.lock().unwrap()
+        self.has_remote_changes.load(Ordering::Acquire)
     }
 
     pub fn set_has_remote_changes(&self, value: bool) {
-        if let Ok(mut v) = self.has_remote_changes.lock() {
-            *v = value;
-        }
+        self.has_remote_changes.store(value, Ordering::Release);
     }
 }
