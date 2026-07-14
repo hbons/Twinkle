@@ -13,6 +13,8 @@ The command-line version of [SparkleShare](https://sparkleshare.org). Sync your 
 cargo install --path .
 ```
 
+[![Flatpak](https://github.com/hbons/Twinkle/actions/workflows/flatpak.yml/badge.svg)](https://github.com/hbons/Twinkle/actions/workflows/flatpak.yml)
+
 <br>
 
 
