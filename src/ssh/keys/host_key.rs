@@ -11,19 +11,7 @@ use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 
-use super::known_hosts::bitbucket::*; // TODO: Use prelude
-use super::known_hosts::codeberg::*;
-use super::known_hosts::devops::*;
-use super::known_hosts::gitee::*;
-use super::known_hosts::github::*;
-use super::known_hosts::gitlab::*;
-use super::known_hosts::gnome::*;
-use super::known_hosts::kde::*;
-use super::known_hosts::launchpad::*;
-use super::known_hosts::sourceforge::*;
-use super::known_hosts::sourcehut::*;
-use super::known_hosts::savannah::*;
-
+use super::known_hosts::prelude::*;
 use super::fingerprint::Fingerprint;
 use super::key_type::KeyType;
 use super::super::keyscan::ssh_keyscan;
