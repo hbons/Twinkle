@@ -201,6 +201,8 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
             }
         }
 
+        let status = repo.git.status()?;
+
         if let Some(message) = twinkle_pretty_commit_message(&status) {
             let user = repo.user().ok_or("User not set")?;
 
