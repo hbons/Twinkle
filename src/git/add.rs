@@ -17,7 +17,7 @@ impl GitEnvironment {
     pub fn add(&self, path: &Path) -> Result<(), Box<dyn Error>> {
         let path = path.to_str().ok_or("Path is not valid UTF-8")?;
         self.run("add", &[
-            "--", // Safety: no more flags coming after this
+            "--", // Safety: No more flags coming after this
             path,
         ])?;
 

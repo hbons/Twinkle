@@ -99,7 +99,12 @@ impl GitEnvironment {
             return Err("Cannot track .gitattributes".into());
         }
 
-        self.run("lfs", &["track", &path.to_string_lossy()])?;
+        self.run("lfs", &[
+            "track",
+            "--", // Safety: No more flags coming after this
+            &path.to_string_lossy()
+        ])?;
+
         Ok(())
     }
 

@@ -26,6 +26,7 @@ impl GitEnvironment {
     pub fn checkout_file(&self, path: &Path, extra_arg: Option<&str>) -> Result<(), Box<dyn Error>> {
         self.run("checkout", &[
             extra_arg.unwrap_or(""),
+            "--", // Safety: No more flags coming after this
             path.to_str().ok_or("Path is not valid UTF-8")?,
         ])?;
 
