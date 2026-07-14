@@ -21,8 +21,9 @@ impl GitEnvironment {
         fs::write(&abs_path, message)?; // Use a file to prevent encoding problems
 
         let args = &[
-            &format!("--file={}", path),
             "--no-edit",
+            "--file",
+            &path,
         ];
 
         match author {

@@ -26,6 +26,7 @@ impl GitEnvironment {
 
         args.push("--no-checkout");
         args.push("--progress");
+        args.push("--"); // Safety: No more flags coming after this
         args.push(url);
 
         if let Some(d) = directory {

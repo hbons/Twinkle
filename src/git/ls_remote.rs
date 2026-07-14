@@ -17,6 +17,7 @@ impl GitEnvironment {
             "--exit-code", // Use exit codes on errors
             "--heads", // '--branches' after Git 2.46.0 (Sep 11 2024)
             "--quiet", // Don't print remote to stderr
+            "--", // Safety: No more flags coming after this
             "origin",
             branch,
         ])?;
