@@ -47,7 +47,7 @@ pub fn twinkle_init(
 }
 
 
-pub fn init_id(
+pub fn init_id( // TODO: Move to TwinkleRepository
     repo: &TwinkleRepository,
 ) -> Result<(), Box<dyn Error>>
 {

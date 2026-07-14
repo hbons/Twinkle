@@ -62,7 +62,8 @@ impl TwinkleRepository {
 
 
     pub fn size_of(&self, path: &Path) -> Option<u64> {
-        let path = self.path.join(path);
+        let path = self.abs_path(path);
+
         fs::metadata(path)
             .ok()
             .map(|v| v.len())

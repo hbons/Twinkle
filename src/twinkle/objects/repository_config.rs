@@ -234,11 +234,9 @@ impl TwinkleRepository {
 
 
     pub fn lfs_size_threshold(&self) -> u64 {
-        let default = TWINKLE_LFS_THRESHOLD;
-
         match self.git.config_get(&key(K_LFS_SIZE_THRESHOLD)) {
             Ok(output) => parse_lfs_size(&output.stdout),
-            Err(_) => default,
+            Err(_) => TWINKLE_LFS_THRESHOLD,
         }
     }
 

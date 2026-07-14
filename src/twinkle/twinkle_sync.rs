@@ -190,15 +190,15 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
             Some(repo.git.GIT_SSH_COMMAND.clone())
         )?;
 
-        while let Ok(status) = repo.git.status() {
-            for change in &status {
-                if repo.lfs_enabled() {
-                    _ = twinkle_lfs_track(repo, change);
-                }
+        let lfs_enabled = repo.lfs_enabled();
+        let status = repo.git.status()?;
 
-                _ = repo.git.add(&change.path); // TODO: Test this
-                // TODO: error get eaten and may cause an infinite loop
+        for change in status {
+            if lfs_enabled {
+                _ = twinkle_lfs_track(repo, &change);
             }
+
+            _ = repo.git.add(&change.path); // TODO: error get eaten and may cause an infinite loop
         }
 
         let status = repo.git.status()?;
