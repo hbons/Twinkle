@@ -16,14 +16,11 @@ impl GitEnvironment {
 
     pub fn add(&self, path: &Path) -> Result<(), Box<dyn Error>> {
         let path = path.to_str().ok_or("Path is not valid UTF-8")?;
-        self.run("add", &[path])?;
+        self.run("add", &[
+            "--", // Safety: no more flags coming after this
+            path,
+        ])?;
 
-        Ok(())
-    }
-
-
-    pub fn add_all(&self) -> Result<(), Box<dyn Error>> {
-        self.run("add", &["--all"])?;
         Ok(())
     }
 }

@@ -185,14 +185,19 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
 
     loop {
         init_id(repo)?;
-        repo.git.lfs_config_filters(Some(repo.git.GIT_SSH_COMMAND.clone()))?;
 
-        repo.git.add_all()?; // TODO: Loop through files and add one-by-one
-        let status = repo.git.status()?;
+        repo.git.lfs_config_filters(
+            Some(repo.git.GIT_SSH_COMMAND.clone())
+        )?;
 
-        if repo.lfs_enabled() {
+        while let Ok(status) = repo.git.status() {
             for change in &status {
-                _ = twinkle_lfs_track(repo, change);
+                if repo.lfs_enabled() {
+                    _ = twinkle_lfs_track(repo, change);
+                }
+
+                _ = repo.git.add(&change.path); // TODO: Test this
+                // TODO: error get eaten and may cause an infinite loop
             }
         }
 
