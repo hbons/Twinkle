@@ -21,9 +21,11 @@ sha2 = "0.11.0"
 # zbus = { version = "5.11.0", features = ["blocking"] }
 # zvariant = "5.7.0"
 
+
 [[bin]]
 name = "twinkle"
 path = "src/main.rs"
+
 
 [profile.release]
 opt-level = "z"

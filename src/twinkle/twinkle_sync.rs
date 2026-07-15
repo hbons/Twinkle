@@ -190,9 +190,11 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
             Some(repo.git.GIT_SSH_COMMAND.clone())
         )?;
 
-        let lfs_enabled = repo.lfs_enabled();
         let status = repo.git.status()?;
+        let lfs_enabled = repo.lfs_enabled();
 
+        // TODO: loop this, but status() needs to return None when there are no more unstaged changes (status_y)
+        // TODO: need a separate command to check any (staged or unstaged) changes. remove plain status(). status_staged()+status_unstaged()+status_staged_or_unstaged()?
         for change in status {
             if lfs_enabled {
                 _ = twinkle_lfs_track(repo, &change);
@@ -201,7 +203,7 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
             _ = repo.git.add(&change.path); // TODO: error get eaten and may cause an infinite loop
         }
 
-        let status = repo.git.status()?;
+        let status = repo.git.status()?; // TODO: status_staged()
 
         if let Some(message) = twinkle_pretty_commit_message(&status) {
             let user = repo.user().ok_or("User not set")?;

@@ -115,7 +115,8 @@ pub fn app_runs_as_root() -> bool {
 
 
 pub fn app_runs_in_terminal() -> bool {
-    env::var("TERM").is_ok()
+    env::var("TERM").is_ok() ||
+    env::var("GITHUB_ACTIONS").is_ok()
 }
 
 

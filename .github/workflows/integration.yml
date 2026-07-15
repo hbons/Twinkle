@@ -1,0 +1,44 @@
+name: Integration
+
+on:
+  push:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+env:
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v7
+
+    - name: Install
+      run: cargo install --path .
+
+    - name: Info
+      run: |
+        gh --version
+        gh auth status
+        twinkle --deps
+
+    - run: rm -Rf .git/
+
+    - name: Test `init`
+      run: |
+        cd src/tests/integration
+        ./test_init.sh
+
+    - name: Test `clone`
+      run: |
+        cd src/tests/integration
+        ./test_clone.sh
+
+    - name: Test `sync`
+      run: |
+        cd src/tests/integration
+        ./test_sync.sh

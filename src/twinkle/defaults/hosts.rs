@@ -10,7 +10,7 @@ pub fn twinkle_host_ssh_settings_url(host: String) -> Option<&'static str> {
         "bitbucket.org"        => Some("https://bitbucket.org/account/settings/ssh-keys/"),
         "codeberg.org"         => Some("https://codeberg.org/user/settings/keys"),
         "git.sr.ht"            => Some("https://meta.sr.ht/keys/ssh-keys"),
-        "git.code.sf.net"      => None, // TODO: Don't have a SourceForge account
+        "git.code.sf.net"      => Some("https://sourceforge.net/auth/shell_services"),
         "git.launchpad.net"    => Some("https://launchpad.net/~/+editsshkeys"),
         "git.savannah.gnu.org" => Some("https://savannah.gnu.org/my/admin/editsshkeys.php"),
         "gitee.com"            => Some("https://gitee.com/profile/sshkeys"),
