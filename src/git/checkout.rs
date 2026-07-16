@@ -17,7 +17,8 @@ impl GitEnvironment {
     pub fn checkout_branch(&self, branch: &str) -> Result<(), Box<dyn Error>> {
         self.run("checkout", &[
             "--quiet",
-            branch])?;
+            branch,
+        ])?;
 
         Ok(())
     }
@@ -25,7 +26,7 @@ impl GitEnvironment {
 
     pub fn checkout_file(&self, path: &Path, extra_arg: Option<&str>) -> Result<(), Box<dyn Error>> {
         self.run("checkout", &[
-            extra_arg.unwrap_or(""),
+            extra_arg.unwrap_or_default(),
             "--", // Safety: No more flags coming after this
             path.to_str().ok_or("Path is not valid UTF-8")?,
         ])?;
@@ -33,18 +34,16 @@ impl GitEnvironment {
         Ok(())
     }
 
+
+    pub fn checkout_original(&self, path: &Path) -> Result<(), Box<dyn Error>> {
+        self.checkout_file(path, Some(":1")) // Common ancestor
+    }
+
     pub fn checkout_ours(&self, path: &Path) -> Result<(), Box<dyn Error>> {
-        self.checkout_file(path, Some("--ours"))?;
-        Ok(())
+        self.checkout_file(path, Some("--ours")) // :2
     }
 
     pub fn checkout_theirs(&self, path: &Path) -> Result<(), Box<dyn Error>> {
-        self.checkout_file(path, Some("--theirs"))?;
-        Ok(())
-    }
-
-    pub fn checkout_original(&self, path: &Path) -> Result<(), Box<dyn Error>> {
-        self.checkout_file(path, Some("ORIG_HEAD^"))?;
-        Ok(())
+        self.checkout_file(path, Some("--theirs")) // :3
     }
 }
