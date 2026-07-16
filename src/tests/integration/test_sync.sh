@@ -43,6 +43,14 @@ timeout 15s twinkle sync || true  # --once
 
 ls
 
+echo "--- README.md ---"
+cat README.md
+echo "--- README (A).md ---"
+cat "README (A).md"
+echo "--- README (B).md ---"
+cat "README (B).md"
+echo "---"
+
 test -f README.md
 test -f "README (A).md"
 test -f "README (B).md"
