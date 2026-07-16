@@ -36,11 +36,10 @@ impl GitEnvironment {
 
 
     pub fn checkout_original(&self, path: &Path) -> Result<(), Box<dyn Error>> {
-        self.run("checkout", &[
-            &format!(
-                ":1:{}", // Common ancestor
-                path.to_str().ok_or("Path is not valid UTF-8")?,
-            )
+        self.run("checkout-index", &[
+            "--stage=1", // Common ancestor
+            "--",
+            path.to_str().ok_or("Path is not valid UTF-8")?,
         ])?;
 
         Ok(())
