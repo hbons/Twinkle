@@ -43,5 +43,9 @@ DEBUG=1 timeout 15s twinkle sync || true  # --once
 
 ls  # TODO
 
+test -f README.md
+test -f "README (A).md"
+test -f "README (B).md"
+
 cd ..
 source ./common/cleanup.sh
