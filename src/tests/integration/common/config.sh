@@ -3,4 +3,4 @@
 ACCOUNT=sparkleshare-org
 KEY_FILE=~/.ssh/twinkle_ed25519
 TAG=`uuidgen`
-DEBUG=1
+export DEBUG=1
