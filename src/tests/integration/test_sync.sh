@@ -21,7 +21,6 @@ twinkle clone \
 mv $REPO_NAME $REPO_NAME_1
 cd $REPO_NAME_1
 timeout 15s twinkle sync || true  # --once
-
 cd ..
 
 DEBUG=1 twinkle clone \
@@ -31,17 +30,14 @@ DEBUG=1 twinkle clone \
 mv $REPO_NAME $REPO_NAME_2
 
 
-cd $REPO_NAME_1
+cd $REPO_NAME_2
 echo "Let's create..." >> README.md
 timeout 15s twinkle sync || true  # --once
-
 cd ..
 
-cd $REPO_NAME_2
+cd $REPO_NAME_1
 echo "...a conflict!" >> README.md
 timeout 15s twinkle sync || true  # --once
-
-ls
 
 echo "--- README.md ---"
 cat README.md
@@ -56,6 +52,7 @@ test -f README.md
 test -f "README (A).md"
 test -f "README (B).md"
 
+# TODO: Doesn't work...
 # source ../common/test_synced.sh
 
 cd ..
