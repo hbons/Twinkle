@@ -7,7 +7,7 @@ source ./common/install_keys.sh
 REPO_NAME=test_init_$TAG
 
 gh repo create \
-    test_init_$TAG \
+    $REPO_NAME \
     --private
 
 touch README.md
