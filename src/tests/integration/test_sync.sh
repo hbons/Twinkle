@@ -14,13 +14,13 @@ gh repo create \
     --add-readme
 
 
-DEBUG=1 twinkle clone \
+twinkle clone \
     git@github.com:$ACCOUNT/$REPO_NAME \
     .
 
 mv $REPO_NAME $REPO_NAME_1
 cd $REPO_NAME_1
-DEBUG=1 timeout 15s twinkle sync || true  # --once
+timeout 15s twinkle sync || true  # --once
 
 cd ..
 
@@ -33,15 +33,15 @@ mv $REPO_NAME $REPO_NAME_2
 
 cd $REPO_NAME_1
 echo "Let's create..." >> README.md
-DEBUG=1 timeout 15s twinkle sync || true  # --once
+timeout 15s twinkle sync || true  # --once
 
 cd ..
 
 cd $REPO_NAME_2
 echo "...a conflict!" >> README.md
-DEBUG=1 timeout 15s twinkle sync || true  # --once
+timeout 15s twinkle sync || true  # --once
 
-ls  # TODO
+ls
 
 test -f README.md
 test -f "README (A).md"

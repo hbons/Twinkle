@@ -12,10 +12,10 @@ gh repo create \
 
 touch README.md
 
-DEBUG=1 twinkle init \
+twinkle init \
     git@github.com:$ACCOUNT/$REPO_NAME \
     .
 
-DEBUG=1 timeout 20s twinkle sync || true  # --once
+timeout 20s twinkle sync || true  # --once
 
 source ./common/cleanup.sh
