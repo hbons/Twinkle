@@ -45,6 +45,7 @@ ls
 
 echo "--- README.md ---"
 cat README.md
+printf '\n'
 echo "--- README (A).md ---"
 cat "README (A).md"
 echo "--- README (B).md ---"
