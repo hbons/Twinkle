@@ -47,5 +47,7 @@ test -f README.md
 test -f "README (A).md"
 test -f "README (B).md"
 
+source ./common/test_synced.sh
+
 cd ..
 source ./common/cleanup.sh
