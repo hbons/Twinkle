@@ -17,7 +17,6 @@ impl GitEnvironment {
     pub fn checkout_branch(&self, branch: &str) -> Result<(), Box<dyn Error>> {
         self.run("checkout", &[
             "--quiet",
-            "--",
             branch,
         ])?;
 
