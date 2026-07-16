@@ -17,6 +17,7 @@ impl GitEnvironment {
     pub fn checkout_branch(&self, branch: &str) -> Result<(), Box<dyn Error>> {
         self.run("checkout", &[
             "--quiet",
+            "--",
             branch,
         ])?;
 
@@ -36,7 +37,14 @@ impl GitEnvironment {
 
 
     pub fn checkout_original(&self, path: &Path) -> Result<(), Box<dyn Error>> {
-        self.checkout_file(path, Some(":1")) // Common ancestor
+        self.run("checkout", &[
+            &format!(
+                ":1:{}", // Common ancestor
+                path.to_str().ok_or("Path is not valid UTF-8")?,
+            )
+        ])?;
+
+        Ok(())
     }
 
     pub fn checkout_ours(&self, path: &Path) -> Result<(), Box<dyn Error>> {
