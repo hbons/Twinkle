@@ -15,6 +15,21 @@ cargo install --path .
 
 [![Flatpak](https://github.com/hbons/Twinkle/actions/workflows/flatpak.yml/badge.svg)](https://github.com/hbons/Twinkle/actions/workflows/flatpak.yml)
 
+```shell
+Usage: twinkle <command> [args…]
+
+Commands:
+    clone <user@host:path> [path]
+    init  <user@host:path> [path]
+    sync  [path] [--interval=60]
+
+Support:
+    sparkleshare.org/support
+
+Options:
+    --help, --version, --deps, --env
+```
+
 <br>
 
 
