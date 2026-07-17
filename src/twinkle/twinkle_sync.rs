@@ -239,7 +239,9 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
                 let fetch = twinkle_sync_down(repo);
 
                 if fetch.is_err() { // TODO: Only delay on network errors?
-                    thread::sleep(twinkle_sync_up_delay(attempt));
+                    let delay = twinkle_sync_up_delay(attempt);
+                    log::info(&format!("Retrying in {}s…", delay.as_secs()));
+                    thread::sleep(delay);
                 }
             }
         }
@@ -260,8 +262,8 @@ pub fn twinkle_sync_up_delay(attempt: u64) -> Duration {
     let max  = twinkle_default_sync_up_delay_max().as_secs();
     let bump = twinkle_default_sync_up_delay_bump().as_secs();
 
-    let delay = ((attempt - 1) * bump).saturating_sub(bump).min(max);
-    log::info(&format!("Retrying in {}s…", delay));
+    let attempt = attempt.saturating_sub(1);
+    let delay = (attempt * bump).min(max);
 
     Duration::from_secs(delay)
 }

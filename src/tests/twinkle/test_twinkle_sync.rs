@@ -22,15 +22,27 @@ fn test_twinkle_sync_up_delay() {
     let delay = twinkle_sync_up_delay(attempts);
     assert_eq!(delay, Duration::from_secs(0));
 
+
+    let attempts = 2;
+    let delay = twinkle_sync_up_delay(attempts);
+    assert_eq!(delay,
+        Duration::from_secs(
+            twinkle_default_sync_up_delay_bump().as_secs() * (attempts - 1)
+        )
+    );
+
     let attempts = 5;
     let delay = twinkle_sync_up_delay(attempts);
-    assert_eq!(delay, Duration::from_secs(twinkle_default_sync_up_delay_bump().as_secs() * (attempts - 1)));
+    assert_eq!(delay,
+        Duration::from_secs(
+            twinkle_default_sync_up_delay_bump().as_secs() * (attempts - 1)
+        )
+    );
 
-    let attempts = twinkle_default_sync_up_delay_max().as_secs() / twinkle_default_sync_up_delay_bump().as_secs() + 1;
-    let delay = twinkle_sync_up_delay(attempts);
-    assert_eq!(delay, twinkle_default_sync_up_delay_max());
 
-    let attempts = twinkle_default_sync_up_delay_max().as_secs() / twinkle_default_sync_up_delay_bump().as_secs() + 10;
+    let attempts = 100;
     let delay = twinkle_sync_up_delay(attempts);
-    assert_eq!(delay, twinkle_default_sync_up_delay_max());
+    assert_eq!(delay,
+        twinkle_default_sync_up_delay_max()
+    );
 }
