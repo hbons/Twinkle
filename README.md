@@ -94,10 +94,10 @@ git lfs track *.mp4
 
 All files are [treated as binary](https://git-scm.com/docs/gitattributes#_marking_files_as_binary), so during merge conflicts Git won't try to resolve anything. Instead, both diverging versions of the file are checked out next to the original, so the users of the repository can decide what to keep.
 
-Here's how it works when *Alice* and then *Bob* both make changes to `README.md` at the same time. We assume Alice's changes reach the repository first:
+Here's how it works when *Alice* and then *Bob* both make changes to `README.md` at the same time. Let's assume Alice's changes reach the repository first:
 
 * Alice adds, Bob adds:
-  * `README (Alice).md` and `README.md`
+  * `README (Alice).md` and Bob's `README.md`
 * Alice adds/modifies, Bob modifies:
   * Original `README.md`, `README (Alice).md` and `README (Bob).md`
 * Alice modifies, Bob adds/modifies:
