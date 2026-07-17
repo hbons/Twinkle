@@ -2,21 +2,24 @@
 
 set -euo pipefail
 
-gh api user/keys --jq '.[].id' |
-while read -r id; do
-    gh api -X DELETE "user/keys/$id"
-done
+echo "--- CLEANUP ---"
 
-gh api user/ssh_signing_keys --jq '.[].id' |
-while read -r id; do
-    gh api -X DELETE "user/ssh_signing_keys/$id"
-done
+echo "KEY_FILE: $KEY_FILE"
+echo "KEY_ID: $KEY_ID"
+echo "SIGNING_KEY_ID: $SIGNING_KEY_ID"
+echo "ACCOUNT: $ACCOUNT"
+echo "REPO_NAME: $REPO_NAME"
+
+gh repo delete \
+    $ACCOUNT/$REPO_NAME \
+    --yes
+
+gh api -X DELETE "user/keys/$KEY_ID"
+gh api -X DELETE "user/ssh_signing_keys/$SIGNING_KEY_ID"
 
 rm -f "$KEY_FILE"
 rm -f "$KEY_FILE.pub"
+
 rm -Rf .git/
 
-# TODO
-# gh repo delete \
-#     $REPO_NAME \
-#     --yes
+echo "--- END CLEANUP ---"
