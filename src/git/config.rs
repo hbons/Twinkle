@@ -16,13 +16,13 @@ impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-config
 
     pub fn config_get(&self, name: &str) -> Result<GitOutput, Box<dyn Error>> {
-        self.run("config", &["--local", name]) // Deprecated in Git 2.44+, later use:
-        // self.run("config", &["--local", "get", name])
+        self.run("config", &[name]) // Deprecated in Git 2.44+, later use:
+        // self.run("config", &["get", name])
     }
 
     pub fn config_set(&self, name: &str, value: &str) -> Result<GitOutput, Box<dyn Error>> {
-        self.run("config", &["--local", name, value]) // Deprecated in Git 2.44+, later use:
-        // self.run("config", &["--local", "set", name, value])
+        self.run("config", &[name, value]) // Deprecated in Git 2.44+, later use:
+        // self.run("config", &["set", name, value])
     }
 
 

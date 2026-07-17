@@ -26,14 +26,18 @@ pub fn twinkle_resolve_changes(repo: &TwinkleRepository) -> Result<(), Box<dyn E
         twinkle_resolve(repo, &change)?;
     }
 
-    repo.git.commit(repo.user(), "Twinkle: Resolve conflicts")?;
+    repo.git.commit(repo.user(), "Resolve conflicts").unwrap();
     log::info("Conflicts resolved");
 
     Ok(())
 }
 
 
-pub fn twinkle_resolve(repo: &TwinkleRepository, change: &GitChange) -> Result<(), Box<dyn Error>> {
+pub fn twinkle_resolve(
+    repo: &TwinkleRepository,
+    change: &GitChange,
+) -> Result<(), Box<dyn Error>>
+{
     // Docs: https://git-scm.com/docs/git-merge#_how_to_resolve_conflicts
 
     let merge_status = change.as_merge_status();
@@ -43,25 +47,51 @@ pub fn twinkle_resolve(repo: &TwinkleRepository, change: &GitChange) -> Result<(
         log::info(&format!("Resolve | {status} | {}", path.display()));
     }
 
+    let our_user = repo.user().ok_or("Missing user")?;
+    let their_user = repo.git.merge_blame(path)?;
+
+    let (ours, theirs) = twinkle_resolve_path_names(path, &our_user, &their_user)?;
+
+    // stage 1 = common ancestor
+    // stage 2 = ours
+    // stage 3 = theirs
+    //
+    // AA:          stage 2, stage 3
+    // UU: stage 1, stage 2, stage 3
+    // AU: stage 1, stage 2
+    // UA: stage 1, stage 3
+    // UD: stage 1, stage 2
+    // DU: stage 1, stage 3
+    // DD: stage 1
+    //
     match merge_status {
         Some(status) => match status {
-            GitMergeStatus::AA | GitMergeStatus::AU |
-            GitMergeStatus::UA | GitMergeStatus::UU => {
-                let our_user = repo.user().ok_or("Missing user")?;
-                let their_user = repo.git.merge_blame(path)?;
-                let (ours, theirs) = twinkle_resolve_path_names(path, &our_user, &their_user)?;
+            GitMergeStatus::AA => {
+                if repo.git.checkout_theirs(path).is_ok() {
+                    fs::rename(repo.abs_path(path), repo.abs_path(&theirs))?;
+                    repo.git.add(&theirs)?;
+                }
 
+                // No common ancestor
                 repo.git.checkout_ours(path)?;
-                fs::rename(repo.abs_path(path), repo.abs_path(&ours))?;
+                repo.git.add(&path)?;
+            },
+            GitMergeStatus::UU |
+            GitMergeStatus::AU |
+            GitMergeStatus::UA => {
+                if repo.git.checkout_ours(path).is_ok() {
+                    fs::rename(repo.abs_path(path), repo.abs_path(&ours))?;
+                    repo.git.add(&ours)?;
+                }
 
-                repo.git.checkout_theirs(path)?;
-                fs::rename(repo.abs_path(path), repo.abs_path(&theirs))?;
+                if repo.git.checkout_theirs(path).is_ok() {
+                    fs::rename(repo.abs_path(path), repo.abs_path(&theirs))?;
+                    repo.git.add(&theirs)?;
+                }
 
-                repo.git.checkout_original(path)?;
-
-                repo.git.add(&ours)?;
-                repo.git.add(&theirs)?;
-                repo.git.add(path)?;
+                if repo.git.checkout_common_ancestor(path).is_ok() {
+                    repo.git.add(path)?;
+                }
             },
             GitMergeStatus::UD => {
                 repo.git.checkout_ours(&change.path)?;
@@ -87,7 +117,12 @@ pub fn twinkle_resolve(repo: &TwinkleRepository, change: &GitChange) -> Result<(
 
 
 /// Generates unique names for ours/theirs names of a path
-pub fn twinkle_resolve_path_names(path: &Path, our_user: &GitUser, their_user: &GitUser) -> Result<(PathBuf, PathBuf), Box<dyn Error>> {
+pub fn twinkle_resolve_path_names(
+    path: &Path,
+    our_user: &GitUser,
+    their_user: &GitUser,
+) -> Result<(PathBuf, PathBuf), Box<dyn Error>>
+{
     let mut clue_a = our_user.name().to_string();
     let mut clue_b = their_user.name().to_string();
 

@@ -35,7 +35,7 @@ impl GitEnvironment {
     }
 
 
-    pub fn checkout_original(&self, path: &Path) -> Result<(), Box<dyn Error>> {
+    pub fn checkout_common_ancestor(&self, path: &Path) -> Result<(), Box<dyn Error>> {
         self.run("checkout-index", &[
             "--stage=1", // Common ancestor
             "--",
@@ -46,10 +46,10 @@ impl GitEnvironment {
     }
 
     pub fn checkout_ours(&self, path: &Path) -> Result<(), Box<dyn Error>> {
-        self.checkout_file(path, Some("--ours")) // :2
+        self.checkout_file(path, Some("--ours")) // same as checkout-index --stage=2
     }
 
     pub fn checkout_theirs(&self, path: &Path) -> Result<(), Box<dyn Error>> {
-        self.checkout_file(path, Some("--theirs")) // :3
+        self.checkout_file(path, Some("--theirs")) // same as checkout-index --stage=3
     }
 }

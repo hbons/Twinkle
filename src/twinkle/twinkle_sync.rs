@@ -181,9 +181,10 @@ pub fn twinkle_watch_remote(repo: &mut TwinkleRepository, interval: Option<Durat
 
 
 pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
-    let mut attempts = 0;
+    let mut attempt = 1;
 
     loop {
+        log::info(&format!("Attempt: {attempt}"));
         init_id(repo)?;
 
         repo.git.lfs_config_filters(
@@ -197,6 +198,7 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
         // TODO: need a separate command to check any (staged or unstaged) changes. remove plain status(). status_staged()+status_unstaged()+status_staged_or_unstaged()?
         for change in status {
             if lfs_enabled {
+                // Discard any errors (file may have been deleted)
                 _ = twinkle_lfs_track(repo, &change);
             }
 
@@ -213,8 +215,12 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
 
             log::info(&format!("✓ Committed. Now at {}", repo.current_head()?));
         } else {
-            log::info(&format!("Nothing new to commit. Still at {}", repo.current_head()?));
-            return Ok(()); // TODO: Also check unpushed commits
+            if !twinkle_has_unpushed_commits(repo) {
+                log::info(&format!("Nothing new to commit. Still at {}", repo.current_head()?));
+                return Ok(());
+            }
+
+            log::info(&format!("✓ Unpushed commits found"));
         }
 
         if repo.read_only() {
@@ -232,9 +238,8 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
                 log::info("✗ Push failed. Fetching…");
                 let fetch = twinkle_sync_down(repo);
 
-                if fetch.is_err() {
-                    attempts += 1;
-                    thread::sleep(twinkle_sync_up_delay(attempts));
+                if fetch.is_err() { // TODO: Only delay on network errors?
+                    thread::sleep(twinkle_sync_up_delay(attempt));
                 }
             }
         }
@@ -243,17 +248,19 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
         if !twinkle_has_unpushed_commits(repo) && status.is_empty() {
             break;
         }
+
+        attempt += 1;
     }
 
     Ok(())
 }
 
 
-pub fn twinkle_sync_up_delay(attempts: u64) -> Duration {
+pub fn twinkle_sync_up_delay(attempt: u64) -> Duration {
     let max  = twinkle_default_sync_up_delay_max().as_secs();
     let bump = twinkle_default_sync_up_delay_bump().as_secs();
 
-    let delay = (attempts * bump).saturating_sub(bump).min(max);
+    let delay = ((attempt - 1) * bump).saturating_sub(bump).min(max);
     log::info(&format!("Retrying in {}s…", delay));
 
     Duration::from_secs(delay)
