@@ -6,14 +6,16 @@ The command-line version of [SparkleShare](https://sparkleshare.org). Sync your 
 
 <br>
 
+[![Flatpak](https://github.com/hbons/Twinkle/actions/workflows/tests.yml/badge.svg)](https://github.com/hbons/Twinkle/actions/workflows/tests.yml)
+
+<br>
+
 
 ## 1. Install on Linux / macOS
 
 ```shell
 cargo install --path .
 ```
-
-[![Flatpak](https://github.com/hbons/Twinkle/actions/workflows/flatpak.yml/badge.svg)](https://github.com/hbons/Twinkle/actions/workflows/flatpak.yml)
 
 ```shell
 Usage: twinkle <command> [args…]
