@@ -55,6 +55,14 @@ test -f "README (B).md"
 
 # TODO: Doesn't work...
 # source ../common/test_synced.sh
+LOCAL=$(git rev-parse HEAD)
+REMOTE=$(git ls-remote origin HEAD | cut -f1)
+[[ "$LOCAL" == "$REMOTE" ]]
+
+
+rm -Rf "$REPO_NAME"
+rm -Rf "$REPO_NAME_1"
+rm -Rf "$REPO_NAME_2"
 
 cd ..
 source ./common/cleanup.sh
