@@ -130,9 +130,9 @@ git config twinkle.lfs.enabled true
 git config twinkle.lfs.sizeThreshold 3m
 ```
 
-### 5.2. `.twinkle.conf`
+### 5.2. `.twinkle/config`
 
-Twinkle automatically adds `.twinkle.conf` to the repository. This file contains a ***random id*** essential for Twinkle to function and will be recreated when missing:
+Twinkle automatically adds `.twinkle/config` to the repository. This file contains a ***random id*** essential for Twinkle to function and will be recreated when missing:
 
 ```yml
 [twinkle]
