@@ -54,25 +54,26 @@ impl App {
         // self.run_check("Host knows client SSH key", &is_client_key_known_to_host, &path);
 
         // self.print_header("Repository");
-        // self.run_check(".git directory exists", &is_git_installed, &path);
-        // self.run_check(".git/config valid", &is_git_installed, &path);
-        // self.run_check(".git/config/exclude valid", &is_git_installed, &path);
-        // self.run_check(".git/config/attributes valid", &is_git_installed, &path);
-        // self.run_check("On a branch", &is_git_installed, &path);
-        // self.run_check("Remote origin URL valid", &is_git_installed, &path);
-        // self.run_check("User name set", &is_git_installed, &path);
-        // self.run_check("User email set", &is_git_installed, &path);
-        // self.run_check("User signing key set", &is_git_installed, &path);
-        // self.run_check("Commit signing enabled", &is_git_installed, &path);
-        // self.run_check("Files treated as binary", &is_git_installed, &path);
-        // // check important git settings / git config --list --show-origin
+        // self.run_check(".git directory present", &is_git_dir_present, &path);
+        // self.run_check(".git/config valid", &is_git_config_valid, &path);
+        // self.run_check(".git/config/exclude valid", &is_git_config_exclude_valid, &path);
+        // self.run_check(".git/config/attributes valid", &is_git_config_attributes_valid, &path);
+        // self.run_check("On a branch", &is_git_on_a_branch, &path);
+        // self.run_check("Remote origin URL valid", &is_git_remote_url_valid, &path);
+        // self.run_check("User name set", &is_git_user_name_set, &path);
+        // self.run_check("User email set", &is_git_user_email_set, &path);
+        // self.run_check("User signing key set", &is_git_user_signing_key_set, &path);
+        // self.run_check("Commit signing enabled", &is_git_commit_signing_enabled, &path);
+        // self.run_check("Files treated as binary", &is_git_attributes_all_binary, &path);
 
         // self.print_header("Twinkle");
-        // self.run_check("Enabled", &is_git_installed, &path);
-        // self.run_check(".twinkle/config valid", &is_git_installed, &path);
-        // self.run_check("Push notifications enabled", &is_git_installed, &path);
-        // self.run_check("Git LFS enabled", &is_git_installed, &path);
-        // self.run_check("Git LFS size threshold set", &is_git_installed, &path);
+        // self.run_check("Enabled", &is_twinkle_enabled, &path);
+        // self.run_check(".twinkle/config valid", &is_twinkle_config_valid, &path);
+        // self.run_check("Push notifications enabled", &is_twinkle_push_noticications_enabled, &path);
+        // self.run_check("Git LFS enabled", &is_git_lfs_enabled, &path);
+        // self.run_check("Git LFS size threshold set", &is_git_lfs_threshold_set, &path);
+
+        // TODO: Check important git settings / git config --list --show-origin
 
         println!();
         Ok(())
