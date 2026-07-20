@@ -6,10 +6,13 @@
 
 
 use std::error::Error;
+use std::env::{ self, consts::OS };
 use std::fmt;
 use std::path::Path;
+use std::process::{ Command, Stdio };
 
 use crate::app::App;
+use crate::git::objects::environment::GitEnvironment;
 use super::util::*;
 
 
@@ -30,109 +33,170 @@ impl App {
 
 
     fn run_checklist(&self, path: &Path) -> Result<(), Box<dyn Error>> {
-        println!();
-        println!("  Platform:");
-        println!();
-        self.run_check("Supported OS: ", &is_git_installed, &path);
-        println!();
+        self.print_header("Platform");
+        self.run_check("Supported OS", &is_supported_os, &path);
 
-        println!("  Dependencies:");
-        println!();
-        self.run_check("OpenSSH found: 2.4.34", &is_git_installed, &path);
-        self.run_check("Git found: ", &is_git_installed, &path);
-        self.run_check("Git LFS found: ", &is_git_installed, &path);
-        println!();
+        self.print_header("Dependencies");
+        self.run_check("OpenSSH", &is_openssh_installed, &path);
+        self.run_check("Git", &is_git_installed, &path);
+        self.run_check("Git LFS", &is_git_lfs_installed, &path);
 
-        println!("  Secure Shell:");
-        println!();
-        self.run_check("ssh-agent running ", &is_git_installed, &path);
-        self.run_check("Keys in agent ", &is_git_installed, &path);
-        println!();
+        self.print_header("Secure Shell");
+        self.run_check("ssh-agent running", &is_ssh_agent_running, &path);
+        self.run_check("Keys added to agent", &is_key_added_to_agent, &path);
 
-        println!("  Connectivity:");
-        println!();
-        self.run_check("Network connection", &is_git_installed, &path);
-        self.run_check("Host reachable", &is_git_installed, &path);
-        self.run_check("Host uses SSH", &is_git_installed, &path);
-        self.run_check("Host supports ED25519", &is_git_installed, &path);
-        self.run_check("Host supports ECDSA", &is_git_installed, &path);
-        self.run_check("Host supports RSA", &is_git_installed, &path);
-        self.run_check("Host knows local SSH key", &is_git_installed, &path);
-        println!();
+        self.print_header("Connectivity");
+        self.run_check("Host reachable", &is_host_reachable, &path);
+        // self.run_check("Host uses SSH", &is_host_using_ssh, &path);
+        // self.run_check("Host supports ED25519", &is_host_supporting_ed25519, &path);
+        // self.run_check("Host supports ECDSA", &is_host_supporting_ecdsa, &path);
+        // self.run_check("Host supports RSA", &is_host_supporting_rsa, &path);
+        // self.run_check("Host knows client SSH key", &is_client_key_known_to_host, &path);
 
-        println!("  Repository:");
-        println!();
-        self.run_check(".git/ exists", &is_git_installed, &path);
-        self.run_check(".git/config valid", &is_git_installed, &path);
-        self.run_check(".git/config/exclude valid", &is_git_installed, &path);
-        self.run_check(".git/config/attributes valid", &is_git_installed, &path);
-        self.run_check("On a branch", &is_git_installed, &path);
-        self.run_check("Remote origin URL valid", &is_git_installed, &path);
-        self.run_check("Files treated as binary", &is_git_installed, &path);
-        self.run_check("User name set", &is_git_installed, &path);
-        self.run_check("User email set", &is_git_installed, &path);
-        self.run_check("User signing key set", &is_git_installed, &path);
-        self.run_check("Commit signing enabled", &is_git_installed, &path);
-        // check important git settings
-        println!();
+        // self.print_header("Repository");
+        // self.run_check(".git directory exists", &is_git_installed, &path);
+        // self.run_check(".git/config valid", &is_git_installed, &path);
+        // self.run_check(".git/config/exclude valid", &is_git_installed, &path);
+        // self.run_check(".git/config/attributes valid", &is_git_installed, &path);
+        // self.run_check("On a branch", &is_git_installed, &path);
+        // self.run_check("Remote origin URL valid", &is_git_installed, &path);
+        // self.run_check("User name set", &is_git_installed, &path);
+        // self.run_check("User email set", &is_git_installed, &path);
+        // self.run_check("User signing key set", &is_git_installed, &path);
+        // self.run_check("Commit signing enabled", &is_git_installed, &path);
+        // self.run_check("Files treated as binary", &is_git_installed, &path);
+        // // check important git settings / git config --list --show-origin
 
-        println!("  Twinkle:"); // bold
-        println!();
-        self.run_check("Enabled", &is_git_installed, &path);
-        self.run_check(".twinkle/config valid", &is_git_installed, &path);
-        self.run_check("Push notifications enabled", &is_git_installed, &path);
-        self.run_check("Git LFS enabled", &is_git_installed, &path);
-        self.run_check("Git LFS size threshold set", &is_git_installed, &path);
+        // self.print_header("Twinkle");
+        // self.run_check("Enabled", &is_git_installed, &path);
+        // self.run_check(".twinkle/config valid", &is_git_installed, &path);
+        // self.run_check("Push notifications enabled", &is_git_installed, &path);
+        // self.run_check("Git LFS enabled", &is_git_installed, &path);
+        // self.run_check("Git LFS size threshold set", &is_git_installed, &path);
 
         println!();
-
-        // twinkle config
-        // check .twinkle/config valid
-        // print all twinkle vars. if missing: DEFAULT (green)
-        //
-        // git config --list --show-origin
-
         Ok(())
     }
 
+
+    pub fn print_header(&self, s: &str) {
+        println!("\n  {}\n", cli_bold(s));
+    }
+
+
     fn run_check(&self,
-        s: &str,
-        f: &dyn Fn(&Path)  -> Result<CheckStatus, Box<dyn Error>>,
+        title: &str,
+        check: &dyn Fn(&Path)  -> Result<Check, Box<dyn Error>>,
         path: &Path, // TODO: use current_dir?
     ) {
-        let result = f(path);
-
-        // TODO: if has output, append ": {output}"
-        let bar = cli_dimmed("");
-
-        println!("    {bar}\x1b[32m{}\x1b[0m{bar} {s}", &cli_bold(&result.unwrap().to_string()).to_string());
-
+        match check(path) {
+            Ok(check) =>
+                match check {
+                    Check::Pass(Some(ref s)) => println!("    \x1b[32m{check}\x1b[0m {title}: \x1b[32m{s}\x1b[0m"),
+                    Check::Fail(Some(ref s)) => println!("    \x1b[31m{check}\x1b[0m {title}: \x1b[31m{s}\x1b[0m"),
+                    Check::Pass(None) =>        println!("    \x1b[32m{check}\x1b[0m {title}"),
+                    Check::Fail(None) =>        println!("    \x1b[31m{check}\x1b[0m {title}"),
+                    Check::Missing =>           println!("    \x1b[31m{check}\x1b[0m {title}: \x1b[31mMissing\x1b[0m"),
+                },
+            _ => println!("    \x1b[31m?\x1b[0m {title}: \x1b[31mCheck Failed\x1b[0m"), // TODO: Orange
+        };
     }
 }
 
 
-pub enum CheckStatus {
-    Pass,
-    Default,
-    Missing, // optional setting
-    Fail,
+pub enum Check {
+    Pass(Option<String>),
+    Missing,
+    Fail(Option<String>),
 }
 
-impl fmt::Display for CheckStatus {
+impl fmt::Display for Check {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Pass => write!(f, "✓"),
-            Self::Default => write!(f, "✓"),
-            Self::Missing => write!(f, "✓"),
-            Self::Fail => write!(f, "✓"),
+            Self::Pass(_) => write!(f, "✓"),
+            Self::Missing => write!(f, "~"),
+            Self::Fail(_) => write!(f, "✗"),
         }
     }
 }
 
 
-pub fn is_git_installed(_path: &Path) -> Result<CheckStatus, Box<dyn Error>> {
-    // let git = GitEnvironment::new(path);
-    // git.branch()?
-    Ok(CheckStatus::Fail)
+// Platform
 
+fn is_supported_os(_path: &Path) -> Result<Check, Box<dyn Error>> {
+    Ok(
+        match OS {
+            s if s.ends_with("bsd") => Check::Pass(Some("*BSD".into())),
+            "linux" => Check::Pass(Some("Linux".into())),
+            "macos" => Check::Pass(Some("macOS".into())),
+            "windows" => Check::Fail(Some("Windows".into())),
+            _ => Check::Fail(Some("Unknown".into())),
+        }
+    )
+}
+
+
+// Dependencies
+
+fn is_openssh_installed(_path: &Path) -> Result<Check, Box<dyn Error>> {
+    let ssh = Command::new("ssh").arg("-V").output();
+
+    Ok(match ssh {
+        Ok(o) => Check::Pass(Some(
+            String::from_utf8_lossy(&o.stderr).trim().to_string())
+        ),
+        _ => Check::Missing,
+    })
+}
+
+fn is_git_installed(path: &Path) -> Result<Check, Box<dyn Error>> {
+    Ok(match GitEnvironment::new(path).version() {
+        Some(s) => Check::Pass(Some(s.to_string())),
+        _ => Check::Missing,
+    })
+}
+
+fn is_git_lfs_installed(path: &Path) -> Result<Check, Box<dyn Error>> {
+    let git = GitEnvironment::new(path);
+    Ok(Check::Pass(Some(git.lfs_version().unwrap())))
+}
+
+
+// Secure Shell
+
+fn is_ssh_agent_running(_path: &Path) -> Result<Check, Box<dyn Error>> {
+    Ok(match env::var("SSH_AUTH_SOCK") {
+        Ok(_) => Check::Pass(None),
+        _ => Check::Fail(None),
+    })
+}
+
+fn is_key_added_to_agent(_path: &Path) -> Result<Check, Box<dyn Error>> {
+    let ssh = Command::new("ssh-add")    .stdout(Stdio::null())
+    .stderr(Stdio::null()).arg("-L").status();
+
+    match ssh {
+        Ok(code) if  code.success() => Ok(Check::Pass(None)),
+        Ok(code) if !code.success() => Ok(Check::Fail(None)),
+        _ => Err("".into()),
+    }
+}
+
+
+// Connectivity
+
+fn is_host_reachable(_path: &Path) -> Result<Check, Box<dyn Error>> {
+    let nc = Command::new("nc")
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .arg("-zv")
+        .arg("1.1.1.1") // TODO: use remote.origin.url
+        .arg("80")
+        .status();
+
+    match nc {
+        Ok(code) if  code.success() => Ok(Check::Pass(None)),
+        Ok(code) if !code.success() => Ok(Check::Fail(None)),
+        _ => Err("".into()),
+    }
 }
