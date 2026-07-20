@@ -70,7 +70,7 @@ impl GitEnvironment {
 // R097	src/file.rs	"src/file 2.rs"
 // M	src/file3.rs
 // M	src/file4.rs
-
+//
 fn parse_line(line: &str, commit: &mut GitCommit, message: &mut String) -> Result<(), Box<dyn Error>> {
     match line {
         s if s.trim().is_empty() => {
@@ -78,7 +78,7 @@ fn parse_line(line: &str, commit: &mut GitCommit, message: &mut String) -> Resul
         },
         s if s.starts_with("commit") => {
             match parse_line_id(line) {
-                Some(id) => commit.id = id,
+                Some(id) => commit.id = id.to_owned(),
                 None => return Err("Error parsing commit id".into()),
             }
         },
@@ -107,11 +107,12 @@ fn parse_line(line: &str, commit: &mut GitCommit, message: &mut String) -> Resul
 
 
 // 'commit ab83b62f5027c66be4826c73f07daeb25fd04219'
-fn parse_line_id(line: &str) -> Option<String> {
-    let id = line.strip_prefix("commit")?;
-    let id = id.trim().to_string();
-
-    Some(id)
+fn parse_line_id(line: &str) -> Option<&str> {
+    Some(
+        line
+            .strip_prefix("commit")?
+            .trim()
+    )
 }
 
 

@@ -13,6 +13,9 @@ pub const K_LAST_SYNC: &str = "lastSync";
 pub const K_LAST_CHECK: &str = "lastCheck";
 pub const K_MAX_FILE_SIZE: &str = "maxFileSize";
 
+pub const K_CO_AUTHOR: &str = "coAuthor";
+
+
 // Notify
 pub const K_NOTIFY_ENABLED: &str = "notify.enabled";
 pub const K_NOTIFY_URL: &str = "notify.url";
