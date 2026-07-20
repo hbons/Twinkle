@@ -33,19 +33,19 @@ impl App {
 
 
     fn run_checklist(&self, path: &Path) -> Result<(), Box<dyn Error>> {
-        self.print_header("Platform");
+        print_header("Platform");
         self.run_check("Supported OS", &is_supported_os, &path);
 
-        self.print_header("Dependencies");
+        print_header("Dependencies");
         self.run_check("OpenSSH", &is_openssh_installed, &path);
         self.run_check("Git", &is_git_installed, &path);
         self.run_check("Git LFS", &is_git_lfs_installed, &path);
 
-        self.print_header("Secure Shell");
+        print_header("Secure Shell");
         self.run_check("ssh-agent running", &is_ssh_agent_running, &path);
         self.run_check("Keys added to agent", &is_key_added_to_agent, &path);
 
-        self.print_header("Connectivity");
+        print_header("Connectivity");
         self.run_check("Host reachable", &is_host_reachable, &path);
         // self.run_check("Host uses SSH", &is_host_using_ssh, &path);
         // self.run_check("Host supports ED25519", &is_host_supporting_ed25519, &path);
@@ -53,7 +53,7 @@ impl App {
         // self.run_check("Host supports RSA", &is_host_supporting_rsa, &path);
         // self.run_check("Host knows client SSH key", &is_client_key_known_to_host, &path);
 
-        // self.print_header("Repository");
+        // print_header("Repository");
         // self.run_check(".git directory present", &is_git_dir_present, &path);
         // self.run_check(".git/config valid", &is_git_config_valid, &path);
         // self.run_check(".git/config/exclude valid", &is_git_config_exclude_valid, &path);
@@ -66,7 +66,7 @@ impl App {
         // self.run_check("Commit signing enabled", &is_git_commit_signing_enabled, &path);
         // self.run_check("Files treated as binary", &is_git_attributes_all_binary, &path);
 
-        // self.print_header("Twinkle");
+        // print_header("Twinkle");
         // self.run_check("Enabled", &is_twinkle_enabled, &path);
         // self.run_check(".twinkle/config valid", &is_twinkle_config_valid, &path);
         // self.run_check("Push notifications enabled", &is_twinkle_push_noticications_enabled, &path);
@@ -77,11 +77,6 @@ impl App {
 
         println!();
         Ok(())
-    }
-
-
-    pub fn print_header(&self, s: &str) {
-        println!("\n  {}\n", cli_bold(s));
     }
 
 
@@ -102,6 +97,11 @@ impl App {
             _ => println!("    \x1b[31m?\x1b[0m {title}: \x1b[31mCheck Failed\x1b[0m"), // TODO: Orange
         };
     }
+}
+
+
+fn print_header(s: &str) {
+    println!("\n  {}\n", cli_bold(s));
 }
 
 
