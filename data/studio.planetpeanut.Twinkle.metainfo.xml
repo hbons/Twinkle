@@ -66,6 +66,16 @@
         <binary>twinkle</binary>
     </provides>
 
+    <supports>
+        <control>keyboard</control>
+        <control>pointing</control>
+        <control>touch</control>
+    </supports>
+
+    <requires>
+        <display_length compare="ge">360</display_length>
+    </requires>
+
     <content_rating type="oars-1.1">
         <content_attribute id="social-contacts">intense</content_attribute>
         <content_attribute id="money-purchasing">mild</content_attribute>
