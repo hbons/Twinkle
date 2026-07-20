@@ -1,5 +1,5 @@
 //   Twinkle, automatic syncing with Git
-//   Copyright (C) 2025  Hylke Bons (hello@planetpeanut.studio)
+//   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
 //   under the terms of the GNU General Public License v3 or any later version.
@@ -10,7 +10,7 @@ use std::fmt;
 use std::path::Path;
 
 use crate::app::App;
-// use super::util::*;
+use super::util::*;
 
 
 impl App {
@@ -29,69 +29,71 @@ impl App {
     }
 
 
+    fn run_checklist(&self, path: &Path) -> Result<(), Box<dyn Error>> {
+        println!();
+        println!("  Platform:");
+        println!();
+        self.run_check("Supported OS: ", &is_git_installed, &path);
+        println!();
 
-fn run_checklist(&self, path: &Path)
--> Result<(), Box<dyn Error>>
-{
-    println!();
-    println!("  Platform:");
-    println!();
+        println!("  Dependencies:");
+        println!();
+        self.run_check("OpenSSH found: 2.4.34", &is_git_installed, &path);
+        self.run_check("Git found: ", &is_git_installed, &path);
+        self.run_check("Git LFS found: ", &is_git_installed, &path);
+        println!();
 
-    println!();
-    println!("  Dependencies:");
-    println!();
-    self.run_check("OpenSSH found: 2.4.34", &is_git_installed, &path);
-    self.run_check("Git found: ", &is_git_installed, &path);
-    self.run_check("Git LFS found: ", &is_git_installed, &path);
-    println!();
+        println!("  Secure Shell:");
+        println!();
+        self.run_check("ssh-agent running ", &is_git_installed, &path);
+        self.run_check("Keys in agent ", &is_git_installed, &path);
+        println!();
 
-    println!("  SSH:");
-    println!();
-    // check keys present
-    // check ssh-agent running
-    // check ssh-agent has keys
-    // check host reachable ping host. nc?
-    println!();
+        println!("  Connectivity:");
+        println!();
+        self.run_check("Network connection", &is_git_installed, &path);
+        self.run_check("Host reachable", &is_git_installed, &path);
+        self.run_check("Host uses SSH", &is_git_installed, &path);
+        self.run_check("Host supports ED25519", &is_git_installed, &path);
+        self.run_check("Host supports ECDSA", &is_git_installed, &path);
+        self.run_check("Host supports RSA", &is_git_installed, &path);
+        self.run_check("Host knows local SSH key", &is_git_installed, &path);
+        println!();
 
-    println!("  Connectivity");
-    println!();
-    self.run_check("Internet connection: ", &is_git_installed, &path);
-    self.run_check("ping host: ", &is_git_installed, &path);
-    self.run_check("SSH to host: ", &is_git_installed, &path);
-    self.run_check("SSH auth to host: ", &is_git_installed, &path);
-    println!();
+        println!("  Repository:");
+        println!();
+        self.run_check(".git/ exists", &is_git_installed, &path);
+        self.run_check(".git/config valid", &is_git_installed, &path);
+        self.run_check(".git/config/exclude valid", &is_git_installed, &path);
+        self.run_check(".git/config/attributes valid", &is_git_installed, &path);
+        self.run_check("On a branch", &is_git_installed, &path);
+        self.run_check("Remote origin URL valid", &is_git_installed, &path);
+        self.run_check("Files treated as binary", &is_git_installed, &path);
+        self.run_check("User name set", &is_git_installed, &path);
+        self.run_check("User email set", &is_git_installed, &path);
+        self.run_check("User signing key set", &is_git_installed, &path);
+        self.run_check("Commit signing enabled", &is_git_installed, &path);
+        // check important git settings
+        println!();
 
-    println!("  Repository:");
-    println!();
-    // check path exists
-    // check .git present OK
-    // check .git/config valid OK (green)
-    // check on a branch
-    // check remote.origin.url
-    // check user name set
-    // check user email set
-    // check user signing key set
-    // check commit signing enabled
-    // check important git settings
-    println!();
+        println!("  Twinkle:"); // bold
+        println!();
+        self.run_check("Enabled", &is_git_installed, &path);
+        self.run_check(".twinkle/config valid", &is_git_installed, &path);
+        self.run_check("Push notifications enabled", &is_git_installed, &path);
+        self.run_check("Git LFS enabled", &is_git_installed, &path);
+        self.run_check("Git LFS size threshold set", &is_git_installed, &path);
 
-    println!("  Twinkle:");
-    println!();
-    // check twinkle.enabled MISSING (red)
-    // check twinkle.lfs.enabled | NOT SET (yellow)
-    // check twinkle.lfs.sizeThreshold | NOT SET (yellow)
-    // check .git/info/exclude: n
-    // check .git/info/attributes filter
-    println!();
+        println!();
 
-    // twinkle config
-    // check .twinkle/config valid
-    // print all twinkle vars. if missing: DEFAULT (green)
-    //
-    // git config --list --show-origin
+        // twinkle config
+        // check .twinkle/config valid
+        // print all twinkle vars. if missing: DEFAULT (green)
+        //
+        // git config --list --show-origin
 
-    Ok(())
-}
+        Ok(())
+    }
 
     fn run_check(&self,
         s: &str,
@@ -101,20 +103,13 @@ fn run_checklist(&self, path: &Path)
         let result = f(path);
 
         // TODO: if has output, append ": {output}"
-        println!("    {} {s}", result.unwrap());
+        let bar = cli_dimmed("");
+
+        println!("    {bar}\x1b[32m{}\x1b[0m{bar} {s}", &cli_bold(&result.unwrap().to_string()).to_string());
 
     }
 }
 
-
-
-
-pub fn is_git_installed(path: &Path) -> Result<CheckStatus, Box<dyn Error>> {
-    // let git = GitEnvironment::new(path);
-    // git.branch()?
-    Ok(CheckStatus::Fail)
-
-}
 
 pub enum CheckStatus {
     Pass,
@@ -129,7 +124,15 @@ impl fmt::Display for CheckStatus {
             Self::Pass => write!(f, "✓"),
             Self::Default => write!(f, "✓"),
             Self::Missing => write!(f, "✓"),
-            Self::Fail => write!(f, "X"),
+            Self::Fail => write!(f, "✓"),
         }
     }
+}
+
+
+pub fn is_git_installed(_path: &Path) -> Result<CheckStatus, Box<dyn Error>> {
+    // let git = GitEnvironment::new(path);
+    // git.branch()?
+    Ok(CheckStatus::Fail)
+
 }
