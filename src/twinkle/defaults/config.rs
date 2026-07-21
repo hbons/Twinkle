@@ -64,7 +64,7 @@ pub fn twinkle_default_git_settings()
     vec![
         ("core.attributesFile", ""), // Ignore the system and user attributes files
         ("core.autocrlf", "input"), // Text files will keep original line endings when checked out, CRLF chars are normalized to LF when committed
-        ("core.excludesFile", ""), // Ignore the system and user gitignore files
+        ("core.excludesFile", ""), // Ignore the system and global gitignore files
         ("core.fileMode", "false"), // Ignore permission changes
         ("core.ignoreCase", "false"), // Be case sensitive explicitly to work on Mac
         ("core.precomposeUnicode", "true"), // Use the same Unicode form on all filesystems
