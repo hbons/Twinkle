@@ -25,7 +25,8 @@ impl App {
             "--help"    => self.cli_option_help(),
             "--version" => println!("{}", app_version()),
             "--deps"    => println!("{}", app_deps()),
-            "--env"     => println!("{:#?}", self),
+            "--env"     => println!("{:#?}", self), // TODO: git config --list --show-origin
+
             _ => {
                 self.cli_option_help();
                 return Err("Unknown command".into());
@@ -45,6 +46,7 @@ impl App {
         println!("    sync  [path] [--interval=60]");
         println!();
         println!("Support:");
+        println!("    checklist [path]");
         println!("    {}",
             cli_link(
                 "https://sparkleshare.org/support",

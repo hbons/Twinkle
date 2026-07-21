@@ -143,3 +143,39 @@ pub fn is_git_user_signing_key_set(path: &Path) -> Result<Check, Box<dyn Error>>
 
     Ok(Check::Missing)
 }
+
+
+pub fn is_git_commit_signing_enabled(path: &Path) -> Result<Check, Box<dyn Error>> {
+    let git = GitEnvironment::new(path);
+
+    if let Ok(output) = git.config_get("commit.gpgSign") {
+        if output.exit_code == 0 {
+            return Ok(Check::Pass(None));
+        }
+    }
+
+    Ok(Check::Missing)
+}
+
+
+pub fn is_git_attributes_all_binary(path: &Path) -> Result<Check, Box<dyn Error>> {
+    if path.join(".git/info/attributes").exists() { // TODO: parse file
+        Ok(Check::Pass(None)) // TODO: check if contains "* merge=binary"
+    } else {
+        Ok(Check::Fail(None))
+    }
+}
+
+
+pub fn is_git_ignoring_submodules(path: &Path) -> Result<Check, Box<dyn Error>> {
+    let git = GitEnvironment::new(path);
+
+    if let Ok(output) = git.config_get("submodule.recurse") {
+        if output.exit_code == 0 &&
+        output.stdout.trim() == "false" {
+            return Ok(Check::Pass(None));
+        }
+    }
+
+    Ok(Check::Missing)
+}
