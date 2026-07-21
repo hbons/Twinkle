@@ -50,7 +50,7 @@ pub fn twinkle_clone_prepare_keys(
     if !host_key.is_trusted {
         Err(Box::new(TwinkleCloneError::NeedsTrust(host_key)))
     } else {
-        match ssh_util_test_connection(url, &host_key, &key_pair) {
+        match ssh_util_test_connection(url, &host_key, Some(&key_pair)) {
             Err(_) => Err(Box::new(TwinkleCloneError::NeedsAuth(host_key, key_pair))),
             Ok(_) => Ok(key_pair),
         }

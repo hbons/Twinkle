@@ -16,17 +16,21 @@ use super::objects::config::SshConfig;
 use super::objects::url::SshUrl;
 
 
-pub fn ssh_util_test_connection(url: &SshUrl, host_key: &HostKey, key_pair: &KeyPair) -> Result<(), Box<dyn Error>> {
-    let hostkey_name = host_key.to_file_name();
-    let hostkey_path = key_pair.private_key_path.parent().ok_or("No parent directory")?;
-    let hostkey_path = hostkey_path.join(hostkey_name);
+pub fn ssh_util_test_connection(url: &SshUrl, host_key: &HostKey, key_pair: Option<&KeyPair>) -> Result<(), Box<dyn Error>> {
+    let mut config = SshConfig::default();
 
-    let config = SshConfig {
-        IdentitiesOnly: true,
-        IdentityFile: Some(key_pair.private_key_path.clone()),
-        UserKnownHostsFile: Some(hostkey_path),
-        ..Default::default()
-    };
+    if let Some(key_pair) = key_pair {
+        let hostkey_name = host_key.to_file_name();
+        let hostkey_path = key_pair.private_key_path.parent().ok_or("No parent directory")?;
+        let hostkey_path = hostkey_path.join(hostkey_name);
+
+        config = SshConfig {
+            IdentitiesOnly: true,
+            IdentityFile: Some(key_pair.private_key_path.clone()),
+            UserKnownHostsFile: Some(hostkey_path),
+            ..Default::default()
+        };
+    }
 
     let args = format!("-T {} {}@{}", config, url.user, url.host);
     log::debug(&format!("ssh {}", args));

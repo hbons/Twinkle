@@ -6,14 +6,17 @@
 
 
 use std::error::Error;
-use std::env::{ self, consts::OS };
-use std::fmt;
+use std::env::{ consts::ARCH, consts::OS };
+use std::{arch, fmt};
 use std::path::Path;
 use std::process::{ Command, Stdio };
 
 use crate::app::App;
 use crate::git::objects::environment::GitEnvironment;
 use super::util::*;
+
+use super::checklist_repository::*;
+use super::checklist_ssh::*;
 
 
 impl App {
@@ -35,6 +38,7 @@ impl App {
     fn run_checklist(&self, path: &Path) -> Result<(), Box<dyn Error>> {
         print_header("Platform");
         self.run_check("Supported OS", &is_supported_os, &path);
+        self.run_check("Supported ARCH", &is_supported_arch, &path);
 
         print_header("Dependencies");
         self.run_check("OpenSSH", &is_openssh_installed, &path);
@@ -47,17 +51,17 @@ impl App {
 
         print_header("Connectivity");
         self.run_check("Host reachable", &is_host_reachable, &path);
-        // self.run_check("Host uses SSH", &is_host_using_ssh, &path);
-        // self.run_check("Host supports ED25519", &is_host_supporting_ed25519, &path);
-        // self.run_check("Host supports ECDSA", &is_host_supporting_ecdsa, &path);
-        // self.run_check("Host supports RSA", &is_host_supporting_rsa, &path);
-        // self.run_check("Host knows client SSH key", &is_client_key_known_to_host, &path);
+        self.run_check("Host uses SSH", &is_host_using_ssh, &path);
+        self.run_check("Host supports ED25519", &is_host_supporting_ed25519, &path);
+        self.run_check("Host supports ECDSA", &is_host_supporting_ecdsa, &path);
+        self.run_check("Host supports RSA", &is_host_supporting_rsa, &path);
+        self.run_check("Host knows client SSH key", &is_client_key_known_to_host, &path);
 
-        // print_header("Repository");
-        // self.run_check(".git directory present", &is_git_dir_present, &path);
-        // self.run_check(".git/config valid", &is_git_config_valid, &path);
-        // self.run_check(".git/config/exclude valid", &is_git_config_exclude_valid, &path);
-        // self.run_check(".git/config/attributes valid", &is_git_config_attributes_valid, &path);
+        print_header("Repository");
+        self.run_check(".git directory present", &is_git_dir_present, &path);
+        self.run_check(".git/config valid", &is_git_config_valid, &path);
+        self.run_check(".git/info/exclude valid", &is_git_info_exclude_valid, &path);
+        self.run_check(".git/info/attributes valid", &is_git_info_attributes_valid, &path);
         // self.run_check("On a branch", &is_git_on_a_branch, &path);
         // self.run_check("Remote origin URL valid", &is_git_remote_url_valid, &path);
         // self.run_check("User name set", &is_git_user_name_set, &path);
@@ -66,12 +70,13 @@ impl App {
         // self.run_check("Commit signing enabled", &is_git_commit_signing_enabled, &path);
         // self.run_check("Files treated as binary", &is_git_attributes_all_binary, &path);
 
-        // print_header("Twinkle");
+        print_header("Sync");
         // self.run_check("Enabled", &is_twinkle_enabled, &path);
         // self.run_check(".twinkle/config valid", &is_twinkle_config_valid, &path);
-        // self.run_check("Push notifications enabled", &is_twinkle_push_noticications_enabled, &path);
         // self.run_check("Git LFS enabled", &is_git_lfs_enabled, &path);
         // self.run_check("Git LFS size threshold set", &is_git_lfs_threshold_set, &path);
+        // self.run_check("Push notifications enabled", &is_twinkle_push_noticications_enabled, &path);
+        // self.run_check("Push notifications URL set", &is_twinkle_push_noticications_url_set, &path);
 
         // TODO: Check important git settings / git config --list --show-origin
 
@@ -115,7 +120,7 @@ impl fmt::Display for Check {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Pass(_) => write!(f, "✓"),
-            Self::Missing => write!(f, "~"),
+            Self::Missing => write!(f, "!"),
             Self::Fail(_) => write!(f, "✗"),
         }
     }
@@ -127,14 +132,29 @@ impl fmt::Display for Check {
 fn is_supported_os(_path: &Path) -> Result<Check, Box<dyn Error>> {
     Ok(
         match OS {
-            s if s.ends_with("bsd") => Check::Pass(Some("*BSD".into())),
-            "linux" => Check::Pass(Some("Linux".into())),
-            "macos" => Check::Pass(Some("macOS".into())),
-            "windows" => Check::Fail(Some("Windows".into())),
-            _ => Check::Fail(Some("Unknown".into())),
+            "linux" |
+            "macos" => Check::Pass(Some(OS.into())),
+            s if s.ends_with("bsd") => Check::Pass(Some(OS.into())),
+            _ => Check::Fail(Some(OS.into())),
         }
     )
 }
+
+fn is_supported_arch(_path: &Path) -> Result<Check, Box<dyn Error>> {
+    Ok(
+        match ARCH {
+            s if s.starts_with("x86") => Check::Pass(Some(ARCH.into())),
+            "linux" | "aarch64" => Check::Pass(Some(ARCH.into())),
+            _ => Check::Fail(Some(ARCH.into())),
+        }
+    )
+}
+
+
+/// * `"x86"`
+/// * `"x86_64"`
+/// * `"arm"`
+/// * `"aarch64"`
 
 
 // Dependencies
@@ -160,44 +180,4 @@ fn is_git_installed(path: &Path) -> Result<Check, Box<dyn Error>> {
 fn is_git_lfs_installed(path: &Path) -> Result<Check, Box<dyn Error>> {
     let git = GitEnvironment::new(path);
     Ok(Check::Pass(Some(git.lfs_version().unwrap())))
-}
-
-
-// Secure Shell
-
-fn is_ssh_agent_running(_path: &Path) -> Result<Check, Box<dyn Error>> {
-    Ok(match env::var("SSH_AUTH_SOCK") {
-        Ok(_) => Check::Pass(None),
-        _ => Check::Fail(None),
-    })
-}
-
-fn is_key_added_to_agent(_path: &Path) -> Result<Check, Box<dyn Error>> {
-    let ssh = Command::new("ssh-add")    .stdout(Stdio::null())
-    .stderr(Stdio::null()).arg("-L").status();
-
-    match ssh {
-        Ok(code) if  code.success() => Ok(Check::Pass(None)),
-        Ok(code) if !code.success() => Ok(Check::Fail(None)),
-        _ => Err("".into()),
-    }
-}
-
-
-// Connectivity
-
-fn is_host_reachable(_path: &Path) -> Result<Check, Box<dyn Error>> {
-    let nc = Command::new("nc")
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
-        .arg("-zv")
-        .arg("1.1.1.1") // TODO: use remote.origin.url
-        .arg("80")
-        .status();
-
-    match nc {
-        Ok(code) if  code.success() => Ok(Check::Pass(None)),
-        Ok(code) if !code.success() => Ok(Check::Fail(None)),
-        _ => Err("".into()),
-    }
 }

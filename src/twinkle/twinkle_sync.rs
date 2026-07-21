@@ -66,7 +66,7 @@ pub fn twinkle_sync_prepare(
         repo.git.GIT_SSH_COMMAND = twinkle_ssh_command(Some(key_pair));
 
         let remote_url = repo.remote_url().ok_or("Missing remote_url")?;
-        ssh_util_test_connection(&remote_url, &host_key, key_pair)?;
+        ssh_util_test_connection(&remote_url, &host_key, Some(key_pair))?;
 
         log::debug(&format!("✓ Authenticated to {}", &remote_url.host));
     }
