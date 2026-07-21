@@ -6,17 +6,32 @@
 
 
 use std::error::Error;
-use std::env::{ consts::ARCH, consts::OS };
-use std::{arch, fmt};
+use std::fmt;
 use std::path::Path;
-use std::process::{ Command, Stdio };
 
 use crate::app::App;
-use crate::git::objects::environment::GitEnvironment;
-use super::util::*;
 
+use super::util::*;
 use super::checklist_repository::*;
+use super::checklist_platform::*;
 use super::checklist_ssh::*;
+
+
+pub enum Check {
+    Fail(Option<String>),
+    Missing,
+    Pass(Option<String>),
+}
+
+impl fmt::Display for Check {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Pass(_) => write!(f, "✓"),
+            Self::Missing => write!(f, "!"),
+            Self::Fail(_) => write!(f, "✗"),
+        }
+    }
+}
 
 
 impl App {
@@ -63,11 +78,12 @@ impl App {
         self.run_check(".git/config valid", &is_git_config_valid, &path);
         self.run_check(".git/info/exclude valid", &is_git_info_exclude_valid, &path);
         self.run_check(".git/info/attributes valid", &is_git_info_attributes_valid, &path);
-        // self.run_check("On a branch", &is_git_on_a_branch, &path);
-        // self.run_check("Remote origin URL valid", &is_git_remote_url_valid, &path);
-        // self.run_check("User name set", &is_git_user_name_set, &path);
-        // self.run_check("User email set", &is_git_user_email_set, &path);
-        // self.run_check("User signing key set", &is_git_user_signing_key_set, &path);
+        self.run_check("On a branch", &is_git_on_a_branch, &path);
+        self.run_check("Not in a merge", &is_git_not_in_a_merge, &path);
+        self.run_check("remote.origin.url valid", &is_git_remote_url_valid, &path);
+        self.run_check("user.name set", &is_git_user_name_set, &path);
+        self.run_check("user.email set", &is_git_user_email_set, &path);
+        self.run_check("user.signingKey set", &is_git_user_signing_key_set, &path);
         // self.run_check("Commit signing enabled", &is_git_commit_signing_enabled, &path);
         // self.run_check("Files treated as binary", &is_git_attributes_all_binary, &path);
 
@@ -108,77 +124,4 @@ impl App {
 
 fn print_header(s: &str) {
     println!("\n  {}\n", cli_bold(s));
-}
-
-
-pub enum Check {
-    Pass(Option<String>),
-    Missing,
-    Fail(Option<String>),
-}
-
-impl fmt::Display for Check {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Pass(_) => write!(f, "✓"),
-            Self::Missing => write!(f, "!"),
-            Self::Fail(_) => write!(f, "✗"),
-        }
-    }
-}
-
-
-// Platform
-
-fn is_supported_os(_path: &Path) -> Result<Check, Box<dyn Error>> {
-    Ok(
-        match OS {
-            "linux" |
-            "macos" => Check::Pass(Some(OS.into())),
-            s if s.ends_with("bsd") => Check::Pass(Some(OS.into())),
-            _ => Check::Fail(Some(OS.into())),
-        }
-    )
-}
-
-fn is_supported_arch(_path: &Path) -> Result<Check, Box<dyn Error>> {
-    Ok(
-        match ARCH {
-            s if s.starts_with("x86") => Check::Pass(Some(ARCH.into())),
-            "linux" | "aarch64" => Check::Pass(Some(ARCH.into())),
-            _ => Check::Fail(Some(ARCH.into())),
-        }
-    )
-}
-
-
-/// * `"x86"`
-/// * `"x86_64"`
-/// * `"arm"`
-/// * `"aarch64"`
-
-
-// Dependencies
-
-fn is_openssh_installed(_path: &Path) -> Result<Check, Box<dyn Error>> {
-    let ssh = Command::new("ssh").arg("-V").output();
-
-    Ok(match ssh {
-        Ok(o) => Check::Pass(Some(
-            String::from_utf8_lossy(&o.stderr).trim().to_string())
-        ),
-        _ => Check::Missing,
-    })
-}
-
-fn is_git_installed(path: &Path) -> Result<Check, Box<dyn Error>> {
-    Ok(match GitEnvironment::new(path).version() {
-        Some(s) => Check::Pass(Some(s.to_string())),
-        _ => Check::Missing,
-    })
-}
-
-fn is_git_lfs_installed(path: &Path) -> Result<Check, Box<dyn Error>> {
-    let git = GitEnvironment::new(path);
-    Ok(Check::Pass(Some(git.lfs_version().unwrap())))
 }

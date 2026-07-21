@@ -8,10 +8,10 @@
 pub mod args;
 pub mod checklist;
 pub mod checklist_repository;
+pub mod checklist_platform;
 pub mod checklist_ssh;
-pub mod util;
-
 pub mod clone;
 pub mod init;
 pub mod sync;
 pub mod status;
+pub mod util;

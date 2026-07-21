@@ -8,6 +8,7 @@
 use std::error::Error;
 use std::path::Path;
 
+use crate::git::objects::environment::GitEnvironment;
 use super::checklist::Check;
 
 
@@ -20,6 +21,7 @@ pub fn is_git_dir_present(path: &Path) -> Result<Check, Box<dyn Error>> {
         Ok(Check::Fail(None))
     }
 }
+
 
 pub fn is_git_config_valid(path: &Path) -> Result<Check, Box<dyn Error>> {
     if path.join(".git/config").exists() { // TODO: parse file
@@ -45,4 +47,99 @@ pub fn is_git_info_attributes_valid(path: &Path) -> Result<Check, Box<dyn Error>
     } else {
         Ok(Check::Fail(None))
     }
+}
+
+
+pub fn is_git_on_a_branch(path: &Path) -> Result<Check, Box<dyn Error>> {
+    let git = GitEnvironment::new(path);
+    if git.symbolic_ref().is_err() {
+        return Ok(Check::Fail(None))
+    }
+
+    Ok(Check::Pass(None))
+}
+
+
+pub fn is_git_not_in_a_merge(path: &Path) -> Result<Check, Box<dyn Error>> {
+    if path.join(".git/MERGE_HEAD").exists() {
+        return Ok(Check::Fail(None))
+    }
+
+    if path.join(".git/REVERT_HEAD").exists() {
+        return Ok(Check::Fail(None))
+    }
+
+    if path.join(".git/BISECT_LOG").exists() {
+        return Ok(Check::Fail(None))
+    }
+
+    if path.join(".git/BISECT_START").exists() {
+        return Ok(Check::Fail(None))
+    }
+
+    if path.join(".git/CHERRY_PICK_HEAD").exists() {
+        return Ok(Check::Fail(None))
+    }
+
+    if path.join(".git/rebase_merge/").exists() {
+        return Ok(Check::Fail(None))
+    }
+
+    if path.join(".git/rebase_apply/").exists() {
+        return Ok(Check::Fail(None))
+    }
+
+    Ok(Check::Pass(None))
+}
+
+
+pub fn is_git_remote_url_valid(path: &Path) -> Result<Check, Box<dyn Error>> {
+    let git = GitEnvironment::new(path);
+
+    if let Ok(output) = git.config_get("remote.origin.url") {
+        if output.exit_code == 0 {
+            return Ok(Check::Pass(None)); // TODO: check URL validity
+        }
+    }
+
+    Ok(Check::Fail(None))
+}
+
+
+pub fn is_git_user_name_set(path: &Path) -> Result<Check, Box<dyn Error>> {
+    let git = GitEnvironment::new(path);
+
+    if let Ok(output) = git.config_get("user.name") {
+        if output.exit_code == 0 {
+            return Ok(Check::Pass(None));
+        }
+    }
+
+    Ok(Check::Missing)
+}
+
+
+pub fn is_git_user_email_set(path: &Path) -> Result<Check, Box<dyn Error>> {
+    let git = GitEnvironment::new(path);
+
+    if let Ok(output) = git.config_get("user.email") {
+        if output.exit_code == 0 {
+            return Ok(Check::Pass(None));
+        }
+    }
+
+    Ok(Check::Missing)
+}
+
+
+pub fn is_git_user_signing_key_set(path: &Path) -> Result<Check, Box<dyn Error>> {
+    let git = GitEnvironment::new(path);
+
+    if let Ok(output) = git.config_get("user.signingKey") {
+        if output.exit_code == 0 {
+            return Ok(Check::Pass(None));
+        }
+    }
+
+    Ok(Check::Missing)
 }
