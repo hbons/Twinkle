@@ -90,7 +90,7 @@ impl App {
         run_check("user.signingKey set", &is_git_user_signing_key_set, &path);
         run_check("Commit signing enabled", &is_git_commit_signing_enabled, &path);
         run_check("Files treated as binary", &is_git_attributes_all_binary, &path);
-        run_check("submodule.recurse", &is_git_ignoring_submodules, &path);
+        run_check("submodule.recurse = false", &is_git_ignoring_submodules, &path);
 
         print_header("Sync");
         // run_check("Enabled", &is_twinkle_enabled, &path);
