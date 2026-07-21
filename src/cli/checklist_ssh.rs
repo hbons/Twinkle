@@ -59,6 +59,9 @@ pub fn is_host_reachable(_path: &Path) -> Result<Check, Box<dyn Error>> {
 }
 
 
+// TODO: is_host_known: ssh-keygen -F github.com
+
+
 pub fn is_host_using_ssh(_path: &Path) -> Result<Check, Box<dyn Error>> {
     let nc = Command::new("nc")
         .stdout(Stdio::null())

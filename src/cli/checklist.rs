@@ -51,6 +51,7 @@ impl App {
 
         print_header("Connectivity");
         self.run_check("Host reachable", &is_host_reachable, &path);
+        // self.run_check("Host known", &is_host_known, &path);
         self.run_check("Host uses SSH", &is_host_using_ssh, &path);
         self.run_check("Host supports ED25519", &is_host_supporting_ed25519, &path);
         self.run_check("Host supports ECDSA", &is_host_supporting_ecdsa, &path);
