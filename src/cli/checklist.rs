@@ -97,9 +97,9 @@ impl App {
                     Check::Fail(Some(ref s)) => println!("    \x1b[31m{check}\x1b[0m {title}: \x1b[31m{s}\x1b[0m"),
                     Check::Pass(None) =>        println!("    \x1b[32m{check}\x1b[0m {title}"),
                     Check::Fail(None) =>        println!("    \x1b[31m{check}\x1b[0m {title}"),
-                    Check::Missing =>           println!("    \x1b[31m{check}\x1b[0m {title}: \x1b[31mMissing\x1b[0m"),
+                    Check::Missing =>           println!("    \x1b[33m{check}\x1b[0m {title}: \x1b[33mMissing\x1b[0m"),
                 },
-            _ => println!("    \x1b[31m?\x1b[0m {title}: \x1b[31mCheck Failed\x1b[0m"), // TODO: Orange
+            _ => println!("    \x1b[31m?\x1b[0m {title}: \x1b[33mCheck Failed\x1b[0m"),
         };
     }
 }
