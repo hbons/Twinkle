@@ -27,7 +27,7 @@ pub fn is_ssh_agent_running(_path: &Path) -> Result<Check, Box<dyn Error>> {
     }
 }
 
-pub fn is_key_added_to_agent(_path: &Path) -> Result<Check, Box<dyn Error>> {
+pub fn is_ssh_agent_has_keys(_path: &Path) -> Result<Check, Box<dyn Error>> {
     let ssh = Command::new("ssh-add")
         .stdout(Stdio::null())
         .stderr(Stdio::null())
@@ -44,7 +44,7 @@ pub fn is_key_added_to_agent(_path: &Path) -> Result<Check, Box<dyn Error>> {
 
 // Connectivity
 
-pub fn is_host_reachable(path: &Path) -> Result<Check, Box<dyn Error>> {
+pub fn is_ssh_host_reachable(path: &Path) -> Result<Check, Box<dyn Error>> {
     let url = GitEnvironment::new(path).config_get("remote.origin.url");
 
     // dbg!(&url.unwrap());
@@ -52,10 +52,9 @@ pub fn is_host_reachable(path: &Path) -> Result<Check, Box<dyn Error>> {
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .arg("-zv")
-        .arg(&url.unwrap().stdout)
+        .arg(&url.unwrap().stdout) // TODO
         .arg("80") // TODO
         .status();
-
 
     match nc {
         Ok(code) if  code.success() => Ok(Check::Pass(None)),
@@ -65,12 +64,12 @@ pub fn is_host_reachable(path: &Path) -> Result<Check, Box<dyn Error>> {
 }
 
 
-pub fn is_host_known(_path: &Path) -> Result<Check, Box<dyn Error>> {
+pub fn is_ssh_host_known(_path: &Path) -> Result<Check, Box<dyn Error>> {
     Ok(Check::Pass(None)) // TODO: ssh-keygen -F codeberg.org
 }
 
 
-pub fn is_host_using_ssh(_path: &Path) -> Result<Check, Box<dyn Error>> {
+pub fn is_ssh_host(_path: &Path) -> Result<Check, Box<dyn Error>> {
     let nc = Command::new("nc")
         .stdout(Stdio::null())
         .stderr(Stdio::null())
@@ -80,14 +79,14 @@ pub fn is_host_using_ssh(_path: &Path) -> Result<Check, Box<dyn Error>> {
         .status();
 
     match nc {
-        Ok(code) if  code.success() => Ok(Check::Pass(None)), // TODO: Pass remote SSH version string
+        Ok(code) if  code.success() => Ok(Check::Pass(None)), // TODO: Pass remote SSH version string?
         Ok(code) if !code.success() => Ok(Check::Fail(None)),
         _ => Err("".into()),
     }
 }
 
 
-pub fn is_host_supporting_ed25519(path: &Path) -> Result<Check, Box<dyn Error>> {
+pub fn is_ssh_host_supporting_ed25519(path: &Path) -> Result<Check, Box<dyn Error>> {
     let url = GitEnvironment::new(path).config_get("remote.origin.url").unwrap().stdout; // TODO
     let url = url.parse::<SshUrl>().unwrap(); // TODO
 
@@ -97,7 +96,7 @@ pub fn is_host_supporting_ed25519(path: &Path) -> Result<Check, Box<dyn Error>> 
     }
 }
 
-pub fn is_host_supporting_ecdsa(path: &Path) -> Result<Check, Box<dyn Error>> {
+pub fn is_ssh_host_supporting_ecdsa(path: &Path) -> Result<Check, Box<dyn Error>> {
     let url = GitEnvironment::new(path).config_get("remote.origin.url").unwrap().stdout; // TODO
     let url = url.parse::<SshUrl>().unwrap(); // TODO
 
@@ -107,7 +106,7 @@ pub fn is_host_supporting_ecdsa(path: &Path) -> Result<Check, Box<dyn Error>> {
     }
 }
 
-pub fn is_host_supporting_rsa(path: &Path) -> Result<Check, Box<dyn Error>> {
+pub fn is_ssh_host_supporting_rsa(path: &Path) -> Result<Check, Box<dyn Error>> {
     let url = GitEnvironment::new(path).config_get("remote.origin.url").unwrap().stdout; // TODO
     let url = url.parse::<SshUrl>().unwrap(); // TODO
 
@@ -118,7 +117,7 @@ pub fn is_host_supporting_rsa(path: &Path) -> Result<Check, Box<dyn Error>> {
 }
 
 
-pub fn is_client_key_known_to_host(_path: &Path) -> Result<Check, Box<dyn Error>> {
+pub fn is_ssh_client_key_known_to_host(_path: &Path) -> Result<Check, Box<dyn Error>> {
     // let url = "ssh://debian@notify.sparkleshare.org/fsdfds".parse::<SshUrl>(); // TODO: strip /path from remote origin url
 
     let ssh = Command::new("ssh")

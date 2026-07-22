@@ -32,7 +32,6 @@ pub fn is_git_info_exclude_valid(path: &Path) -> Result<Check, Box<dyn Error>> {
     }
 }
 
-
 pub fn is_git_info_attributes_valid(path: &Path) -> Result<Check, Box<dyn Error>> {
     if path.join(".git/info/attributes").exists() { // TODO: parse file
         Ok(Check::Pass(None))
@@ -77,6 +76,7 @@ pub fn is_git_not_in_a_merge(path: &Path) -> Result<Check, Box<dyn Error>> {
 
 pub fn is_git_attributes_all_binary(path: &Path) -> Result<Check, Box<dyn Error>> {
     let path = path.join(".git/info/attributes");
+
     if path.exists() {
         let content = fs::read_to_string(path)?;
 

@@ -68,25 +68,25 @@ impl App {
 
         print_header("Secure Shell");
         run_check("ssh-agent running", &is_ssh_agent_running, &path);
-        run_check("Keys added to agent", &is_key_added_to_agent, &path);
-        run_check("Host reachable", &is_host_reachable, &path);
-        run_check("Host known", &is_host_known, &path);
-        run_check("Host uses SSH", &is_host_using_ssh, &path);
-        run_check("Host supports ED25519", &is_host_supporting_ed25519, &path);
-        run_check("Host supports ECDSA", &is_host_supporting_ecdsa, &path);
-        run_check("Host supports RSA", &is_host_supporting_rsa, &path);
-        run_check("Host knows client SSH key", &is_client_key_known_to_host, &path);
+        run_check("ssh-agent has keys", &is_ssh_agent_has_keys, &path);
+        run_check("Host reachable", &is_ssh_host_reachable, &path);
+        run_check("Host known", &is_ssh_host_known, &path);
+        run_check("Host uses SSH", &is_ssh_host, &path);
+        run_check("Host supports ED25519 keys", &is_ssh_host_supporting_ed25519, &path);
+        run_check("Host supports ECDSA keys", &is_ssh_host_supporting_ecdsa, &path);
+        run_check("Host supports RSA keys", &is_ssh_host_supporting_rsa, &path);
+        run_check("Host knows client SSH key", &is_ssh_client_key_known_to_host, &path);
 
         print_header("Repository");
-        run_check(".git/ present", &is_git_dir_present, &path);
-        run_check(".git/info/exclude valid", &is_git_info_exclude_valid, &path);
-        run_check(".git/info/attributes valid", &is_git_info_attributes_valid, &path);
+        run_check(".git/", &is_git_dir_present, &path);
+        run_check(".git/info/exclude", &is_git_info_exclude_valid, &path);
+        run_check(".git/info/attributes", &is_git_info_attributes_valid, &path);
         run_check("On a branch", &is_git_on_a_branch, &path);
         run_check("Not in a merge", &is_git_not_in_a_merge, &path);
         run_check("Files treated as binary", &is_git_attributes_all_binary, &path);
 
         print_header("Config");
-        run_check(".git/config valid", &is_git_config_valid, &path);
+        run_check(".git/config", &is_git_config_valid, &path);
         run_check("remote.origin.url", &is_git_remote_url_valid, &path);
         run_check("core.attributesFile", &is_git_core_attributes_file_set, &path);
         run_check("core.excludesFile", &is_git_core_excludes_file_set, &path);
@@ -103,18 +103,15 @@ impl App {
         // ("core.quotePath", "false"),
         // ("core.safecrlf", "false"),
 
-        print_header(&format!("{}", self.name));
-        run_check(".twinkle/config valid", &is_twinkle_config_valid, &path);
+        print_header("Sync");
+        run_check(".twinkle/config", &is_twinkle_config_valid, &path);
         run_check("twinkle.enabled", &is_twinkle_enabled_set, &path);
         run_check("twinkle.lfs.enabled", &is_twinkle_lfs_enabled_set, &path);
         run_check("twinkle.push.enabled", &is_twinkle_push_enabled_set, &path);
 
-        // TODO: find all git config options/filters/hooks that may have been added by the user
+        // TODO: Find all git config options/filters/hooks that may have been added by the user
 
-        println!();
         print_legend();
-        println!();
-
         Ok(())
     }
 }
@@ -168,17 +165,18 @@ pub fn run_check(
 
 
 fn print_legend() {
-    println!(
-        "  {} {}",
-        cli_red(&Check::Fail(None).to_string()),
-        cli_dimmed("= Check failed and could disrupt sync"),
-    );
-
+    println!();
     println!(
         "  {} {}",
         cli_yellow(&Check::Missing.to_string()),
         cli_dimmed("= Check failed but should not disrupt sync"),
     );
+    println!(
+        "  {} {}",
+        cli_red(&Check::Fail(None).to_string()),
+        cli_dimmed("= Check failed and could disrupt sync"),
+    );
+    println!();
 }
 
 

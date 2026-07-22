@@ -15,14 +15,16 @@ use super::check::Check;
 fn get_from_config(path: &Path, name: &str, expect: Option<&str>) -> Result<Check, Box<dyn Error>> {
     let git = GitEnvironment::new(path);
 
-    if let Ok(output) = git.config_get(name) {
+    if let Ok(output) = git.config_get(name) { // TODO: This is hideous, I need a break...
         if output.exit_code == 0 {
-            if Some(output.stdout.as_str()) == expect || expect.is_none() {
+            if Some(output.stdout.as_str().trim()) == expect || expect.is_none() {
                 if expect == Some("") {
                     return Ok(Check::Pass(Some("\"\"".into())));
                 } else {
                     return Ok(Check::Pass(Some(output.stdout)));
                 }
+            } else {
+                return Ok(Check::Fail(Some(output.stdout)));
             }
         } else {
             return Ok(Check::Fail(Some(output.stdout)));
@@ -33,19 +35,19 @@ fn get_from_config(path: &Path, name: &str, expect: Option<&str>) -> Result<Chec
 }
 
 
-// Git Config
+// Git
 
 pub fn is_git_config_valid(path: &Path) -> Result<Check, Box<dyn Error>> {
-    if path.join(".git/config").exists() { // TODO: parse file
-        Ok(Check::Pass(None))
+    if path.join(".git/config").exists() {
+        Ok(Check::Pass(None)) // TODO: parse file
     } else {
         Ok(Check::Fail(None))
     }
 }
 
 pub fn is_twinkle_config_valid(path: &Path) -> Result<Check, Box<dyn Error>> {
-    if path.join(".twinkle/config").exists() { // TODO: parse file
-        Ok(Check::Pass(None))
+    if path.join(".twinkle/config").exists() {
+        Ok(Check::Pass(None)) // TODO: parse file
     } else {
         Ok(Check::Fail(None))
     }
@@ -57,11 +59,11 @@ pub fn is_git_remote_url_valid(path: &Path) -> Result<Check, Box<dyn Error>> {
 }
 
 pub fn is_git_core_attributes_file_set(path: &Path) -> Result<Check, Box<dyn Error>> {
-    get_from_config(path, "core.attributesFile", Some(&"\"\""))
+    get_from_config(path, "core.attributesFile", Some(&""))
 }
 
 pub fn is_git_core_excludes_file_set(path: &Path) -> Result<Check, Box<dyn Error>> {
-    get_from_config(path, "core.excludesFile", Some(&"\"\""))
+    get_from_config(path, "core.excludesFile", Some(&""))
 }
 
 pub fn is_git_submodule_recurse_set(path: &Path) -> Result<Check, Box<dyn Error>> {
@@ -69,7 +71,7 @@ pub fn is_git_submodule_recurse_set(path: &Path) -> Result<Check, Box<dyn Error>
 }
 
 pub fn is_git_push_default_set(path: &Path) -> Result<Check, Box<dyn Error>> {
-    get_from_config(path, "remote.origin.url", Some(&"current"))
+    get_from_config(path, "push.default", Some(&"current"))
 }
 
 pub fn is_git_user_name_set(path: &Path) -> Result<Check, Box<dyn Error>> {
@@ -80,16 +82,8 @@ pub fn is_git_user_email_set(path: &Path) -> Result<Check, Box<dyn Error>> {
     get_from_config(path, "user.email", None)
 }
 
-pub fn is_git_user_signing_key_set(path: &Path) -> Result<Check, Box<dyn Error>> {
-    get_from_config(path, "user.signingKey", None)
-}
 
-pub fn is_git_commit_signing_enabled(path: &Path) -> Result<Check, Box<dyn Error>> {
-    get_from_config(path, "commit.gpgSign", None)
-}
-
-
-// Sync Config
+// Sync
 
 pub fn is_twinkle_enabled_set(path: &Path) -> Result<Check, Box<dyn Error>> {
     get_from_config(path, "twinkle.enabled", Some(&"true".to_string()))
