@@ -43,8 +43,8 @@ pub fn is_git_core_excludes_file_set(path: &Path) -> Result<Check, Box<dyn Error
     get_from_config(path, "core.excludesFile", Some(&"\"\""))
 }
 
-pub fn is_git_ignoring_submodules(path: &Path) -> Result<Check, Box<dyn Error>> {
-    get_from_config(path, "remote.origin.url", Some(&"false"))
+pub fn is_git_submodule_recurse_set(path: &Path) -> Result<Check, Box<dyn Error>> {
+    get_from_config(path, "submodule.recurse", Some(&"false"))
 }
 
 pub fn is_git_push_default_set(path: &Path) -> Result<Check, Box<dyn Error>> {

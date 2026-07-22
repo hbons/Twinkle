@@ -90,10 +90,10 @@ impl App {
         print_header("Config");
         run_check(".git/config valid", &is_git_config_valid, &path);
         run_check("remote.origin.url", &is_git_remote_url_valid, &path);
-        run_check("submodule.recurse", &is_git_ignoring_submodules, &path);
         run_check("core.attributesFile", &is_git_core_attributes_file_set, &path);
         run_check("core.excludesFile", &is_git_core_excludes_file_set, &path);
         run_check("push.default", &is_git_push_default_set, &path);
+        run_check("submodule.recurse", &is_git_submodule_recurse_set, &path);
         run_check("user.name", &is_git_user_name_set, &path);
         run_check("user.email", &is_git_user_email_set, &path);
 
@@ -125,7 +125,7 @@ impl App {
 pub fn run_check(
     title: &str,
     check: &dyn Fn(&Path)  -> Result<Check, Box<dyn Error>>,
-    path: &Path, // TODO: use current_dir?
+    path: &Path,
 ) {
     match check(path) {
         Ok(check) =>
@@ -175,6 +175,7 @@ fn print_legend() {
         cli_red(&Check::Fail(None).to_string()),
         cli_dimmed("= Check failed and could disrupt sync"),
     );
+
     println!(
         "  {} {}",
         cli_yellow(&Check::Missing.to_string()),
