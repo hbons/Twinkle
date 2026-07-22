@@ -12,6 +12,27 @@ use crate::git::objects::environment::GitEnvironment;
 use super::check::Check;
 
 
+fn get_from_config(path: &Path, name: &str, expect: Option<&str>) -> Result<Check, Box<dyn Error>> {
+    let git = GitEnvironment::new(path);
+
+    if let Ok(output) = git.config_get(name) {
+        if output.exit_code == 0 {
+            if Some(output.stdout.as_str()) == expect || expect.is_none() {
+                if expect == Some("") {
+                    return Ok(Check::Pass(Some("\"\"".into())));
+                } else {
+                    return Ok(Check::Pass(Some(output.stdout)));
+                }
+            }
+        } else {
+            return Ok(Check::Fail(Some(output.stdout)));
+        }
+    }
+
+    Ok(Check::Missing)
+}
+
+
 // Git Config
 
 pub fn is_git_config_valid(path: &Path) -> Result<Check, Box<dyn Error>> {
@@ -80,25 +101,4 @@ pub fn is_twinkle_lfs_enabled_set(path: &Path) -> Result<Check, Box<dyn Error>> 
 
 pub fn is_twinkle_push_enabled_set(path: &Path) -> Result<Check, Box<dyn Error>> {
     get_from_config(path, "twinkle.push.enabled", Some(&"true".to_string()))
-}
-
-
-fn get_from_config(path: &Path, name: &str, expect: Option<&str>) -> Result<Check, Box<dyn Error>> {
-    let git = GitEnvironment::new(path);
-
-    if let Ok(output) = git.config_get(name) {
-        if output.exit_code == 0 {
-            if Some(output.stdout.as_str()) == expect || expect.is_none() {
-                if expect == Some("") {
-                    return Ok(Check::Pass(Some("\"\"".into())));
-                } else {
-                    return Ok(Check::Pass(Some(output.stdout)));
-                }
-            }
-        } else {
-            return Ok(Check::Fail(Some(output.stdout)));
-        }
-    }
-
-    Ok(Check::Missing)
 }

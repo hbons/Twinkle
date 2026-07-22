@@ -69,8 +69,6 @@ impl App {
         print_header("Secure Shell");
         run_check("ssh-agent running", &is_ssh_agent_running, &path);
         run_check("Keys added to agent", &is_key_added_to_agent, &path);
-
-        print_header("Connectivity");
         run_check("Host reachable", &is_host_reachable, &path);
         run_check("Host known", &is_host_known, &path);
         run_check("Host uses SSH", &is_host_using_ssh, &path);

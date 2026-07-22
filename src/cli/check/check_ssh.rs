@@ -13,6 +13,7 @@ use std::process::{ Command, Stdio };
 use crate::git::objects::environment::GitEnvironment;
 use crate::ssh::keys::key_type::KeyType;
 use crate::ssh::keyscan::ssh_keyscan;
+use crate::ssh::objects::url::SshUrl;
 
 use super::check::Check;
 
@@ -34,7 +35,7 @@ pub fn is_key_added_to_agent(_path: &Path) -> Result<Check, Box<dyn Error>> {
         .status();
 
     match ssh {
-        Ok(code) if  code.success() => Ok(Check::Pass(Some("3".to_string()))), // TODO: Pass number of keys
+        Ok(code) if  code.success() => Ok(Check::Pass(None)), // TODO: Pass number of keys
         Ok(code) if !code.success() => Ok(Check::Fail(None)),
         _ => Err("".into()),
     }
@@ -86,30 +87,35 @@ pub fn is_host_using_ssh(_path: &Path) -> Result<Check, Box<dyn Error>> {
 }
 
 
-pub fn is_host_supporting_ed25519(_path: &Path) -> Result<Check, Box<dyn Error>> {
-    // TODO: use remote.origin.url and get port
-    match ssh_keyscan("notify.sparkleshare.org", Some(22), KeyType::ED25519) {
+pub fn is_host_supporting_ed25519(path: &Path) -> Result<Check, Box<dyn Error>> {
+    let url = GitEnvironment::new(path).config_get("remote.origin.url").unwrap().stdout; // TODO
+    let url = url.parse::<SshUrl>().unwrap(); // TODO
+
+    match ssh_keyscan(&url.host, Some(url.port.map(|p| p as u16).unwrap_or(22)), KeyType::ED25519) {
         Ok(_)  => Ok(Check::Pass(None)),
         Err(_) => Ok(Check::Missing),
     }
 }
 
-pub fn is_host_supporting_ecdsa(_path: &Path) -> Result<Check, Box<dyn Error>> {
-    // TODO: use remote.origin.url and get port
-    match ssh_keyscan("notify.sparkleshare.org", Some(22), KeyType::ECDSA) {
+pub fn is_host_supporting_ecdsa(path: &Path) -> Result<Check, Box<dyn Error>> {
+    let url = GitEnvironment::new(path).config_get("remote.origin.url").unwrap().stdout; // TODO
+    let url = url.parse::<SshUrl>().unwrap(); // TODO
+
+    match ssh_keyscan(&url.host, Some(url.port.map(|p| p as u16).unwrap_or(22)), KeyType::ECDSA) {
         Ok(_)  => Ok(Check::Pass(None)),
         Err(_) => Ok(Check::Missing),
     }
 }
 
-pub fn is_host_supporting_rsa(_path: &Path) -> Result<Check, Box<dyn Error>> {
-    // TODO: use remote.origin.url and get port
-    match ssh_keyscan("notify.sparkleshare.org", Some(22), KeyType::RSA) {
+pub fn is_host_supporting_rsa(path: &Path) -> Result<Check, Box<dyn Error>> {
+    let url = GitEnvironment::new(path).config_get("remote.origin.url").unwrap().stdout; // TODO
+    let url = url.parse::<SshUrl>().unwrap(); // TODO
+
+    match ssh_keyscan(&url.host, Some(url.port.map(|p| p as u16).unwrap_or(22)), KeyType::RSA) {
         Ok(_)  => Ok(Check::Pass(None)),
         Err(_) => Ok(Check::Missing),
     }
 }
-
 
 
 pub fn is_client_key_known_to_host(_path: &Path) -> Result<Check, Box<dyn Error>> {
@@ -122,7 +128,7 @@ pub fn is_client_key_known_to_host(_path: &Path) -> Result<Check, Box<dyn Error>
     // .arg("-p")
     // .arg("22") // TODO
     .arg("-o BatchMode=yes")
-    .arg("debian@notify.sparkleshare.org")
+    .arg("debian@notify.sparkleshare.org") // TODO
     .arg("exit")
     .status();
 
