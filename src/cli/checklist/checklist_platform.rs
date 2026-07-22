@@ -11,7 +11,7 @@ use std::path::Path;
 use std::process::Command;
 
 use crate::git::objects::environment::GitEnvironment;
-use super::checklist::Check;
+use super::check::Check;
 
 
 // Platform

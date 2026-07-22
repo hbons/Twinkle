@@ -6,6 +6,7 @@
 
 
 pub mod checklist {
+    pub mod check;
     pub mod checklist;
     pub mod checklist_config;
     pub mod checklist_platform;

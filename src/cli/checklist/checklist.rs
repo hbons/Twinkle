@@ -6,35 +6,16 @@
 
 
 use std::error::Error;
-use std::fmt;
 use std::path::Path;
 
 use crate::app::App;
 use crate::cli::util::*;
 
+use super::check::Check;
 use super::checklist_config::*;
 use super::checklist_platform::*;
 use super::checklist_repository::*;
 use super::checklist_ssh::*;
-
-
-pub enum Check {
-    Fail(Option<String>),
-    Missing, //
-    Pass(Option<String>),
-    // Invalid, //
-    // Error, TODO: instead of Result
-}
-
-impl fmt::Display for Check {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Pass(_) => write!(f, "✓"),
-            Self::Missing => write!(f, "?"),
-            Self::Fail(_) => write!(f, "!"),
-        }
-    }
-}
 
 
 impl App {
@@ -140,10 +121,6 @@ pub fn run_check(
 }
 
 
-fn print_header(s: &str) {
-    println!("\n  {}\n", cli_bold(s));
-}
-
 fn print_legend() {
     println!(
         "  {} {}",
@@ -155,4 +132,9 @@ fn print_legend() {
         cli_red(&Check::Fail(None).to_string()),
         cli_dimmed("= Check failed and could disrupt sync"),
     );
+}
+
+
+fn print_header(s: &str) {
+    println!("\n  {}\n", cli_bold(s));
 }

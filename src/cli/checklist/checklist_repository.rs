@@ -9,7 +9,7 @@ use std::error::Error;
 use std::path::Path;
 
 use crate::git::objects::environment::GitEnvironment;
-use super::checklist::Check;
+use super::check::Check;
 
 
 // Repository

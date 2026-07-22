@@ -13,15 +13,15 @@ use std::process::{ Command, Stdio };
 use crate::ssh::keys::key_type::KeyType;
 use crate::ssh::keyscan::ssh_keyscan;
 
-use super::checklist::Check;
+use super::check::Check;
 
 
 // Secure Shell
 
 pub fn is_ssh_agent_running(_path: &Path) -> Result<Check, Box<dyn Error>> {
     match env::var("SSH_AUTH_SOCK") {
-        Ok(_) => Ok(Check::Pass(None)),
-        _ => Ok(Check::Fail(None)),
+        Ok(_)  => Ok(Check::Pass(None)),
+        Err(_) => Ok(Check::Fail(None)),
     }
 }
 
