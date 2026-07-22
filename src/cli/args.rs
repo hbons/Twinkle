@@ -21,7 +21,7 @@ impl App {
             "init"      => self.cli_command_init(args)?,
             "sync"      => self.cli_command_sync(args)?,
             "status"    => self.cli_command_status(args)?, // Not displayed
-            "checklist" => self.cli_command_checklist(args)?, // Not displayed
+            "check"     => self.cli_command_checklist(args)?, // Not displayed
             "--help"    => self.cli_option_help(),
             "--version" => println!("{}", app_version()),
             "--deps"    => println!("{}", app_deps()),
@@ -46,7 +46,7 @@ impl App {
         println!("    sync  [path] [--interval=60]");
         println!();
         println!("Support:");
-        println!("    checklist [path]");
+        println!("    check [path]");
         println!("    {}",
             cli_link(
                 "https://sparkleshare.org/support",

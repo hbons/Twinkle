@@ -10,6 +10,7 @@ use std::env;
 use std::path::Path;
 use std::process::{ Command, Stdio };
 
+use crate::git::objects::environment::GitEnvironment;
 use crate::ssh::keys::key_type::KeyType;
 use crate::ssh::keyscan::ssh_keyscan;
 
@@ -20,7 +21,7 @@ use super::check::Check;
 
 pub fn is_ssh_agent_running(_path: &Path) -> Result<Check, Box<dyn Error>> {
     match env::var("SSH_AUTH_SOCK") {
-        Ok(_)  => Ok(Check::Pass(None)),
+        Ok(v)  => Ok(Check::Pass(Some(v.to_string()))),
         Err(_) => Ok(Check::Fail(None)),
     }
 }
@@ -29,11 +30,11 @@ pub fn is_key_added_to_agent(_path: &Path) -> Result<Check, Box<dyn Error>> {
     let ssh = Command::new("ssh-add")
         .stdout(Stdio::null())
         .stderr(Stdio::null())
-        .arg("-L")
+        .arg("-l")
         .status();
 
     match ssh {
-        Ok(code) if  code.success() => Ok(Check::Pass(None)),
+        Ok(code) if  code.success() => Ok(Check::Pass(Some("3".to_string()))), // TODO: Pass number of keys
         Ok(code) if !code.success() => Ok(Check::Fail(None)),
         _ => Err("".into()),
     }
@@ -42,14 +43,18 @@ pub fn is_key_added_to_agent(_path: &Path) -> Result<Check, Box<dyn Error>> {
 
 // Connectivity
 
-pub fn is_host_reachable(_path: &Path) -> Result<Check, Box<dyn Error>> {
+pub fn is_host_reachable(path: &Path) -> Result<Check, Box<dyn Error>> {
+    let url = GitEnvironment::new(path).config_get("remote.origin.url");
+
+    // dbg!(&url.unwrap());
     let nc = Command::new("nc")
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .arg("-zv")
-        .arg("1.1.1.1") // TODO: use remote.origin.url
+        .arg(&url.unwrap().stdout)
         .arg("80") // TODO
         .status();
+
 
     match nc {
         Ok(code) if  code.success() => Ok(Check::Pass(None)),
@@ -59,21 +64,22 @@ pub fn is_host_reachable(_path: &Path) -> Result<Check, Box<dyn Error>> {
 }
 
 
-// TODO: is_host_known: ssh-keygen -F github.com
+pub fn is_host_known(_path: &Path) -> Result<Check, Box<dyn Error>> {
+    Ok(Check::Pass(None)) // TODO: ssh-keygen -F codeberg.org
+}
 
 
 pub fn is_host_using_ssh(_path: &Path) -> Result<Check, Box<dyn Error>> {
     let nc = Command::new("nc")
         .stdout(Stdio::null())
         .stderr(Stdio::null())
-        .arg("-zv")
-        .arg("-G 3") // timeout, TODO: Test on Linux
+        .arg("-w 3") // timeout, TODO: Test on Linux
         .arg("notify.sparkleshare.org") // TODO: use remote.origin.url and get port
         .arg("22")
         .status();
 
     match nc {
-        Ok(code) if  code.success() => Ok(Check::Pass(None)),
+        Ok(code) if  code.success() => Ok(Check::Pass(None)), // TODO: Pass remote SSH version string
         Ok(code) if !code.success() => Ok(Check::Fail(None)),
         _ => Err("".into()),
     }

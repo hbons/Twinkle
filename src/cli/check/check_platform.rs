@@ -33,11 +33,16 @@ pub fn is_supported_arch(_path: &Path) -> Result<Check, Box<dyn Error>> {
 
     Ok(
         match ARCH {
-            s if s.starts_with("x86") => Check::Pass(arch),
-            "arm" | "aarch64" => Check::Pass(arch),
+            "x86_64"  => Check::Pass(arch),
+            "aarch64" => Check::Pass(arch),
             _ => Check::Fail(arch),
         }
     )
+}
+
+pub fn is_supported_runtime(_path: &Path) -> Result<Check, Box<dyn Error>> {
+    Ok(Check::Pass(Some("native".into()))) // TODO
+    // Ok(Check::Pass("flatpak")) // TODO
 }
 
 
