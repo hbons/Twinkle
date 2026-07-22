@@ -83,28 +83,27 @@ pub fn is_host_using_ssh(_path: &Path) -> Result<Check, Box<dyn Error>> {
 pub fn is_host_supporting_ed25519(_path: &Path) -> Result<Check, Box<dyn Error>> {
     // TODO: use remote.origin.url and get port
     match ssh_keyscan("notify.sparkleshare.org", Some(22), KeyType::ED25519) {
-        Ok(_) => Ok(Check::Pass(None)),
-        _ => Ok(Check::Fail(None)),
+        Ok(_)  => Ok(Check::Pass(None)),
+        Err(_) => Ok(Check::Missing),
     }
 }
-
-
-pub fn is_host_supporting_rsa(_path: &Path) -> Result<Check, Box<dyn Error>> {
-    // TODO: use remote.origin.url and get port
-    match ssh_keyscan("notify.sparkleshare.org", Some(22), KeyType::RSA) {
-        Ok(_) => Ok(Check::Missing),
-        _ => Ok(Check::Pass(None)),
-    }
-}
-
 
 pub fn is_host_supporting_ecdsa(_path: &Path) -> Result<Check, Box<dyn Error>> {
     // TODO: use remote.origin.url and get port
     match ssh_keyscan("notify.sparkleshare.org", Some(22), KeyType::ECDSA) {
-        Ok(_) => Ok(Check::Pass(None)),
-        _ => Ok(Check::Missing),
+        Ok(_)  => Ok(Check::Pass(None)),
+        Err(_) => Ok(Check::Missing),
     }
 }
+
+pub fn is_host_supporting_rsa(_path: &Path) -> Result<Check, Box<dyn Error>> {
+    // TODO: use remote.origin.url and get port
+    match ssh_keyscan("notify.sparkleshare.org", Some(22), KeyType::RSA) {
+        Ok(_)  => Ok(Check::Pass(None)),
+        Err(_) => Ok(Check::Missing),
+    }
+}
+
 
 
 pub fn is_client_key_known_to_host(_path: &Path) -> Result<Check, Box<dyn Error>> {

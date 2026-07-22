@@ -61,15 +61,21 @@ fn _twinkle_default_settings()
 pub fn twinkle_default_git_settings()
 -> Vec<(&'static str, &'static str)>
 {
+    // Important: Keep in sync with the `checklist` cli command
+
     vec![
-        ("core.attributesFile", ""), // Ignore the system and user attributes files
+        // Prevent system/global config interference
+        ("core.attributesFile", ""), // Ignore the system/global attributes files
+        ("core.excludesFile", ""), // Ignore the system/global gitignore files
+
+        // Cross-platform compatiblity
         ("core.autocrlf", "input"), // Text files will keep original line endings when checked out, CRLF chars are normalized to LF when committed
-        ("core.excludesFile", ""), // Ignore the system and global gitignore files
         ("core.fileMode", "false"), // Ignore permission changes
         ("core.ignoreCase", "false"), // Be case sensitive explicitly to work on Mac
         ("core.precomposeUnicode", "true"), // Use the same Unicode form on all filesystems
         ("core.quotePath", "false"), // Output Unicode characters: '"h\303\251"' becomes 'hé'
         ("core.safecrlf", "false"),
+
         ("push.default", "current"), // Push only current branch to matching remote
         ("submodule.recurse", "false"), // Ignore submodules
 

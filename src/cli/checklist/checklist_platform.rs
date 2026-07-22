@@ -6,36 +6,36 @@
 
 
 use std::error::Error;
-use std::env::{ consts::ARCH, consts::OS };
+use std::env::consts::{ ARCH, OS };
 use std::path::Path;
 use std::process::Command;
 
 use crate::git::objects::environment::GitEnvironment;
-
-use super::*;
-use super::checklist_ssh::*;
-use crate::cli::checklist::Check;
+use super::checklist::Check;
 
 
 // Platform
 
 pub fn is_supported_os(_path: &Path) -> Result<Check, Box<dyn Error>> {
+    let os = Some(OS.into());
+
     Ok(
         match OS {
-            "linux" |
-            "macos" => Check::Pass(Some(OS.into())),
-            s if s.ends_with("bsd") => Check::Pass(Some(OS.into())),
-            _ => Check::Fail(Some(OS.into())),
+            "linux" | "macos" => Check::Pass(os),
+            s if s.ends_with("bsd") => Check::Pass(os),
+            _ => Check::Fail(os),
         }
     )
 }
 
 pub fn is_supported_arch(_path: &Path) -> Result<Check, Box<dyn Error>> {
+    let arch = Some(ARCH.into());
+
     Ok(
         match ARCH {
-            s if s.starts_with("x86") => Check::Pass(Some(ARCH.into())),
-            "arm" | "aarch64" => Check::Pass(Some(ARCH.into())),
-            _ => Check::Fail(Some(ARCH.into())),
+            s if s.starts_with("x86") => Check::Pass(arch),
+            "arm" | "aarch64" => Check::Pass(arch),
+            _ => Check::Fail(arch),
         }
     )
 }

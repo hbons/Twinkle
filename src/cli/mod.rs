@@ -5,12 +5,15 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
+pub mod checklist {
+    pub mod checklist;
+    pub mod checklist_config;
+    pub mod checklist_platform;
+    pub mod checklist_repository;
+    pub mod checklist_ssh;
+}
+
 pub mod args;
-pub mod checklist;
-pub mod checklist_repository;
-pub mod checklist_platform;
-pub mod checklist_ssh;
-pub mod checklist_sync;
 pub mod clone;
 pub mod init;
 pub mod sync;

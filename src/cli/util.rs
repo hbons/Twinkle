@@ -40,3 +40,21 @@ pub fn cli_error(s: &str) -> String {  format!("\x1b[31m{}\x1b[0m", s) }
 pub fn cli_link(url: &str, label: Option<&str>) -> String {
     format!("\x1b]8;;{}\x1b\\{}\x1b]8;;\x1b\\", url, label.unwrap_or(url))
 }
+
+pub fn cli_green(s: &str) -> String {
+    cli_bold(
+        &format!("\x1b[32m{}\x1b[0m", s)
+    )
+}
+
+pub fn cli_yellow(s: &str) -> String {
+    cli_bold(
+        &format!("\x1b[33m{}\x1b[0m", s)
+    )
+}
+
+pub fn cli_red(s: &str) -> String {
+    cli_bold(
+        &format!("\x1b[31m{}\x1b[0m", s)
+    )
+}
