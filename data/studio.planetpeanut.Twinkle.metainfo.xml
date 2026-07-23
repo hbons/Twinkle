@@ -81,6 +81,27 @@
         <content_attribute id="money-purchasing">mild</content_attribute>
     </content_rating>
 
+    <categories>
+        <category>Productivity</category>
+        <category>Networking</category>
+        <category>Utility</category>
+    </categories>
+
+    <keywords>
+        <keyword>sync</keyword>
+        <keyword>git</keyword>
+        <keyword>dropbox</keyword>
+        <keyword>backup</keyword>
+        <keyword>version-control</keyword>
+        <keyword>file-history</keyword>
+        <keyword>self-hosted</keyword>
+        <keyword>cloud</keyword>
+        <keyword>push</keyword>
+        <keyword>ssh</keyword>
+        <keyword>commit</keyword>
+        <keyword>collaboration</keyword>
+    </keywords>
+
     <metadata_license>CC0-1.0</metadata_license>
     <update_contact>hello_AT_planetpeanut.studio</update_contact>
 </component>
