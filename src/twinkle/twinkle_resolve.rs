@@ -74,7 +74,7 @@ pub fn twinkle_resolve(
 
                 // No common ancestor
                 repo.git.checkout_ours(path)?;
-                repo.git.add(&path)?;
+                repo.git.add(path)?;
             },
             GitMergeStatus::UU |
             GitMergeStatus::AU |

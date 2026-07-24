@@ -73,7 +73,7 @@ pub fn is_ssh_host(_path: &Path) -> Result<Check, Box<dyn Error>> {
     let nc = Command::new("nc")
         .stdout(Stdio::null())
         .stderr(Stdio::null())
-        .arg("-w 3") // timeout, TODO: Test on Linux
+        .args(["-w",  "3"]) // timeout, TODO: Test on Linux
         .arg("notify.sparkleshare.org") // TODO: use remote.origin.url and get port
         .arg("22")
         .status();
@@ -90,7 +90,7 @@ pub fn is_ssh_host_supporting_ed25519(path: &Path) -> Result<Check, Box<dyn Erro
     let url = GitEnvironment::new(path).config_get("remote.origin.url").unwrap().stdout; // TODO
     let url = url.parse::<SshUrl>().unwrap(); // TODO
 
-    match ssh_keyscan(&url.host, Some(url.port.map(|p| p as u16).unwrap_or(22)), KeyType::ED25519) {
+    match ssh_keyscan(&url.host, Some(url.port.unwrap_or(22)), KeyType::ED25519) {
         Ok(_)  => Ok(Check::Pass(None)),
         Err(_) => Ok(Check::Missing),
     }
@@ -100,7 +100,7 @@ pub fn is_ssh_host_supporting_ecdsa(path: &Path) -> Result<Check, Box<dyn Error>
     let url = GitEnvironment::new(path).config_get("remote.origin.url").unwrap().stdout; // TODO
     let url = url.parse::<SshUrl>().unwrap(); // TODO
 
-    match ssh_keyscan(&url.host, Some(url.port.map(|p| p as u16).unwrap_or(22)), KeyType::ECDSA) {
+    match ssh_keyscan(&url.host, Some(url.port.unwrap_or(22)), KeyType::ECDSA) {
         Ok(_)  => Ok(Check::Pass(None)),
         Err(_) => Ok(Check::Missing),
     }
@@ -110,7 +110,7 @@ pub fn is_ssh_host_supporting_rsa(path: &Path) -> Result<Check, Box<dyn Error>> 
     let url = GitEnvironment::new(path).config_get("remote.origin.url").unwrap().stdout; // TODO
     let url = url.parse::<SshUrl>().unwrap(); // TODO
 
-    match ssh_keyscan(&url.host, Some(url.port.map(|p| p as u16).unwrap_or(22)), KeyType::RSA) {
+    match ssh_keyscan(&url.host, Some(url.port.unwrap_or(22)), KeyType::RSA) {
         Ok(_)  => Ok(Check::Pass(None)),
         Err(_) => Ok(Check::Missing),
     }
@@ -126,7 +126,7 @@ pub fn is_ssh_client_key_known_to_host(_path: &Path) -> Result<Check, Box<dyn Er
     .arg("-T")
     // .arg("-p")
     // .arg("22") // TODO
-    .arg("-o BatchMode=yes")
+    .args(["-o", "BatchMode=yes"])
     .arg("debian@notify.sparkleshare.org") // TODO
     .arg("exit")
     .status();

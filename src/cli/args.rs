@@ -21,7 +21,7 @@ impl App {
             "init"      => self.cli_command_init(args)?,
             "sync"      => self.cli_command_sync(args)?,
             "status"    => self.cli_command_status(args)?, // Not displayed
-            "check"     => self.cli_command_checklist(args)?, // Not displayed
+            "check"     => self.cli_command_check(args)?, // Not displayed
             "--help"    => self.cli_option_help(),
             "--version" => println!("{}", app_version()),
             "--deps"    => println!("{}", app_deps()),

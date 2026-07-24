@@ -59,19 +59,19 @@ pub fn is_git_remote_url_valid(path: &Path) -> Result<Check, Box<dyn Error>> {
 }
 
 pub fn is_git_core_attributes_file_set(path: &Path) -> Result<Check, Box<dyn Error>> {
-    get_from_config(path, "core.attributesFile", Some(&""))
+    get_from_config(path, "core.attributesFile", Some(""))
 }
 
 pub fn is_git_core_excludes_file_set(path: &Path) -> Result<Check, Box<dyn Error>> {
-    get_from_config(path, "core.excludesFile", Some(&""))
+    get_from_config(path, "core.excludesFile", Some(""))
 }
 
 pub fn is_git_submodule_recurse_set(path: &Path) -> Result<Check, Box<dyn Error>> {
-    get_from_config(path, "submodule.recurse", Some(&"false"))
+    get_from_config(path, "submodule.recurse", Some("false"))
 }
 
 pub fn is_git_push_default_set(path: &Path) -> Result<Check, Box<dyn Error>> {
-    get_from_config(path, "push.default", Some(&"current"))
+    get_from_config(path, "push.default", Some("current"))
 }
 
 pub fn is_git_user_name_set(path: &Path) -> Result<Check, Box<dyn Error>> {
@@ -86,13 +86,13 @@ pub fn is_git_user_email_set(path: &Path) -> Result<Check, Box<dyn Error>> {
 // Sync
 
 pub fn is_twinkle_enabled_set(path: &Path) -> Result<Check, Box<dyn Error>> {
-    get_from_config(path, "twinkle.enabled", Some(&"true".to_string()))
+    get_from_config(path, "twinkle.enabled", Some("true"))
 }
 
 pub fn is_twinkle_lfs_enabled_set(path: &Path) -> Result<Check, Box<dyn Error>> {
-    get_from_config(path, "twinkle.lfs.enabled", Some(&"true".to_string()))
+    get_from_config(path, "twinkle.lfs.enabled", Some("true"))
 }
 
 pub fn is_twinkle_push_enabled_set(path: &Path) -> Result<Check, Box<dyn Error>> {
-    get_from_config(path, "twinkle.push.enabled", Some(&"true".to_string()))
+    get_from_config(path, "twinkle.push.enabled", Some("true"))
 }

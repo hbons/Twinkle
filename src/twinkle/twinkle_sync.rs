@@ -220,7 +220,7 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
                 return Ok(());
             }
 
-            log::info(&format!("✓ Unpushed commits found"));
+            log::info("✓ Unpushed commits found");
         }
 
         if repo.read_only() {

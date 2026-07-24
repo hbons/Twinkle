@@ -67,6 +67,8 @@ pub fn is_git_installed(path: &Path) -> Result<Check, Box<dyn Error>> {
 }
 
 pub fn is_git_lfs_installed(path: &Path) -> Result<Check, Box<dyn Error>> {
-    let git = GitEnvironment::new(path);
-    Ok(Check::Pass(Some(git.lfs_version().unwrap())))
+    Ok(match GitEnvironment::new(path).lfs_version() {
+        Some(s) => Check::Pass(Some(s.to_string())),
+        _ => Check::Missing,
+    })
 }
