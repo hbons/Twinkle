@@ -159,7 +159,7 @@ pub fn is_ssh_client_key_known_to_host(path: &Path) -> Result<Check, Box<dyn Err
             .stderr(Stdio::null())
             .arg("-T")
             .args(["-o", "BatchMode=yes"])
-            .arg(&format!("{}@{}", url.user, url.host))
+            .arg(format!("{}@{}", url.user, url.host))
             .arg(url.port.unwrap_or(22).to_string())
             .arg("exit")
             .status();
