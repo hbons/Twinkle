@@ -45,44 +45,77 @@ pub fn is_ssh_agent_has_keys(_path: &Path) -> Result<Check, Box<dyn Error>> {
 // Connectivity
 
 pub fn is_ssh_host_reachable(path: &Path) -> Result<Check, Box<dyn Error>> {
-    let url = GitEnvironment::new(path).config_get("remote.origin.url");
+    let result = GitEnvironment::new(path)
+        .config_get("remote.origin.url")
+        .and_then(|o| o.stdout.parse::<SshUrl>());
 
-    // dbg!(&url.unwrap());
-    let nc = Command::new("nc")
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
-        .arg("-zv")
-        .arg(&url.unwrap().stdout) // TODO
-        .arg("80") // TODO
-        .status();
+    if let Ok(url) = result {
+        let nc = Command::new("nc")
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .arg("-zv")
+            .arg(url.host)
+            .arg(url.port.unwrap_or(22).to_string())
+            .status();
 
-    match nc {
-        Ok(code) if  code.success() => Ok(Check::Pass(None)),
-        Ok(code) if !code.success() => Ok(Check::Fail(None)),
-        _ => Err("".into()),
+        match nc {
+            Ok(code) if  code.success() => return Ok(Check::Pass(None)),
+            Ok(code) if !code.success() => return Ok(Check::Fail(None)),
+            _ => return Err("".into()),
+        }
     }
+
+    Ok(Check::Fail(None))
 }
 
 
-pub fn is_ssh_host_known(_path: &Path) -> Result<Check, Box<dyn Error>> {
-    Ok(Check::Pass(None)) // TODO: ssh-keygen -F codeberg.org
+pub fn is_ssh_host_known(path: &Path) -> Result<Check, Box<dyn Error>> {
+    let result = GitEnvironment::new(path)
+        .config_get("remote.origin.url")
+        .and_then(|o| o.stdout.parse::<SshUrl>());
+
+    if let Ok(url) = result {
+        let nc = Command::new("ssh-keygen")
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .arg("-F")
+            .arg(url.host)
+            .status();
+
+        match nc {
+            Ok(code) if  code.success() => return Ok(Check::Pass(None)),
+            Ok(code) if !code.success() => return Ok(Check::Fail(None)),
+            _ => return Err("".into()),
+        }
+    }
+
+    Ok(Check::Fail(None))
+
 }
 
 
-pub fn is_ssh_host(_path: &Path) -> Result<Check, Box<dyn Error>> {
-    let nc = Command::new("nc")
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
-        .args(["-w",  "3"]) // timeout, TODO: Test on Linux
-        .arg("notify.sparkleshare.org") // TODO: use remote.origin.url and get port
-        .arg("22")
-        .status();
+pub fn is_ssh_host(path: &Path) -> Result<Check, Box<dyn Error>> {
+    let result = GitEnvironment::new(path)
+        .config_get("remote.origin.url")
+        .and_then(|o| o.stdout.parse::<SshUrl>());
 
-    match nc {
-        Ok(code) if  code.success() => Ok(Check::Pass(None)), // TODO: Pass remote SSH version string?
-        Ok(code) if !code.success() => Ok(Check::Fail(None)),
-        _ => Err("".into()),
+    if let Ok(url) = result {
+        let nc = Command::new("nc")
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .args(["-w", "3"])
+            .arg(url.host)
+            .arg(url.port.unwrap_or(22).to_string())
+            .status();
+
+        match nc {
+            Ok(code) if  code.success() => return Ok(Check::Pass(None)),
+            Ok(code) if !code.success() => return Ok(Check::Fail(None)),
+            _ => return Err("".into()),
+        }
     }
+
+    Ok(Check::Fail(None))
 }
 
 
@@ -114,27 +147,29 @@ pub fn is_ssh_host_supporting_rsa(path: &Path) -> Result<Check, Box<dyn Error>> 
 }
 
 
-pub fn is_ssh_client_key_known_to_host(_path: &Path) -> Result<Check, Box<dyn Error>> {
-    // let url = "ssh://debian@notify.sparkleshare.org/fsdfds".parse::<SshUrl>(); // TODO: strip /path from remote origin url
+// TODO: what if keys in Secrets?
+pub fn is_ssh_client_key_known_to_host(path: &Path) -> Result<Check, Box<dyn Error>> {
+    let result = GitEnvironment::new(path)
+        .config_get("remote.origin.url")
+        .and_then(|o| o.stdout.parse::<SshUrl>());
 
-    let ssh = Command::new("ssh")
-        .stdout(Stdio::null())
-    .stderr(Stdio::null())
-    .arg("-T")
-    // .arg("-p")
-    // .arg("22") // TODO
-    .args(["-o", "BatchMode=yes"])
-    .arg("debian@notify.sparkleshare.org") // TODO
-    .arg("exit")
-    .status();
+    if let Ok(url) = result {
+        let nc = Command::new("ssh")
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .arg("-T")
+            .args(["-o", "BatchMode=yes"])
+            .arg(&format!("{}@{}", url.user, url.host))
+            .arg(url.port.unwrap_or(22).to_string())
+            .arg("exit")
+            .status();
 
-    // dbg!("ssh://debian@notify.sparkleshare.org/fsdfds".parse::<SshUrl>().unwrap().to_string_alternate());
-
-    match ssh {
-        Ok(code) if  code.success() => Ok(Check::Pass(None)),
-        Ok(code) if !code.success() => Ok(Check::Fail(None)),
-        _ => Err("".into()),
+        match nc {
+            Ok(code) if  code.success() => return Ok(Check::Pass(None)), // TODO: exits 1 on github.com!
+            Ok(code) if !code.success() => return Ok(Check::Fail(None)),
+            _ => return Err("".into()),
+        }
     }
 
-    // TODO: what if keys in Secrets?
+    Ok(Check::Fail(None))
 }

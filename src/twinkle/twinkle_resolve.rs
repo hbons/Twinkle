@@ -26,7 +26,7 @@ pub fn twinkle_resolve_changes(repo: &TwinkleRepository) -> Result<(), Box<dyn E
         twinkle_resolve(repo, &change)?;
     }
 
-    repo.git.commit(repo.user(), "Resolve conflicts").unwrap(); // TODO
+    repo.git.commit(repo.user(), "Resolve conflicts")?;
     log::info("Conflicts resolved");
 
     Ok(())

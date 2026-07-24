@@ -25,16 +25,16 @@ pub fn is_git_dir_present(path: &Path) -> Result<Check, Box<dyn Error>> {
 
 
 pub fn is_git_info_exclude_valid(path: &Path) -> Result<Check, Box<dyn Error>> {
-    if path.join(".git/info/exclude").exists() { // TODO: parse file
-        Ok(Check::Pass(None))
+    if path.join(".git/info/exclude").exists() {
+        Ok(Check::Pass(None)) // TODO: parse file
     } else {
         Ok(Check::Fail(None))
     }
 }
 
 pub fn is_git_info_attributes_valid(path: &Path) -> Result<Check, Box<dyn Error>> {
-    if path.join(".git/info/attributes").exists() { // TODO: parse file
-        Ok(Check::Pass(None))
+    if path.join(".git/info/attributes").exists() {
+        Ok(Check::Pass(None)) // TODO: parse file
     } else {
         Ok(Check::Fail(None))
     }

@@ -153,7 +153,7 @@ pub fn run_check(
                     println!(
                         "    {} {title}: {}",
                         cli_yellow(&check.to_string()),
-                        cli_yellow("missing")
+                        cli_yellow("missing"),
                     ),
             },
         Err(_) =>
