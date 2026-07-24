@@ -86,34 +86,50 @@ pub fn is_ssh_host(_path: &Path) -> Result<Check, Box<dyn Error>> {
 }
 
 
+// TODO: Condense these 3 into 1
 pub fn is_ssh_host_supporting_ed25519(path: &Path) -> Result<Check, Box<dyn Error>> {
-    let url = GitEnvironment::new(path).config_get("remote.origin.url").unwrap().stdout; // TODO
-    let url = url.parse::<SshUrl>().unwrap(); // TODO
+    let result = GitEnvironment::new(path)
+        .config_get("remote.origin.url")
+        .and_then(|o| o.stdout.parse::<SshUrl>());
 
-    match ssh_keyscan(&url.host, Some(url.port.unwrap_or(22)), KeyType::ED25519) {
-        Ok(_)  => Ok(Check::Pass(None)),
-        Err(_) => Ok(Check::Missing),
+    if let Ok(url) = result {
+        return match ssh_keyscan(&url.host, Some(url.port.unwrap_or(22)), KeyType::ED25519) {
+            Ok(_)  => Ok(Check::Pass(None)),
+            Err(_) => Ok(Check::Missing),
+        }
     }
+
+    Ok(Check::Fail(None))
 }
 
 pub fn is_ssh_host_supporting_ecdsa(path: &Path) -> Result<Check, Box<dyn Error>> {
-    let url = GitEnvironment::new(path).config_get("remote.origin.url").unwrap().stdout; // TODO
-    let url = url.parse::<SshUrl>().unwrap(); // TODO
+    let result = GitEnvironment::new(path)
+        .config_get("remote.origin.url")
+        .and_then(|o| o.stdout.parse::<SshUrl>());
 
-    match ssh_keyscan(&url.host, Some(url.port.unwrap_or(22)), KeyType::ECDSA) {
-        Ok(_)  => Ok(Check::Pass(None)),
-        Err(_) => Ok(Check::Missing),
+    if let Ok(url) = result {
+        return match ssh_keyscan(&url.host, Some(url.port.unwrap_or(22)), KeyType::ECDSA) {
+            Ok(_)  => Ok(Check::Pass(None)),
+            Err(_) => Ok(Check::Missing),
+        }
     }
+
+    Ok(Check::Fail(None))
 }
 
 pub fn is_ssh_host_supporting_rsa(path: &Path) -> Result<Check, Box<dyn Error>> {
-    let url = GitEnvironment::new(path).config_get("remote.origin.url").unwrap().stdout; // TODO
-    let url = url.parse::<SshUrl>().unwrap(); // TODO
+    let result = GitEnvironment::new(path)
+        .config_get("remote.origin.url")
+        .and_then(|o| o.stdout.parse::<SshUrl>());
 
-    match ssh_keyscan(&url.host, Some(url.port.unwrap_or(22)), KeyType::RSA) {
-        Ok(_)  => Ok(Check::Pass(None)),
-        Err(_) => Ok(Check::Missing),
+    if let Ok(url) = result {
+        return match ssh_keyscan(&url.host, Some(url.port.unwrap_or(22)), KeyType::RSA) {
+            Ok(_)  => Ok(Check::Pass(None)),
+            Err(_) => Ok(Check::Missing),
+        }
     }
+
+    Ok(Check::Fail(None))
 }
 
 
