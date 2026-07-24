@@ -29,6 +29,8 @@ use std::process::exit;
 
 use crate::app::{ app_deps, app_version };
 use crate::app::{ App, app_runs_as_root, app_runs_in_terminal };
+
+#[cfg(feature = "gnome")]
 use crate::gui::Gui;
 
 
@@ -50,8 +52,11 @@ fn main() -> Result<(), Box<dyn Error>> {
         };
     }
 
-    let app = App::default();
-    app.gui_run()?;
+    #[cfg(feature = "gnome")]
+    {
+        let app = App::default();
+        app.gui_run()?;
+    }
 
     Ok(())
 }
