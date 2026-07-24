@@ -49,6 +49,7 @@ pub fn is_git_on_a_branch(path: &Path) -> Result<Check, Box<dyn Error>> {
     }
 
     let branch = git.branch_show_current()?;
+
     Ok(Check::Pass(Some(branch)))
 }
 

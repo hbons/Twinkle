@@ -5,6 +5,7 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
+#[allow(clippy::module_inception)]
 pub mod check {
     pub mod check;
     pub mod check_config;

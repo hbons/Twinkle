@@ -117,9 +117,11 @@ impl App {
 }
 
 
+type CheckRun = dyn Fn(&Path) -> Result<Check, Box<dyn Error>>;
+
 pub fn run_check(
     title: &str,
-    check: &dyn Fn(&Path)  -> Result<Check, Box<dyn Error>>,
+    check: &CheckRun,
     path: &Path,
 ) {
     match check(path) {
