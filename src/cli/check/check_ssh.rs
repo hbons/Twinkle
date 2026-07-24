@@ -86,50 +86,31 @@ pub fn is_ssh_host(_path: &Path) -> Result<Check, Box<dyn Error>> {
 }
 
 
-// TODO: Condense these 3 into 1
-pub fn is_ssh_host_supporting_ed25519(path: &Path) -> Result<Check, Box<dyn Error>> {
+fn is_ssh_host_supporting_key_type(path: &Path, key_type: KeyType) -> Result<Check, Box<dyn Error>> {
     let result = GitEnvironment::new(path)
         .config_get("remote.origin.url")
         .and_then(|o| o.stdout.parse::<SshUrl>());
 
     if let Ok(url) = result {
-        return match ssh_keyscan(&url.host, Some(url.port.unwrap_or(22)), KeyType::ED25519) {
+        return match ssh_keyscan(&url.host, Some(url.port.unwrap_or(22)), key_type) {
             Ok(_)  => Ok(Check::Pass(None)),
             Err(_) => Ok(Check::Missing),
         }
     }
 
     Ok(Check::Fail(None))
+}
+
+pub fn is_ssh_host_supporting_ed25519(path: &Path) -> Result<Check, Box<dyn Error>> {
+    is_ssh_host_supporting_key_type(path, KeyType::ED25519)
 }
 
 pub fn is_ssh_host_supporting_ecdsa(path: &Path) -> Result<Check, Box<dyn Error>> {
-    let result = GitEnvironment::new(path)
-        .config_get("remote.origin.url")
-        .and_then(|o| o.stdout.parse::<SshUrl>());
-
-    if let Ok(url) = result {
-        return match ssh_keyscan(&url.host, Some(url.port.unwrap_or(22)), KeyType::ECDSA) {
-            Ok(_)  => Ok(Check::Pass(None)),
-            Err(_) => Ok(Check::Missing),
-        }
-    }
-
-    Ok(Check::Fail(None))
+    is_ssh_host_supporting_key_type(path, KeyType::ECDSA)
 }
 
 pub fn is_ssh_host_supporting_rsa(path: &Path) -> Result<Check, Box<dyn Error>> {
-    let result = GitEnvironment::new(path)
-        .config_get("remote.origin.url")
-        .and_then(|o| o.stdout.parse::<SshUrl>());
-
-    if let Ok(url) = result {
-        return match ssh_keyscan(&url.host, Some(url.port.unwrap_or(22)), KeyType::RSA) {
-            Ok(_)  => Ok(Check::Pass(None)),
-            Err(_) => Ok(Check::Missing),
-        }
-    }
-
-    Ok(Check::Fail(None))
+    is_ssh_host_supporting_key_type(path, KeyType::RSA)
 }
 
 
