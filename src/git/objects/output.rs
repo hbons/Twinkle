@@ -5,6 +5,7 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
+#[derive(Debug)]
 pub struct GitOutput {
     pub exit_code: i32,
     pub stdout: String,

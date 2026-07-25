@@ -34,7 +34,7 @@ pub fn ssh_keyscan(host: &str, port: Option<u16>, key_type: KeyType) -> Result<H
     match ssh_keyscan {
         Ok(output) => {
             if !output.status.success() {
-                log::error(String::from_utf8_lossy(&output.stderr).trim());
+                log::error(String::from_utf8_lossy(&output.stderr).trim()); // TODO: defer printing
                 let code = output.status.code().unwrap_or_default();
                 return Err(format!("ssh-keyscan exited with error {code}").into());
             }

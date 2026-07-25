@@ -26,7 +26,7 @@ pub fn twinkle_resolve_changes(repo: &TwinkleRepository) -> Result<(), Box<dyn E
         twinkle_resolve(repo, &change)?;
     }
 
-    repo.git.commit(repo.user(), "Resolve conflicts").unwrap();
+    repo.git.commit(repo.user(), "Resolve conflicts")?;
     log::info("Conflicts resolved");
 
     Ok(())
@@ -74,7 +74,7 @@ pub fn twinkle_resolve(
 
                 // No common ancestor
                 repo.git.checkout_ours(path)?;
-                repo.git.add(&path)?;
+                repo.git.add(path)?;
             },
             GitMergeStatus::UU |
             GitMergeStatus::AU |
