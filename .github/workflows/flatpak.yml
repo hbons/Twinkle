@@ -6,6 +6,9 @@ on:
       - main
       - dev
 
+permissions:
+  contents: write
+
 jobs:
   flatpak:
     name: "Flatpak (${{ matrix.variant.arch }})"
