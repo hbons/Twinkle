@@ -17,6 +17,8 @@ The command-line version of [SparkleShare](https://sparkleshare.org). Sync your 
 cargo install --path .
 ```
 
+Or get the [nightly Flatpak](https://github.com/hbons/Twinkle/releases/tag/flatpak-nightly).
+
 ```shell
 Usage: twinkle <command> [args…]
 
