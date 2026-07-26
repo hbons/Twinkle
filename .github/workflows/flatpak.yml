@@ -40,6 +40,6 @@ jobs:
       with:
         tag_name: flatpak-nightly
         name: "Flatpak: Nightly"
-        files: twinkle-${{ matrix.variant.arch }}.flatpak
+        files: twinkle-${{ matrix.variant.arch }}-${{ github.sha }}.flatpak
         prerelease: true
         make_latest: false
