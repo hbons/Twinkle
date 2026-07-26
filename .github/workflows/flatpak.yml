@@ -33,7 +33,7 @@ jobs:
         arch: ${{ matrix.variant.arch }}
 
     - name: Rename bundle per arch
-      run: mv twinkle.flatpak twinkle-${{ matrix.variant.arch }}-${{ github.sha }}.flatpak
+      run: mv twinkle.flatpak twinkle-${{ matrix.variant.arch }}.flatpak
 
     - name: "Upload to `Flatpak: Nightly` release"
       uses: softprops/action-gh-release@v3
