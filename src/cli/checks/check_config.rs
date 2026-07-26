@@ -49,7 +49,7 @@ pub fn is_git_config_valid(path: &Path) -> Outcome {
 
     match output {
         Ok(o) if o.exit_code == 0 => return Outcome::Pass(None),
-        _ => return Outcome::Fail(None),
+        _ => return Outcome::Fail(Some("invalid".into())),
     }
 }
 
@@ -65,7 +65,7 @@ pub fn is_twinkle_config_valid(path: &Path) -> Outcome {
 
     match output {
         Ok(o) if o.exit_code == 0 => return Outcome::Pass(None),
-        _ => return Outcome::Fail(None),
+        _ => return Outcome::Fail(Some("invalid".into())),
     }
 }
 
