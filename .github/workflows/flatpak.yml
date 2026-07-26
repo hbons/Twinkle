@@ -7,7 +7,7 @@ on:
 
 jobs:
   flatpak:
-    name: "Flatpak"
+    name: "Flatpak (${{ matrix.variant.arch }})"
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-50
       options: --privileged
@@ -27,3 +27,15 @@ jobs:
         manifest-path: studio.planetpeanut.Twinkle.yml
         cache-key: flatpak-builder-${{ github.sha }}
         arch: ${{ matrix.variant.arch }}
+
+    - name: Rename bundle per arch
+      run: mv twinkle.flatpak twinkle-${{ matrix.variant.arch }}.flatpak
+
+    - name: Upload to `Nightly Flatpak` release
+      uses: softprops/action-gh-release@v3
+      with:
+        tag_name: nightly-flatpak
+        name: Nightly Flatpak
+        files: twinkle-${{ matrix.variant.arch }}.flatpak
+        prerelease: true
+        make_latest: false
