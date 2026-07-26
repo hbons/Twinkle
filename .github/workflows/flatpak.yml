@@ -35,11 +35,14 @@ jobs:
     - name: Rename bundle per arch
       run: mv twinkle.flatpak twinkle-${{ matrix.variant.arch }}.flatpak
 
+    - name: Get short SHA
+      run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
     - name: "Upload to `Flatpak: Nightly` release"
       uses: softprops/action-gh-release@v3
       with:
         tag_name: flatpak-nightly
-        name: "Flatpak: Nightly (${{ github.sha }})"
+        name: "Flatpak: Nightly (${{ env.SHORT_SHA }})"
         files: twinkle-${{ matrix.variant.arch }}.flatpak
         prerelease: true
         make_latest: false
