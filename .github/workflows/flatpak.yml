@@ -38,7 +38,7 @@ jobs:
     - name: Upload to `Nightly Flatpak` release
       uses: softprops/action-gh-release@v3
       with:
-        tag_name: nightly-flatpak
+        tag_name: flatpak-nightly
         name: Nightly Flatpak
         files: twinkle-${{ matrix.variant.arch }}.flatpak
         prerelease: true
