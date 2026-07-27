@@ -32,11 +32,22 @@ pub fn is_git_info_exclude_exists(path: &Path) -> Outcome {
 }
 
 pub fn is_git_info_attributes_exists(path: &Path) -> Outcome {
-    if path.join(".git/info/attributes").exists() {
-        Outcome::Pass(None)
-    } else {
-        Outcome::Fail(None)
+    let path = path.join(".git/info/attributes");
+
+    if !path.exists() {
+        return Outcome::Fail(Some("missing".into()))
     }
+
+    match fs::read_to_string(path) {
+        Ok(c) => {
+            if c.contains("* merge=binary") {
+                return Outcome::Pass(None);
+            }
+        },
+        Err(_) => return Outcome::Error,
+    }
+
+    Outcome::Fail(Some("missing \"* merge=binary\"".into()))
 }
 
 
@@ -74,24 +85,4 @@ pub fn is_git_not_in_a_merge(path: &Path) -> Outcome {
     }
 
     Outcome::Pass(None)
-}
-
-
-pub fn is_git_attributes_all_binary(path: &Path) -> Outcome {
-    let path = path.join(".git/info/attributes");
-
-    if path.exists() {
-        let content = fs::read_to_string(path);
-
-        match content {
-            Ok(c) => {
-                if c.contains("* merge=binary") {
-                    return Outcome::Pass(None);
-                }
-            },
-            Err(_) => return Outcome::Error,
-        }
-    }
-
-    Outcome::Fail(Some("missing \"* merge=binary\"".into()))
 }

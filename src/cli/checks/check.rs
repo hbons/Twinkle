@@ -66,7 +66,7 @@ impl App {
         run_check(".git/info/attributes", &is_git_info_attributes_exists, path);
         run_check("On a branch", &is_git_on_a_branch, path);
         run_check("Not in a merge", &is_git_not_in_a_merge, path);
-        run_check("Files treated as binary", &is_git_attributes_all_binary, path);
+        run_check("On a branch", &is_git_on_a_branch, path);
 
         print_header("Config");
         run_check(".git/config", &is_git_config_valid, path);
