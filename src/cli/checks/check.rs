@@ -64,7 +64,6 @@ impl App {
         run_check(".git/", &is_git_dir_present, path);
         run_check(".git/info/exclude", &is_git_info_exclude_exists, path);
         run_check(".git/info/attributes", &is_git_info_attributes_exists, path);
-        run_check("On a branch", &is_git_on_a_branch, path);
         run_check("Not in a merge", &is_git_not_in_a_merge, path);
         run_check("On a branch", &is_git_on_a_branch, path);
 

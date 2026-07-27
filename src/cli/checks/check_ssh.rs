@@ -64,7 +64,7 @@ pub fn is_ssh_host_reachable(path: &Path) -> Outcome {
         }
     }
 
-    Outcome::Fail(None)
+    Outcome::Error
 }
 
 
@@ -93,7 +93,7 @@ pub fn is_ssh_host_known(path: &Path) -> Outcome {
 }
 
 
-pub fn is_ssh_host(path: &Path) -> Outcome {
+pub fn is_ssh_supported_host(path: &Path) -> Outcome {
     let result = GitEnvironment::new(path)
         .config_get("remote.origin.url")
         .and_then(|o| o.stdout.parse::<SshUrl>());

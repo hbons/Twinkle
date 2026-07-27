@@ -48,8 +48,8 @@ pub fn is_git_config_valid(path: &Path) -> Outcome {
         .run("config", &["--list"]);
 
     match output {
-        Ok(o) if o.exit_code == 0 => return Outcome::Pass(None),
-        _ => return Outcome::Fail(Some("invalid".into())),
+        Ok(o) if o.exit_code == 0 => Outcome::Pass(None),
+        _ => Outcome::Fail(Some("invalid".into())),
     }
 }
 
@@ -60,12 +60,16 @@ pub fn is_twinkle_config_valid(path: &Path) -> Outcome {
         )
     );
 
+    if !config_path.exists() {
+        return Outcome::Fail(Some("missing".into()));
+    }
+
     let output = GitEnvironment::new(path)
         .run("config", &["--file", &config_path.to_string_lossy(), "--list"]);
 
     match output {
-        Ok(o) if o.exit_code == 0 => return Outcome::Pass(None),
-        _ => return Outcome::Fail(Some("invalid".into())),
+        Ok(o) if o.exit_code == 0 => Outcome::Pass(None),
+        _ => Outcome::Fail(Some("invalid".into())),
     }
 }
 
