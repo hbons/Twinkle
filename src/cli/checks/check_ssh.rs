@@ -6,8 +6,11 @@
 
 
 use std::env;
+use std::io::{ BufRead, BufReader };
+use std::net::{ TcpStream, ToSocketAddrs };
 use std::path::Path;
 use std::process::{ Command, Stdio };
+use std::time::Duration;
 
 use crate::git::objects::environment::GitEnvironment;
 use crate::ssh::keys::key_type::KeyType;
@@ -56,18 +59,8 @@ pub fn is_ssh_host_reachable(path: &Path) -> Outcome {
         .and_then(|o| o.stdout.parse::<SshUrl>());
 
     if let Ok(url) = result {
-        let nc = Command::new("nc")
-            .stdout(Stdio::null())
-            .stderr(Stdio::null())
-            .arg("-zv")
-            .arg(url.host)
-            .arg(url.port.unwrap_or(22).to_string())
-            .status();
-
-        match nc {
-            Ok(status) if  status.success() => return Outcome::Pass(None),
-            Ok(status) if !status.success() => return Outcome::Fail(None),
-            _ => return Outcome::Error,
+        if check_host_port(&url.host, url.port.unwrap_or(22), 3) {
+            return Outcome::Pass(Some(url.host));
         }
     }
 
@@ -106,18 +99,8 @@ pub fn is_ssh_host(path: &Path) -> Outcome {
         .and_then(|o| o.stdout.parse::<SshUrl>());
 
     if let Ok(url) = result {
-        let nc = Command::new("nc")
-            .stdout(Stdio::null())
-            .stderr(Stdio::null())
-            .args(["-w", "3"])
-            .arg(url.host)
-            .arg(url.port.unwrap_or(22).to_string())
-            .status();
-
-        match nc {
-            Ok(status) if  status.success() => return Outcome::Pass(None),
-            Ok(status) if !status.success() => return Outcome::Fail(None),
-            _ => return Outcome::Error,
+        if check_host_port(&url.host, url.port.unwrap_or(22), 3) {
+            return Outcome::Pass(Some(format!("{}", url.port.unwrap_or(22))));
         }
     }
 
@@ -193,4 +176,19 @@ pub fn is_ssh_client_key_known_to_host(path: &Path) -> Outcome {
     }
 
     Outcome::Fail(None)
+}
+
+
+fn check_host_port(host: &str, port: u16, timeout_secs: u64) -> bool {
+    format!("{}:{}", host.trim(), port)
+        .to_socket_addrs()
+        .ok()
+        .into_iter()
+        .flatten()
+        .any(|address|
+            TcpStream::connect_timeout(
+                &address,
+                Duration::from_secs(timeout_secs)
+            ).is_ok()
+        )
 }
