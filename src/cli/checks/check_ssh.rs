@@ -137,7 +137,7 @@ fn is_ssh_host_supporting_key_type(path: &Path, key_type: KeyType) -> Outcome {
 
     if let Ok(url) = result {
         return match ssh_keyscan(&url.host, Some(url.port.unwrap_or(22)), key_type) {
-            Ok(_)  => Outcome::Pass(None),
+            Ok(_)  => Outcome::Pass(Some(format!("{:?}", key_type))),
             Err(_) => Outcome::Missing,
         }
     }
