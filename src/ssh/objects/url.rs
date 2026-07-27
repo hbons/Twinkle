@@ -10,9 +10,6 @@ use std::fmt;
 use std::path::PathBuf;
 use std::str;
 
-// use serde::ser::{ Serialize, Serializer };
-// use serde::de::{ Deserialize, Deserializer };
-
 
 #[derive(Clone, Debug, Default)]
 pub struct SshUrl {
@@ -49,6 +46,7 @@ impl str::FromStr for SshUrl {
 impl SshUrl {
     // ssh://git@github.com/hbons/Twinkle
     // ssh://git@github.com:22/hbons/Twinkle
+    // TODO: Add IPv6 support: "[2001:adb8:85a4:0000:0000:8a1e:0e70:7034]"
     pub fn from_string_standard(s: &str) -> Result<Self, Box<dyn Error>> {
         let s = s.strip_prefix("ssh://").ok_or("No 'ssh://' found")?;
         let (user, host_and_path) = s.split_once('@').ok_or("No 'user@' found")?;
@@ -75,6 +73,7 @@ impl SshUrl {
 
 
     // git@github.com:hbons/Twinkle
+    // TODO: Add IPv6 support: "[2001:adb8:85a4:0000:0000:8a1e:0e70:7034]"
     pub fn from_string_alternate(s: &str) -> Result<Self, Box<dyn Error>> {
         let (user, host_and_path) = s.split_once('@').ok_or("No 'user@' found")?;
         let (host, path) = host_and_path.split_once(':').ok_or("No ':' found")?;
@@ -141,24 +140,3 @@ impl SshUrl {
         }
     }
 }
-
-
-// impl Serialize for SshUrl {
-//     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-//     where S: Serializer,
-//     {
-//         serializer.serialize_str(&self.original)
-//     }
-// }
-
-
-// impl<'de> Deserialize<'de> for SshUrl {
-//     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-//     where D: Deserializer<'de>,
-//     {
-//         let s = String::deserialize(deserializer)?;
-//         let url =  s.parse::<SshUrl>().map_err(serde::de::Error::custom)?;
-
-//         Ok(url)
-//     }
-// }
