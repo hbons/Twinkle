@@ -28,14 +28,21 @@ pub fn is_ssh_agent_running(_path: &Path) -> Outcome {
 
 pub fn is_ssh_agent_has_keys(_path: &Path) -> Outcome {
     let ssh = Command::new("ssh-add")
-        .stdout(Stdio::null())
+        .stdout(Stdio::piped())
         .stderr(Stdio::null())
         .arg("-l")
-        .status();
+        .output();
 
     match ssh {
-        Ok(status) if  status.success() => Outcome::Pass(None), // TODO: Pass number of keys
-        Ok(status) if !status.success() => Outcome::Fail(None),
+        Ok(o) if o.status.success() => {
+            let line_count = BufReader::new(&o.stdout[..])
+                .lines()
+                .count()
+                .to_string();
+
+            Outcome::Pass(Some(line_count))
+        },
+        Ok(o) if !o.status.success() => Outcome::Missing,
         _ => Outcome::Error,
     }
 }

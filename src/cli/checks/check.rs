@@ -53,12 +53,12 @@ impl App {
         run_check("ssh-agent running", &is_ssh_agent_running, path);
         run_check("ssh-agent has keys", &is_ssh_agent_has_keys, path);
         run_check("Host reachable", &is_ssh_host_reachable, path);
-        run_check("Host known", &is_ssh_host_known, path);
-        run_check("Host uses SSH", &is_ssh_host, path);
-        run_check("Host supports ED25519 keys", &is_ssh_host_supporting_ed25519, path);
-        run_check("Host supports ECDSA keys", &is_ssh_host_supporting_ecdsa, path);
-        run_check("Host supports RSA keys", &is_ssh_host_supporting_rsa, path);
-        run_check("Host knows client SSH key", &is_ssh_client_key_known_to_host, path);
+        run_check("Host sshd on port", &is_ssh_supported_host, path);
+        run_check("Host key", &is_ssh_host_supporting_ed25519, path);
+        run_check("Host key", &is_ssh_host_supporting_ecdsa, path);
+        run_check("Host key", &is_ssh_host_supporting_rsa, path);
+        run_check("Host knows client", &is_ssh_client_key_known_to_host, path);
+        run_check("Client knows host", &is_ssh_host_known, path);
 
         print_header("Repository");
         run_check(".git/", &is_git_dir_present, path);
