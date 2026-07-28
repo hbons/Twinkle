@@ -116,7 +116,7 @@ pub fn is_twinkle_enabled_set(path: &Path) -> Outcome {
 
 pub fn is_twinkle_id_set(path: &Path) -> Outcome {
     let name = env!("CARGO_BIN_NAME");
-    get_from_config(path, &format!("{name}.id"), Some("true"))
+    get_from_config(path, &format!("{name}.id"), None)
 }
 
 pub fn is_twinkle_lfs_enabled_set(path: &Path) -> Outcome {
