@@ -1,1 +1,194 @@
-Hylke Bons – hello@planetpeanut.studio
+Hylke Bons <hello@planetpeanut.studio>
+
+
+Contributors before the rewrite in Rust:
+
+Aaron Bockover <aaron@abock.org>
+Alejandro Serrano <trupill@gmail.com>
+Aleksandar Antoski <acko.aa@gmail.com>
+Alex Hudson <alex@stratagia.co.uk>
+Alexander Shopov <ash@kambanaria.org>
+Alexandre Saiz Verdaguer <a@alexandresaiz.com>
+Allan Day <allanpday@gmail.com>
+Anders Hagen Jarmund <ajarmund@gmail.com>
+Andre Spahlinger <uenz@gmx.net>
+Andreas Schneider <aksdb@gmx.de>
+Andre Klapper <ak-47@gmx.net>
+Andrés G. Aragoneses <knocte@gmail.com>
+Andrew Shadura <andrew.shadura@collabora.co.uk>
+Aria Stewart <aredridel@nbtsc.org>
+Arnold Bechtoldt <mail@arnoldbechtoldt.com>
+Balló György <ballogyor@gmail.com>
+Beau Gunderson <beau@beaugunderson.com>
+Benjamin Podszun <benjamin.podszun@gmail.com>
+Bertrand Lorentz <bertrand.lorentz@gmail.com>
+BlackHawkDesign <blackhawk_design@hotmail.com>
+bogdanovic <ianbogda+github@gmail.com>
+Brandon Dahler <brandon.dahler@gmail.com>
+brazier <alexander@linux.com>
+Bruno Arliguy <from-transifex@arliguy.net>
+Carlos Martín Nieto <cmn@dwim.me>
+Carsten Brandt <mail@cebe.cc>
+chaoweilun <chaoweilun@gmail.com>
+ckoinig <christian@koinig.org>
+Claudio Rodrigo Pereyra Diaz <elsupergomez@gmail.com>
+conerck <constantin.erckenbrecht+transifex@gmail.com>
+Daapii <devdaapii@gmail.com>
+Dimitris Glezos <glezos@indifex.com>
+Dmitry Golubkov <master@hsdesign.ru>
+Eduardo Silva <eduardo@eduardosilva.eti.br>
+Emmanouel Kapernaros <manolis@kapcom.gr>
+eranco <realaddress@gmail.com>
+Eric Wong <e@ewong.me>
+fabien <fabien@arkhi.org>
+fbarth <transifex@florian-barth.de>
+fgp <komakino@wanadoo.es>
+fidel <fidel@macfidelity.de>
+focusheart <focusheart@gmail.com>
+foxox <foxox.jd@live.com>
+Francisco Javier Melendo Román <jamelrom@gmail.com>
+Francois Truphemus <melchips@kingsofpluton.net>
+freakinpenguin <github@go4x.de>
+freefd <faland@gmail.com>
+friflaj <friflaj@redminebacklogs.net>
+Gabriel Burt <gabriel.burt@gmail.com>
+Garrett LeSage <garrett@lesage.us>
+Georg Brzyk <georg@brzyk.de>
+Gerard Walace <gerard.walace@gmail.com>
+Giovanni gionn Toraldo <gt@libersoft.it>
+Guy Lunardi <glunardi@gmail.com>
+Håkan Sahlström <shlstrm@sdf.org>
+Hans-Christoph Steiner <hans@eds.org>
+helmo <rink@initfour.nl>
+Hylke Bons <hello@planetpeanut.studio>
+Iacopo Spalletti <segnalazioni@nephila.it>
+Iain Lane <laney@debian.org>
+InvertedAcceleration <invertedacceleration@gametheworld.com>
+Ivan Malison <IvanMalison@gmail.com>
+Izzy <izzy84075@gmail.com>
+José Félix Ontañón <fontanon@emergya.es>
+Jack Leigh <leighman@gmx.se>
+jack1142
+Jakub Steiner <jimmac@gmail.com>
+Jan Funke <funke@ini.ch>
+Jan Schulz-Hofen <jan@plan.io>
+Jan-Christoph Borchardt <JanCBorchardt@gmail.com>
+janerictobias <lindblom.jan@gmail.com>
+Jeremy Malcolm <Jeremy@Malcolm.id.au>
+Jiri Slezka <jiri.slezka@slu.cz>
+Juanjo Marin <juanj.marin@juntadeandalucia.es>
+Jo Shields <directhex@apebox.org>
+Jonathan Haines <jonno.haines@gmail.com>
+Joon Ro <joon.ro@utexas.edu>
+Jorge A Gallegos <kad@blegh.net>
+Jorge Bianquetti <jbianquetti@gmail.com>
+Jose A Mendoza <orien3243@users.noreply.github.com>
+jschaul <joe.schaul@gmail.com>
+Julien Villers <jvillers42@hotmail.com>
+Kepi <kepi@igloonet.cz>
+Kévin LEMELE <klemel@linagora.com>
+Konstantinos Vaggelakos <kozze89@gmail.com>
+Kristi <kristi.git@gmail.com>
+Kristoffer Kleine <kris.kleine@yahoo.de>
+l3iggs <l3iggs@github>
+Lapo Calamandrei <calamandrei@gmail.com>
+Lars Falk-Petersen <dev@falk-petersen.no>
+Leszek Krupinski <leafnode@gmail.com>
+Luca Delucchi <lucadeluge@gmail.com>
+Luis Cordova <cordoval@gmail.com>
+Łukasz Jernaś <deejay1@srem.org>
+Luke Fitzgerald <lw.fitzgerald@gmail.com>
+Magnun Leno <magnun.leno@gmail.com>
+Majid Al-Dharrab <majid@aldharrab.com>
+Malcolm Gillies <74748374+mbg-unsw@users.noreply.github.com>
+Malte Kiefer <malte.kiefer@mailgermania.de>
+Mark Lopez <m@silvenga.com>
+Mark Osborne <markdosborne@gmail.com>
+Markus Litz <killerjoe@gmx.de>
+Markus Stoll <post@mstoll.de>
+Martin Lettner <m.lettner@gmail.com>
+Massimo Gengarelli <gengarel@cs.unibo.it>
+Matej Moško <matej.mosko@gmail.com>
+Matt <mkarau@alum.mit.edu>
+Matthias Dittrich <matthi.d@googlemail.com>
+Maxime “pep” Buquet <pep@collabora.com>
+Michael Monreal <michael.monreal@gmail.com>
+Michael Scherer <misc@zarb.org>
+michaelcinquin <mc@michaelcinquin.com>
+Michel Weimerskirch <michel@weimerskirch.net>
+Miguel Vaello Martinez <miguel.vaellomartinez@gmail.com>
+Mirco Bauer <meebey@meebey.net>
+Misha Shnurapet <shnurapet@fedoraproject.org>
+mmans <mr.mmans@gmail.com>
+Morten Nilsen <mortenn@hapro.no>
+Morton Fox <github@qslw.com>
+MPW1412 <matthiaspeterw@aol.com>
+mstricker <max@maxstricker.it>
+Nathan Broadbent <nathan.f77@gmail.com>
+Nebojsa Jakovljevic <nebjak@gmail.com>
+Nejc Saje <nejc.saje@gmail.com>
+Nick Richards <nick@nedrichards.com>
+Nícolas Lazarte Kaqui <nicolaslazartekaqui@gmail.com>
+Nicolas Raoul <nicolas.raoul@gmail.com>
+Niklas Angebrand <angebrand@liamg.moc>
+Nikos Roussos <nikos@roussos.cc>
+No_CQRT <no.cqrt@gmail.com>
+oldbeggar <chen.gang1983@gmail.com>
+Oleg Khlystov <pktfag@gmail.com>
+Oleg Shmelyov <shmelyov.o@gmail.com>
+Oleg Stepura <github@oleg.stepura.com>
+Olli Jarva <olli@jarva.fi>
+Ophir Setter <ophir.setter+transifex@gmail.com>
+ouille <ouille@free.fr>
+Paul Cutler <pcutler@gnome.org>
+Paul Hammant <paul@hammant.org>
+Paul Lange <palango@gmx.de>
+payalord <payalord@gmail.com>
+pdf <github@obfusc8.org>
+Petr Tvarůžek <zzanzare@gmail.com>
+Phate <phate@x-pantion.de>
+Philipp Gildein <rmbl@openspeak-project.org>
+Pierre-Antoine Angelini <angelini@univ-rennes1.fr>
+PierreAronnax <pierre@trionax.com>
+praktikant <praktikant@mergsystems>
+Recai Oktaş <roktas@bil.omu.edu.tr>
+Robin Jakobsson <jakobsson.robin@gmail.com>
+Robin Kuck <robin@basicinside.de>
+Sam Hewitt <sam@snwh.org>
+samuelt <samuel.thollander@gmail.com>
+Sandy Armstrong <sanfordarmstrong@gmail.com>
+Sascha Lewandowski <S.Lewandowski@abiwillich.de>
+Shish <shish@shishnet.org>
+Simon Pither <simon@pither.com>
+sokai <me@sokai.name>
+Stefan Bethge <stefan+github@lanpartei.de>
+Steven Harms <sharms@ubuntu.com>
+Stijn Hoop <stijn@sandcat.nl>
+Sven Koehler <sven.koehler@student.hpi.uni-potsdam.de>
+syunji <syunji@gmail.com>
+Thanh Tung Nguyen <thngtong@gmail.com>
+thelightmaker <thelightmaker@gmail.com>
+Thomas Menga <lekiss@gmail.com>
+Thomas Vollstädt <redfox@nx02.de>
+Tijl Vercaemer <tijl@blandinium.com>
+Tobias Birmili <tobias@birmili.com>
+Travis Glenn Hansen <travisghansen@yahoo.com>
+tuxmartin <tux.martin@gmail.com>
+Veeven <veeven@gmail.com>
+VegardAa <vegard.aarseth@gmail.com>
+Vincent Untz <vuntz@gnome.org>
+Will Thompson <will.thompson@collabora.co.uk>
+wimh <wimh@github>
+Wisdom Wolf <WisdomWolf@users.noreply.github.com>
+Wizard_85
+wojtech <rolf@wojtech.de>
+wus <i@greengecko.org>
+Xeross <xeross@theelitist.net>
+Yann Hermans <chezyann@gmail.com>
+Yann Verry <y.verry@pixmania-group.com>
+Zoltan Hoppár <hopparz@gmail.com>
+Zombyrad <benjamincottyn@gmail.com>
+甘露 <rhythm.gan@gmail.com>
+Сергій Гаврилов <sergiovana@bigmir.net>
+
+Thanks for all your contributions!
