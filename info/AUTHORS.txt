@@ -1,9 +1,10 @@
 Hylke Bons <hello@planetpeanut.studio>
 
 
-Contributors before the rewrite in Rust:
+Contributors before the Rust rewrite:
 
 Aaron Bockover <aaron@abock.org>
+Alan Pearce <alan@alanpearce.co.uk>
 Alejandro Serrano <trupill@gmail.com>
 Aleksandar Antoski <acko.aa@gmail.com>
 Alex Hudson <alex@stratagia.co.uk>
@@ -30,16 +31,19 @@ Bruno Arliguy <from-transifex@arliguy.net>
 Carlos Martín Nieto <cmn@dwim.me>
 Carsten Brandt <mail@cebe.cc>
 chaoweilun <chaoweilun@gmail.com>
+chris-r <chris.ross@entopa.jp>
 ckoinig <christian@koinig.org>
 Claudio Rodrigo Pereyra Diaz <elsupergomez@gmail.com>
 conerck <constantin.erckenbrecht+transifex@gmail.com>
 Daapii <devdaapii@gmail.com>
+David Christ <david.christ@uni-trier.de>
 Dimitris Glezos <glezos@indifex.com>
 Dmitry Golubkov <master@hsdesign.ru>
 Eduardo Silva <eduardo@eduardosilva.eti.br>
 Emmanouel Kapernaros <manolis@kapcom.gr>
 eranco <realaddress@gmail.com>
 Eric Wong <e@ewong.me>
+Erik Nelson <erik@nsk.io>
 fabien <fabien@arkhi.org>
 fbarth <transifex@florian-barth.de>
 fgp <komakino@wanadoo.es>
@@ -55,6 +59,7 @@ Gabriel Burt <gabriel.burt@gmail.com>
 Garrett LeSage <garrett@lesage.us>
 Georg Brzyk <georg@brzyk.de>
 Gerard Walace <gerard.walace@gmail.com>
+Gert van Dijk <gertvdijk+github@gmail.com>
 Giovanni gionn Toraldo <gt@libersoft.it>
 Guy Lunardi <glunardi@gmail.com>
 Håkan Sahlström <shlstrm@sdf.org>
@@ -112,6 +117,7 @@ Matej Moško <matej.mosko@gmail.com>
 Matt <mkarau@alum.mit.edu>
 Matthias Dittrich <matthi.d@googlemail.com>
 Maxime “pep” Buquet <pep@collabora.com>
+Michael Fayez <michaeleino@users.noreply.github.com>
 Michael Monreal <michael.monreal@gmail.com>
 Michael Scherer <misc@zarb.org>
 michaelcinquin <mc@michaelcinquin.com>
@@ -138,6 +144,7 @@ Oleg Khlystov <pktfag@gmail.com>
 Oleg Shmelyov <shmelyov.o@gmail.com>
 Oleg Stepura <github@oleg.stepura.com>
 Olli Jarva <olli@jarva.fi>
+Oluf Lorenzen <fink.github.com@mafia-server.net>
 Ophir Setter <ophir.setter+transifex@gmail.com>
 ouille <ouille@free.fr>
 Paul Cutler <pcutler@gnome.org>
@@ -145,12 +152,14 @@ Paul Hammant <paul@hammant.org>
 Paul Lange <palango@gmx.de>
 payalord <payalord@gmail.com>
 pdf <github@obfusc8.org>
+Peter Verraedt <peter@verraedt.be>
 Petr Tvarůžek <zzanzare@gmail.com>
 Phate <phate@x-pantion.de>
 Philipp Gildein <rmbl@openspeak-project.org>
 Pierre-Antoine Angelini <angelini@univ-rennes1.fr>
 PierreAronnax <pierre@trionax.com>
 praktikant <praktikant@mergsystems>
+pscTheOne <phil@bitcoinsberlin.com>
 Recai Oktaş <roktas@bil.omu.edu.tr>
 Robin Jakobsson <jakobsson.robin@gmail.com>
 Robin Kuck <robin@basicinside.de>
@@ -159,6 +168,7 @@ samuelt <samuel.thollander@gmail.com>
 Sandy Armstrong <sanfordarmstrong@gmail.com>
 Sascha Lewandowski <S.Lewandowski@abiwillich.de>
 Shish <shish@shishnet.org>
+Simon Aittamaa <simon.aittamaa@ltu.se>
 Simon Pither <simon@pither.com>
 sokai <me@sokai.name>
 Stefan Bethge <stefan+github@lanpartei.de>
@@ -171,9 +181,12 @@ thelightmaker <thelightmaker@gmail.com>
 Thomas Menga <lekiss@gmail.com>
 Thomas Vollstädt <redfox@nx02.de>
 Tijl Vercaemer <tijl@blandinium.com>
+Tino Wittig <tino-wittig@users.noreply.github.com>
 Tobias Birmili <tobias@birmili.com>
 Travis Glenn Hansen <travisghansen@yahoo.com>
 tuxmartin <tux.martin@gmail.com>
+Valentin Lenhart <valentin.lenhart@posteo.de>
+Vasili Sviridov <vsviridov@exceede.com>
 Veeven <veeven@gmail.com>
 VegardAa <vegard.aarseth@gmail.com>
 Vincent Untz <vuntz@gnome.org>
@@ -188,6 +201,7 @@ Yann Hermans <chezyann@gmail.com>
 Yann Verry <y.verry@pixmania-group.com>
 Zoltan Hoppár <hopparz@gmail.com>
 Zombyrad <benjamincottyn@gmail.com>
+zyegfryed <zyegfryed@gmail.com>
 甘露 <rhythm.gan@gmail.com>
 Сергій Гаврилов <sergiovana@bigmir.net>
 
