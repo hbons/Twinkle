@@ -19,4 +19,6 @@ twinkle init \
 timeout 20s twinkle sync || true  # --once
 source ./common/test_synced.sh
 
+twinke check
+
 source ./common/cleanup.sh

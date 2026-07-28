@@ -23,5 +23,7 @@ touch NEW_FILE2
 timeout 20s twinkle sync || true  # --once
 source ../common/test_synced.sh
 
+twinkle check
+
 cd ..
 source ./common/cleanup.sh
