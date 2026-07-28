@@ -59,20 +59,14 @@ modules:
         - /libexec/git-core/git-upload-archive
         - /libexec/git-core/git-instaweb
 
-  - name: git-lfs-amd64
-    only-arches: [x86_64]
+  - name: git-lfs
     sources:
       - type: archive
+        only-arches: [x86_64]
         url: https://github.com/git-lfs/git-lfs/releases/download/v3.7.1/git-lfs-linux-amd64-v3.7.1.tar.gz
         sha256: 1c0b6ee5200ca708c5cebebb18fdeb0e1c98f1af5c1a9cba205a4c0ab5a5ec08
-    buildsystem: simple
-    build-commands:
-      - cp git-lfs /app/libexec/git-core/
-
-  - name: git-lfs-arm64
-    only-arches: [aarch64]
-    sources:
       - type: archive
+        only-arches: [aarch64]
         url: https://github.com/git-lfs/git-lfs/releases/download/v3.7.1/git-lfs-linux-arm64-v3.7.1.tar.gz
         sha256: 73a9c90eeb4312133a63c3eaee0c38c019ea7bfa0953d174809d25b18588dd8d
     buildsystem: simple
