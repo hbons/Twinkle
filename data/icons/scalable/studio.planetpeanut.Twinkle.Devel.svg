@@ -1,7 +1,7 @@
 <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M21.9766 12C16.4492 12 12 16.4609 12 22V108.031C12 113.574 16.4492 118.031 21.9766 118.031H106.02C111.551 118.031 116 113.574 116 108.031V35.9453C116 29.3164 110.641 23.9453 104.027 23.9453H58C55.5469 23.9453 53.3047 22.5586 52.2031 20.3633L50.6992 17.3711C49.043 14.0781 45.6797 12 42 12H21.9766Z" fill="#12868F"/>
-<rect x="40" y="20" width="48" height="48" rx="4" fill="#FF8BB7"/>
-<path d="M40 24C40 21.7909 41.7909 20 44 20H84C86.2091 20 88 21.7909 88 24V28H40V24Z" fill="#F378A7"/>
+<rect x="40" y="20" width="48" height="48" rx="4" fill="#FEC64C"/>
+<path d="M40 24C40 21.7909 41.7909 20 44 20H84C86.2091 20 88 21.7909 88 24V28H40V24Z" fill="#FFAA41"/>
 <rect width="42" height="42" rx="4" transform="matrix(-0.866025 -0.5 -0.5 0.866025 127.687 47.3135)" fill="#F6FBE5"/>
 <rect x="99.9737" y="31.3135" width="42" height="2.00001" transform="rotate(120 99.9737 31.3135)" fill="#D0ED78"/>
 <rect x="124.687" y="52.5096" width="42" height="2" transform="rotate(-150 124.687 52.5096)" fill="#D0ED78"/>
@@ -16,7 +16,7 @@
 <path d="M65.9766 36C63.2305 36 60.75 37.1016 58.9492 38.8906C56.6758 41.1445 53.5664 44 50.3164 44H21.9766C16.4492 44 12 48.4609 12 54L12 105.977C12 111.516 16.4492 115.977 21.9766 115.977H106.02C111.551 115.977 116 111.516 116 105.977V46C116 40.4609 111.551 36 106.02 36H65.9766Z" fill="#69CED5"/>
 <defs>
 <linearGradient id="paint0_linear_2066_117" x1="44.6795" y1="72.6795" x2="4.6795" y2="72.6795" gradientUnits="userSpaceOnUse">
-<stop stop-color="#FE904C"/>
+<stop stop-color="#FE4CD2"/>
 <stop offset="1" stop-color="#F05101"/>
 </linearGradient>
 <linearGradient id="paint1_linear_2066_117" x1="11.9998" y1="112" x2="116" y2="112" gradientUnits="userSpaceOnUse">
