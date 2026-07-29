@@ -27,7 +27,7 @@ jobs:
     - uses: actions/checkout@v7
     - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
       with:
-        bundle: twinkle.flatpak
+        bundle: twinkle-${{ matrix.variant.arch }}.flatpak
         manifest-path: studio.planetpeanut.Twinkle.yml
         cache-key: flatpak-builder-${{ github.sha }}
         arch: ${{ matrix.variant.arch }}
