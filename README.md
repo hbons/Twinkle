@@ -2,7 +2,7 @@
 
 # [Twinkle](https://sparkleshare.org) ～ *Sync files with Git*
 
-The command-line version of [SparkleShare](https://sparkleshare.org). Sync your files with any Git repository. Collaborate using services like [GitHub](https://github.com), [GitLab](https://gitlab.com) and [Codeberg](https://codeberg.org) or host your own using [Forgejo](https://forgejo). No special server software required and its only dependencies are `openssh`, `git`, and (optionally) `git-lfs`.
+The command-line version of [SparkleShare](https://sparkleshare.org). Sync your files with any Git repository. Collaborate using services like [GitHub](https://github.com), [GitLab](https://gitlab.com) and [Codeberg](https://codeberg.org) or host your own using [Forgejo](https://forgejo.org). No special server software required and its only dependencies are `openssh`, `git`, and (optionally) `git-lfs`.
 
 <br>
 
