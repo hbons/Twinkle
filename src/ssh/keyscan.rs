@@ -25,7 +25,7 @@ pub fn ssh_keyscan(host: &str, port: Option<u16>, key_type: KeyType) -> Result<H
         host, // Host
     ];
 
-    log::debug(&format!("ssh-keyscan {}", &args.join(" ")));
+    log::debug(&format!("ssh-keyscan {}", args.join(" ")));
 
     let ssh_keyscan = Command::new("ssh-keyscan")
         .args(args)

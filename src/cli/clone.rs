@@ -44,7 +44,7 @@ impl App {
 
         let path = match args.get(3) {
             Some(s) => PathBuf::from(s),
-            None => current_dir()?,
+            None => env::current_dir()?,
         };
 
         let path = fs::canonicalize(path).map_err(|_| {

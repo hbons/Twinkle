@@ -43,7 +43,7 @@ pub fn ssh_keygen(key_path: &Path, key_type: KeyType, key_size: Option<KeySize>)
         "-f", key_path.to_str().ok_or("Invalid key path")?, // File name
     ];
 
-    log::debug(&format!("ssh-keygen {}", &args.join(" ")));
+    log::debug(&format!("ssh-keygen {}", args.join(" ")));
 
     let ssh_keygen = Command::new("ssh-keygen")
         .args(args)

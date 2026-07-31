@@ -310,7 +310,7 @@ impl TwinkleRepository {
         let mut buffer = File::create(&attributes_path)?;
         buffer.write_all(rules.join("\n").as_bytes())?;
 
-        log::debug(&format!("Repository | Created `{}`", &attributes_path.to_string_lossy()));
+        log::debug(&format!("Repository | Created `{}`", attributes_path.to_string_lossy()));
 
         Ok(())
     }
@@ -321,7 +321,7 @@ impl TwinkleRepository {
         let mut buffer = File::create(&exclude_path)?;
         buffer.write_all(rules.join("\n").as_bytes())?;
 
-        log::debug(&format!("Repository | Created `{}`", &exclude_path.to_string_lossy()));
+        log::debug(&format!("Repository | Created `{}`", exclude_path.to_string_lossy()));
 
         Ok(())
     }

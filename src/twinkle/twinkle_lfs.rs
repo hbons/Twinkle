@@ -36,7 +36,7 @@ pub fn twinkle_lfs_track(
         log::info(
             &format!( // TODO: Move format! to info()
                 "Tracking with LFS: `{}`",
-                &change.path.to_string_lossy(),
+                change.path.to_string_lossy(),
             )
         );
     }
