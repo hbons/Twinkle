@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - dev
 
 permissions:
   contents: write
@@ -31,6 +30,11 @@ jobs:
         manifest-path: studio.planetpeanut.Twinkle.yml
         cache-key: flatpak-builder-${{ github.sha }}
         arch: ${{ matrix.variant.arch }}
+
+    - name: Tag
+      run: |
+        git tag -f flatpak-nightly
+        git push origin flatpak-nightly --force
 
     - name: "Upload to `Flatpak: Nightly` release"
       uses: softprops/action-gh-release@v3
