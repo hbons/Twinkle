@@ -33,6 +33,7 @@ jobs:
 
     - name: Tag
       run: |
+        git config --global --add safe.directory /__w/Twinkle/Twinkle
         git tag -f flatpak-nightly
         git push origin flatpak-nightly --force
 
