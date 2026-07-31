@@ -5,7 +5,7 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-use std::env::current_dir;
+use std::env;
 use std::error::Error;
 use std::fs;
 use std::path::PathBuf;
@@ -13,7 +13,12 @@ use std::path::PathBuf;
 use crate::app::App;
 use crate::log;
 use crate::ssh::objects::url::SshUrl;
-use crate::twinkle::twinkle_clone::{ twinkle_clone_complete, twinkle_clone_start };
+
+use crate::twinkle::twinkle_clone::{
+    TwinkleCloneError,
+    twinkle_clone_complete,
+    twinkle_clone_start,
+};
 
 
 impl App {
@@ -108,5 +113,16 @@ impl App {
 
         //     thread::sleep(Duration::from_millis(500));
         // }
+    }
+}
+
+
+impl TwinkleCloneError {
+    pub fn to_exit_code(&self) -> u8 {
+        match self {
+            Self::NeedsNetwork => 1,
+            Self::NeedsTrust(_) => 2,
+            Self::NeedsAuth(_, _) => 3,
+        }
     }
 }
