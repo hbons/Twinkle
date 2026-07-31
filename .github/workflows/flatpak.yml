@@ -42,6 +42,7 @@ jobs:
       with:
         tag_name: flatpak-nightly
         name: "Flatpak: Nightly"
+        body: "Latest build for testing."
         files: twinkle-${{ matrix.variant.arch }}.flatpak
         prerelease: true
         make_latest: false
