@@ -15,14 +15,18 @@ use super::objects::output::GitOutput;
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-config
 
-    pub fn config_get(&self, name: &str) -> Result<GitOutput, Box<dyn Error>> { // TODO: Option
-        self.run("config", &["--local", name]) // TODO: Deprecated in Git 2.44+, later use:
-        // self.run("config", &["get", name])
+    // TODO: Implicit config operations are deprecated since Git 2.44.
+    //       Use `git config get/set/list` if they exist.
+    //       See: https://git-scm.com/docs/git-config#_deprecated_modes
+
+    pub fn config_get(&self, name: &str)
+    -> Result<GitOutput, Box<dyn Error>> { // TODO: Option
+        self.run("config", &["--local", name])
     }
 
-    pub fn config_set(&self, name: &str, value: &str) -> Result<GitOutput, Box<dyn Error>> {
-        self.run("config", &["--local", name, value]) // Deprecated in Git 2.44+, later use:
-        // self.run("config", &["set", name, value])
+    pub fn config_set(&self, name: &str, value: &str)
+    -> Result<GitOutput, Box<dyn Error>> {
+        self.run("config", &["--local", name, value])
     }
 
 
@@ -33,21 +37,21 @@ impl GitEnvironment {
     ) -> Result<GitOutput, Box<dyn Error>> // TODO: Option
     {
         let file = file.to_string_lossy().to_string();
-
-        self.run("config", &["--file", &file, name]) // Deprecated in Git 2.44+, later use:
-        // self.run("config", &["--local", "get", name])
+        self.run("config", &["--file", &file, name])
     }
 
-    pub fn config_file_set(
-        &self,
+    pub fn config_file_set(&self,
         file: &Path,
         name: &str,
         value: &str,
     ) -> Result<GitOutput, Box<dyn Error>>
     {
         let file = file.to_string_lossy().to_string();
+        self.run("config", &["--file", &file, name, value])
+    }
 
-        self.run("config", &["--file", &file, name, value]) // Deprecated in Git 2.44+, later use:
-        // self.run("config", &["--local", "get", name])
+
+    pub fn config_list(&self) -> Result<GitOutput, Box<dyn Error>> {
+        self.run("config", &["--local", "--list"])
     }
 }
