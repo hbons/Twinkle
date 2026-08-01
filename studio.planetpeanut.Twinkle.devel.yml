@@ -13,7 +13,7 @@ build-options:
     RUST_BACKTRACE: '1'
 
 finish-args:
-  - --filesystem=xdg-documents/Twinkle:create
+  - --filesystem=host
   - --share=ipc
   - --share=network
   - --socket=wayland
