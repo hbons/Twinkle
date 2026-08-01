@@ -6,12 +6,20 @@
 
 
 use std::error::Error;
-use crate::app::{ App, app_deps, app_version };
+use std::env;
+
+use crate::{ App, app_deps, app_version };
+use crate::git::objects::environment::GitEnvironment;
+
 use super::util::*;
 
 
 impl App {
-    pub fn cli_parse_args(&mut self, args: &Vec<String>) -> Result<(), Box<dyn Error>> {
+    pub fn cli_parse_args(
+        &mut self,
+        args: &Vec<String>
+    ) -> Result<(), Box<dyn Error>>
+    {
         self.cli_require_args(1, args)?;
 
         let command = args.get(1).ok_or("Missing <command>")?;
@@ -23,10 +31,9 @@ impl App {
             "status"    => self.cli_command_status(args)?, // Not displayed
             "check"     => self.cli_command_check(args)?, // Not displayed
             "--help"    => self.cli_option_help(),
-            "--version" => println!("{}", app_version()),
-            "--deps"    => println!("{}", app_deps()),
-            "--env"     => println!("{:#?}", self), // TODO: git config --list --show-origin
-
+            "--version" => self.cli_option_version(),
+            "--deps"    => self.cli_option_deps(),
+            "--env"     => self.cli_option_env()?,
             _ => {
                 self.cli_option_help();
                 return Err("Unknown command".into());
@@ -57,5 +64,28 @@ impl App {
         println!("Options:");
         println!("    --help, --version, --deps, --env");
         println!();
+    }
+
+
+    pub fn cli_option_version(&self) {
+        println!("{}", app_version());
+    }
+
+
+    pub fn cli_option_deps(&self) {
+        println!("{}", app_deps());
+    }
+
+
+    pub fn cli_option_env(&self) -> Result<(), Box<dyn Error>>{
+        println!("{:#?}", self);
+
+        let git = GitEnvironment::new(&env::current_dir()?);
+
+        if let Ok(output) = git.config_list() {
+            println!("{}", output.stdout);
+        }
+
+        Ok(())
     }
 }
