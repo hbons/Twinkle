@@ -59,7 +59,8 @@ pub fn init_id( // TODO: Move to TwinkleRepository
             repo.git.config_file_get(
                 config_file,
                 &key(K_ID),
-            )?.stdout // TODO: validate type, twinkleID
+            ).ok_or("Missing .id")?
+            .stdout // TODO: validate type, twinkleID
         } else {
             if let Some(parent) = abs_config_file.parent() {
                 fs::create_dir_all(parent)?;
