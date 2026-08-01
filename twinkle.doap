@@ -5,7 +5,7 @@
          xmlns="http://usefulinc.com/ns/doap#">
 
   <name xml:lang="en">Twinkle</name>
-  <shortdesc xml:lang="en">Automatic syncing with Git</shortdesc>
+  <shortdesc xml:lang="en">Sync files with Git</shortdesc>
   <homepage rdf:resource="https://planetpeanut.studio/twinkle" />
   <bug-database rdf:resource="https://github.com/hbons/Twinkle/issues"/>
 
