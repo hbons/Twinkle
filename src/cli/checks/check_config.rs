@@ -15,7 +15,7 @@ use super::outcome::Outcome;
 fn get_from_config(path: &Path, name: &str, expect: Option<&str>) -> Outcome {
     let git = GitEnvironment::new(path);
 
-    if let Ok(output) = git.config_get(name) {
+    if let Some(output) = git.config_get(name) {
         let stdout = output.stdout;
 
         if output.exit_code != 0 {

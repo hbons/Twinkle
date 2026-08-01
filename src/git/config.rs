@@ -19,9 +19,8 @@ impl GitEnvironment {
     //       Use `git config get/set/list` if they exist.
     //       See: https://git-scm.com/docs/git-config#_deprecated_modes
 
-    pub fn config_get(&self, name: &str)
-    -> Result<GitOutput, Box<dyn Error>> { // TODO: Option
-        self.run("config", &["--local", name])
+    pub fn config_get(&self, name: &str) -> Option<GitOutput> {
+        self.run("config", &["--local", name]).ok()
     }
 
     pub fn config_set(&self, name: &str, value: &str)
@@ -34,10 +33,10 @@ impl GitEnvironment {
         &self,
         file: &Path,
         name: &str,
-    ) -> Result<GitOutput, Box<dyn Error>> // TODO: Option
+    ) -> Option<GitOutput>
     {
         let file = file.to_string_lossy().to_string();
-        self.run("config", &["--file", &file, name])
+        self.run("config", &["--file", &file, name]).ok()
     }
 
     pub fn config_file_set(&self,

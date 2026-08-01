@@ -43,13 +43,13 @@ impl GitUser {
 
 
 impl GitUser {
-    pub fn from(path: &Path) -> Result<Self, Box<dyn Error>> {
+    pub fn from(path: &Path) -> Option<Self> {
         let git = GitEnvironment::new(path);
 
         format!("{} <{}>",
             git.config_get("user.name")?.stdout,
             git.config_get("user.email")?.stdout,
-        ).parse::<GitUser>()
+        ).parse::<GitUser>().ok()
     }
 }
 
