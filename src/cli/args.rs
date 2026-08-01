@@ -45,7 +45,7 @@ impl App {
 
 
     pub fn cli_option_help(&self) {
-        println!("Usage: twinkle <command> [args…]");
+        println!("Usage: {} <command> [args…]", self.command);
         println!();
         println!("Commands:");
         println!("    clone <user@host:path> [path]");
