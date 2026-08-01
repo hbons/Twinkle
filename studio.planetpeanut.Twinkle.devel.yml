@@ -44,7 +44,7 @@ modules:
       - make configure
       - CFLAGS='-O2 -pipe -march=native' ./configure --prefix=/app
       - make NO_TCLTK=1 NO_GETTEXT=1 NO_CURL=1 NO_EXPAT=1 NO_OPENSSL=1 NO_ICONV=1 NO_PCRE=1 NO_PERL=1 NO_PYTHON=1
-      - make install
+      - make strip install
     cleanup:
         - /share/doc
         - /share/man
