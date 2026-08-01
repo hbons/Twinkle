@@ -27,11 +27,19 @@ modules:
         sha256: ef6026dd2aea8d56059638d5d3262902c892ceba9f88395835e0d06d3fb63238
     config-opts:
       - --without-pie
+    build-options:
+      strip: true
     cleanup:
-      - /sbin/sshd
       - /bin/scp
       - /bin/sftp
+      - /bin/ssh-add
+      - /bin/ssh-agent
+      - /bin/ssh-keysign
+      - /bin/ssh-argv0
       - /libexec/sftp-server
+      - /libexec/sshd
+      - /sbin/sshd
+      - /share/doc
       - /share/man
 
   - name: git
@@ -42,7 +50,7 @@ modules:
     buildsystem: simple
     build-commands:
       - make configure
-      - CFLAGS='-Os -pipe -march=native' ./configure --prefix=/app
+      - CFLAGS='-Os -pipe ./configure --prefix=/app
       - make NO_TCLTK=1 NO_GETTEXT=1 NO_CURL=1 NO_EXPAT=1 NO_OPENSSL=1 NO_ICONV=1 NO_PCRE=1 NO_PERL=1 NO_PYTHON=1 NO_INSTALL_HARDLINKS=1
       - make strip install
     cleanup:
