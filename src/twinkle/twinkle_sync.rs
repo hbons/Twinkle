@@ -207,13 +207,18 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
 
         let status = repo.git.status()?; // TODO: status_staged()
 
+        let branch = repo.git.branch_show_current()?;
+        let remote = repo.git.config_get(&format!("branch.{branch}.remote"))
+            .ok_or("Missing branch.*.remote")?
+            .stdout;
+
         if let Some(message) = twinkle_pretty_commit_message(&status) {
             let user = repo.user().ok_or("User not set")?;
 
             repo.set_user(&user)?;
             repo.git.commit(Some(user), &message)?;
 
-            log::info(&format!("✓ Committed. Now at {}", repo.current_head()?));
+            log::info(&format!("✓ Committed to `{branch}`. Now at {}", repo.current_head()?));
         } else {
             if !twinkle_has_unpushed_commits(repo) {
                 log::info(&format!("Nothing new to commit. Still at {}", repo.current_head()?));
@@ -227,14 +232,14 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
             return Ok(());
         }
 
-        let branch = repo.branch().ok_or("Not on a branch")?;
-
         repo.git.lfs_install_pre_push_hook(Some(repo.git.GIT_SSH_COMMAND.clone()))?;
-        let push = repo.git.push("origin", &branch);
+
+        let push = repo.git.push(&remote, &branch);
 
         match push {
-            Ok(_)  => log::info(&format!("✓ Pushed. Local and remote at {}", repo.current_head()?)),
-            Err(_) => {
+            Ok(_)  => log::info(&format!("✓ Pushed to `{remote}`. Local and remote at {}", repo.current_head()?)),
+            Err(e) => {
+                dbg!(e);
                 log::info("✗ Push failed. Fetching…");
                 let fetch = twinkle_sync_down(repo);
 
@@ -270,7 +275,12 @@ pub fn twinkle_sync_up_delay(attempt: u64) -> Duration {
 
 
 pub fn twinkle_sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
-    repo.git.fetch("main")?;
+    let branch = repo.git.branch_show_current()?;
+    let remote = repo.git.config_get(&format!("branch.{branch}.remote"))
+        .ok_or("Missing branch.*.remote")?
+        .stdout;
+
+    repo.git.fetch(&remote, &branch)?;
 
     if repo.lfs_enabled() {
         repo.git.lfs_fetch()?;
