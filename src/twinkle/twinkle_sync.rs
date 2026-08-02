@@ -213,9 +213,12 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
         let status = repo.git.status()?; // TODO: status_staged()
 
         let branch = repo.git.branch_show_current()?;
-        let remote = repo.git.config_get(&format!("branch.{branch}.remote"))
-            .ok_or("Missing branch.*.remote")?
-            .stdout;
+        let remote =
+            if let Some(output) = repo.git.config_get(&format!("branch.{branch}.remote")) {
+                output.stdout
+            } else {
+                "origin".into()
+            };
 
         if let Some(message) = twinkle_pretty_commit_message(&status) {
             let user = repo.user().ok_or("User not set")?;
@@ -281,9 +284,12 @@ pub fn twinkle_sync_up_delay(attempt: u64) -> Duration {
 
 pub fn twinkle_sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
     let branch = repo.git.branch_show_current()?;
-    let remote = repo.git.config_get(&format!("branch.{branch}.remote"))
-        .ok_or("Missing branch.*.remote")?
-        .stdout;
+    let remote =
+        if let Some(output) = repo.git.config_get(&format!("branch.{branch}.remote")) {
+            output.stdout
+        } else {
+            "origin".into()
+        };
 
     repo.git.fetch(&remote, &branch)?;
 
