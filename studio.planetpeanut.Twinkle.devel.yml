@@ -58,7 +58,7 @@ modules:
     buildsystem: simple
     build-commands:
       - make configure
-      - CFLAGS='-Os -pipe ./configure --prefix=/app
+      - CFLAGS='-Os -pipe' ./configure --prefix=/app
       - make NO_TCLTK=1 NO_GETTEXT=1 NO_CURL=1 NO_EXPAT=1 NO_OPENSSL=1 NO_ICONV=1 NO_PCRE=1 NO_PERL=1 NO_PYTHON=1 NO_INSTALL_HARDLINKS=1
       - make strip install
     cleanup:
