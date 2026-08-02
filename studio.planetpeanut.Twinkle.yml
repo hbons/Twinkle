@@ -13,7 +13,7 @@ build-options:
     RUST_BACKTRACE: '1'
 
 finish-args:
-  - --filesystem=xdg-documents/Twinkle:create
+  - --filesystem=xdg-documents/Twinkle:create  # TODO: xdg-projects: https://github.com/flatpak/flatpak/issues/6719
   - --share=ipc
   - --share=network
   - --socket=wayland
@@ -25,13 +25,29 @@ modules:
       - type: archive
         url: https://ftp.jaist.ac.jp/pub/OpenBSD/OpenSSH/portable/openssh-10.4p1.tar.gz
         sha256: ef6026dd2aea8d56059638d5d3262902c892ceba9f88395835e0d06d3fb63238
+    build-options:
+      strip: true
     config-opts:
+      - --without-gss-api
+      - --without-kerberos
+      - --without-kerberos5
+      - --without-lastlog
+      - --without-ldap
       - --without-pie
+      - --without-smartcard
+      - --without-wtmp
+      - --without-zlib
     cleanup:
-      - /sbin/sshd
       - /bin/scp
       - /bin/sftp
+      - /bin/ssh-add
+      - /bin/ssh-agent
+      - /bin/ssh-keysign
+      - /bin/ssh-argv0
       - /libexec/sftp-server
+      - /libexec/sshd
+      - /sbin/sshd
+      - /share/doc
       - /share/man
 
   - name: git
@@ -43,21 +59,34 @@ modules:
     build-commands:
       - make configure
       - CFLAGS='-Os -pipe' ./configure --prefix=/app
-      - make NO_TCLTK=1 NO_GETTEXT=1 NO_CURL=1 NO_EXPAT=1 NO_OPENSSL=1 NO_ICONV=1 NO_PCRE=1 NO_PERL=1 NO_PYTHON=1
+      - make NO_TCLTK=1 NO_GETTEXT=1 NO_CURL=1 NO_EXPAT=1 NO_OPENSSL=1 NO_ICONV=1 NO_PCRE=1 NO_PERL=1 NO_PYTHON=1 NO_INSTALL_HARDLINKS=1
       - make strip install
     cleanup:
-        - /share/doc
-        - /share/man
-        - /share/git-core/templates
-        - /lib/*.la
-        - /lib/pkgconfig
-        - /libexec/git-core/git-daemon
-        - /libexec/git-core/git-http-backend
-        - /libexec/git-core/git-shell
-        - /libexec/git-core/git-upload-pack
-        - /libexec/git-core/git-receive-pack
-        - /libexec/git-core/git-upload-archive
-        - /libexec/git-core/git-instaweb
+      - /bin/git-cvsserver
+      - /lib/*.la
+      - /lib/pkgconfig
+      - /libexec/git-core/git-am
+      - /libexec/git-core/git-credential-store
+      - /libexec/git-core/git-credential-cache
+      - /libexec/git-core/git-daemon
+      - /libexec/git-core/git-format-patch
+      - /libexec/git-core/git-http-backend
+      - /libexec/git-core/git-instaweb
+      - /libexec/git-core/git-p4
+      - /libexec/git-core/git-quiltimport
+      - /libexec/git-core/git-send-email
+      - /libexec/git-core/git-shell
+      - /libexec/git-core/git-receive-pack
+      - /libexec/git-core/git-svn*
+      - /libexec/git-core/git-upload-archive
+      - /libexec/git-core/git-upload-pack
+      - /libexec/git-core/git-web*
+      - /share/doc
+      - /share/locale
+      - /share/git-core/contrib
+      - /share/git-core/templates
+      - /share/git-core/Documentation
+      - /share/man
 
   - name: git-lfs
     sources:
