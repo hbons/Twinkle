@@ -164,8 +164,14 @@ pub fn twinkle_watch_remote(repo: &mut TwinkleRepository, interval: Option<Durat
 
         if !repo.is_busy() {
             let branch = repo.branch().ok_or("Not on a branch")?;
+            let remote =
+                if let Some(output) = repo.git.config_get(&format!("branch.{branch}.remote")) {
+                    output.stdout
+                } else {
+                    "origin".into()
+                };
 
-            if let Ok(remote_id) = repo.git.ls_remote(&branch) {
+            if let Ok(remote_id) = repo.git.ls_remote(&remote, &branch) {
                 if !repo.git.merge_base(&remote_id, &branch)? {
                     repo.set_has_remote_changes(true);
                     log::info("Remote changes detected…");
