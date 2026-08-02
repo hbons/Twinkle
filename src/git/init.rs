@@ -9,11 +9,17 @@ use std::error::Error;
 use super::objects::environment::GitEnvironment;
 
 
+const DEFAULT_BRANCH: &str = "main"; // Still "master" until Git 3.0
+
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-init
 
     pub fn init(&self) -> Result<(), Box<dyn Error>> {
-        self.run("init", &["--quiet"])?;
+        self.run("init", &[
+            &format!("--initial-branch={DEFAULT_BRANCH}"),
+            "--quiet",
+        ])?;
+
         Ok(())
     }
 }

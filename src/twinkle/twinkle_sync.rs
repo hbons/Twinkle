@@ -164,7 +164,7 @@ pub fn twinkle_watch_remote(repo: &mut TwinkleRepository, interval: Option<Durat
 
         if !repo.is_busy() {
             let branch = repo.branch().ok_or("Not on a branch")?;
-            let remote =
+            let remote = // TODO: repo.remote() (3x)
                 if let Some(output) = repo.git.config_get(&format!("branch.{branch}.remote")) {
                     output.stdout
                 } else {
