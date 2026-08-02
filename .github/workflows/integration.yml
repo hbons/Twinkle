@@ -11,11 +11,23 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  test:
+    strategy:
+      matrix:
+        variant:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: macos-26
+
+    runs-on: ${{ matrix.variant.runner }}
 
     steps:
     - uses: actions/checkout@v7
+
+    - name: Install Dependencies
+      if: runner.os == 'macOS'
+      run: brew install coreutils  # Needed for `timeout`
 
     - name: Install
       run: cargo install --path .
