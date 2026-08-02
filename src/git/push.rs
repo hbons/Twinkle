@@ -12,10 +12,10 @@ use super::objects::environment::GitEnvironment;
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-push
 
-    pub fn push(&self, remote_url: &str, branch: &str) -> Result<(), Box<dyn Error>> {
+    pub fn push(&self, remote: &str, branch: &str) -> Result<(), Box<dyn Error>> {
         self.run("push", &[
             "--progress",
-            remote_url,
+            remote,
             branch,
         ])?;
 

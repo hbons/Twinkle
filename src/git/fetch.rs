@@ -12,12 +12,12 @@ use super::objects::environment::GitEnvironment;
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-fetch
 
-    pub fn fetch(&self, branch: &str) -> Result<bool, Box<dyn Error>> {
+    pub fn fetch(&self, remote: &str, branch: &str) -> Result<(), Box<dyn Error>> {
         let output = self.run("fetch", &[
             "--no-recurse-submodules",
             "--progress", // Print progress on stderr
-            "origin",
-            branch
+            remote,
+            branch,
         ])?;
 
         match output.exit_code {
@@ -28,6 +28,6 @@ impl GitEnvironment {
             _   => return Err("Error: Unknown error".into()),
         }
 
-        Ok(true)
+        Ok(())
     }
 }
