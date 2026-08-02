@@ -15,6 +15,7 @@ impl GitEnvironment {
     pub fn push(&self, remote: &str, branch: &str) -> Result<(), Box<dyn Error>> {
         self.run("push", &[
             "--progress",
+            "--set-upstream",
             remote,
             branch,
         ])?;
