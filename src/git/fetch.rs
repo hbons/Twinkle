@@ -6,13 +6,16 @@
 
 
 use std::error::Error;
+
 use super::objects::environment::GitEnvironment;
+use super::objects::reference::GitReference;
+use super::objects::remote::GitRemote;
 
 
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-fetch
 
-    pub fn fetch(&self, remote: &str, branch: &str) -> Result<(), Box<dyn Error>> {
+    pub fn fetch(&self, remote: &GitRemote, branch: &GitReference) -> Result<(), Box<dyn Error>> {
         let output = self.run("fetch", &[
             "--no-recurse-submodules",
             "--progress", // Print progress on stderr

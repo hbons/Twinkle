@@ -105,7 +105,7 @@ pub fn twinkle_clone_complete(
 {
     twinkle_init_common(repo, key_pair)?;
 
-    repo.git.checkout_branch("HEAD")?;
+    repo.git.checkout_branch(&"HEAD".into())?;
     init_id(repo)?;
 
     if repo.is_empty() {

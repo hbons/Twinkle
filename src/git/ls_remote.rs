@@ -6,13 +6,16 @@
 
 
 use std::error::Error;
+
 use super::objects::environment::GitEnvironment;
+use super::objects::reference::GitReference;
+use super::objects::remote::GitRemote;
 
 
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-ls-remote
 
-    pub fn ls_remote(&self, remote: &str, branch: &str) -> Result<String, Box<dyn Error>> {
+    pub fn ls_remote(&self, remote: &GitRemote, branch: &GitReference) -> Result<String, Box<dyn Error>> {
         let output = self.run("ls-remote", &[
             "--exit-code", // Use exit codes on errors
             "--heads", // '--branches' after Git 2.46.0 (Sep 11 2024)
