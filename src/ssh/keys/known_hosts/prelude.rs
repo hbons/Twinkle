@@ -14,7 +14,6 @@ pub use super::github::ssh_hostkey_github;
 pub use super::gitlab::ssh_hostkey_gitlab;
 pub use super::gnome::ssh_hostkey_gnome;
 pub use super::kde::ssh_hostkey_kde;
-pub use super::launchpad::ssh_hostkey_launchpad;
 pub use super::sourceforge::ssh_hostkey_sourceforge;
 pub use super::sourcehut::ssh_hostkey_sourcehut;
 pub use super::savannah::ssh_hostkey_savannah;
