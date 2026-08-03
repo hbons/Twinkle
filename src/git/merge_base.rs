@@ -6,13 +6,15 @@
 
 
 use std::error::Error;
+
 use super::objects::environment::GitEnvironment;
+use super::objects::reference::GitReference;
 
 
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-merge-base
 
-    pub fn merge_base(&self, commit_id: &str, branch: &str) -> Result<bool, Box<dyn Error>> {
+    pub fn merge_base(&self, commit_id: &str, branch: &GitReference) -> Result<bool, Box<dyn Error>> {
         let result = self.run("merge-base", &[
             "--is-ancestor",
             commit_id,

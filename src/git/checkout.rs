@@ -9,12 +9,13 @@ use std::error::Error;
 use std::path::Path;
 
 use super::objects::environment::GitEnvironment;
+use super::objects::reference::GitReference;
 
 
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-checkout
 
-    pub fn checkout_branch(&self, branch: &str) -> Result<(), Box<dyn Error>> {
+    pub fn checkout_branch(&self, branch: &GitReference) -> Result<(), Box<dyn Error>> {
         self.run("checkout", &[
             "--quiet",
             branch,
