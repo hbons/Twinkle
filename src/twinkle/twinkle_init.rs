@@ -139,7 +139,7 @@ fn init_config(
 ) -> Result<(), Box<dyn Error>>
 {
     for (option, value) in twinkle_default_git_settings() {
-        repo.git.config_set(option, value)?;
+        repo.git.config_set(option, &value)?;
     }
 
     Ok(())

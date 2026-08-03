@@ -59,36 +59,48 @@ fn _twinkle_default_settings()
 
 /// Docs: https://git-scm.com/docs/git-config#_variables
 pub fn twinkle_default_git_settings()
--> Vec<(&'static str, &'static str)>
+-> Vec<(&'static str, String)>
 {
     // Important: Keep in sync with the `checklist` cli command
 
     vec![
         // Prevent system/global config interference
-        ("core.attributesFile", ""), // Ignore the system/global attributes files
-        ("core.excludesFile", ""), // Ignore the system/global gitignore files
+        ("core.attributesFile", "".into()), // Ignore the system/global attributes files
+        ("core.excludesFile", "".into()), // Ignore the system/global gitignore files
 
         // Cross-platform compatiblity
-        ("core.autocrlf", "input"), // Text files will keep original line endings when checked out, CRLF chars are normalized to LF when committed
-        ("core.fileMode", "false"), // Ignore permission changes
-        ("core.ignoreCase", "false"), // Be case sensitive explicitly to work on Mac
-        ("core.precomposeUnicode", "true"), // Use the same Unicode form on all filesystems
-        ("core.quotePath", "false"), // Output Unicode characters: '"h\303\251"' becomes 'hé'
-        ("core.safecrlf", "false"),
+        ("core.autocrlf", "input".into()), // Text files will keep original line endings when checked out, CRLF chars are normalized to LF when committed
+        ("core.fileMode", "false".into()), // Ignore permission changes
+        ("core.ignoreCase", "false".into()), // Be case sensitive explicitly to work on Mac
+        ("core.precomposeUnicode", "true".into()), // Use the same Unicode form on all filesystems
+        ("core.quotePath", "false".into()), // Output Unicode characters: '"h\303\251"' becomes 'hé'
+        ("core.safecrlf", "false".into()),
 
-        ("push.default", "current"), // Push only current branch to matching remote
-        ("submodule.recurse", "false"), // Ignore submodules
+        ("checkout.workers", recommended_workers().to_string()), // Use more cores than the default "1" when checking out files
+        ("push.default", "current".into()), // Push only current branch to matching remote
+        ("submodule.recurse", "false".into()), // Ignore submodules
 
         // Commit signing
-        ("commit.gpgSign", "false"),
-        ("tag.gpgSign", "false"),
-        ("gpg.format", "ssh"),
+        ("commit.gpgSign", "false".into()),
+        ("tag.gpgSign", "false".into()),
+        ("gpg.format", "ssh".into()),
 
         // Some memory limiting options
-        ("core.packedGitLimit", "128m"),
-        ("core.packedGitWindowSize", "128m"),
-        ("pack.deltaCacheSize", "128m"),
-        ("pack.packSizeLimit", "128m"),
-        ("pack.windowMemory", "128m"),
+        ("core.packedGitLimit", "128m".into()),
+        ("core.packedGitWindowSize", "128m".into()),
+        ("pack.deltaCacheSize", "128m".into()),
+        ("pack.packSizeLimit", "128m".into()),
+        ("pack.windowMemory", "128m".into()),
     ]
+}
+
+
+use std::thread::available_parallelism;
+
+fn recommended_workers() -> usize {
+    let cores = available_parallelism()
+        .map(|n| n.get())
+        .unwrap_or(1);
+
+    (cores / 2).min(8).max(1)
 }
