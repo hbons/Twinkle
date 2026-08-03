@@ -44,8 +44,8 @@ impl str::FromStr for SshUrl {
 
 
 impl SshUrl {
-    // ssh://git@github.com/hbons/Twinkle
-    // ssh://git@github.com:22/hbons/Twinkle
+    /// ssh://git@github.com/hbons/Twinkle
+    /// ssh://git@github.com:22/hbons/Twinkle
     // TODO: Add IPv6 support: "[2001:adb8:85a4:0000:0000:8a1e:0e70:7034]"
     pub fn from_string_standard(s: &str) -> Result<Self, Box<dyn Error>> {
         let s = s.strip_prefix("ssh://").ok_or("No 'ssh://' found")?;
@@ -72,7 +72,7 @@ impl SshUrl {
     }
 
 
-    // git@github.com:hbons/Twinkle
+    /// git@github.com:hbons/Twinkle
     // TODO: Add IPv6 support: "[2001:adb8:85a4:0000:0000:8a1e:0e70:7034]"
     pub fn from_string_alternate(s: &str) -> Result<Self, Box<dyn Error>> {
         let (user, host_and_path) = s.split_once('@').ok_or("No 'user@' found")?;
@@ -106,8 +106,8 @@ impl fmt::Display for SshUrl {
 }
 
 impl SshUrl {
-    // ssh://git@github.com/hbons/Twinkle
-    // ssh://git@github.com:22/hbons/Twinkle
+    /// ssh://git@github.com/hbons/Twinkle
+    /// ssh://git@github.com:22/hbons/Twinkle
     pub fn to_string_standard(&self) -> String {
         let port_str =
             match self.port {
@@ -123,7 +123,7 @@ impl SshUrl {
     }
 
 
-    // git@github.com:hbons/Twinkle
+    /// git@github.com:hbons/Twinkle
     pub fn to_string_alternate(&self) -> String {
         format!("{user}@{host}:{path}",
             user = self.user,
@@ -132,11 +132,11 @@ impl SshUrl {
     }
 
 
+    /// ssh://git@github.com:22/hbons/Twinkle
     pub fn to_string_with_port(&self) -> String {
-        if self.port.is_some() {
-            self.to_string_standard()
-        } else {
-            self.to_string_alternate()
+        match self.port {
+            Some(_) => self.to_string_standard(),
+            None    => self.to_string_alternate(),
         }
     }
 }
