@@ -49,6 +49,14 @@ impl TwinkleRepository {
     }
 
 
+    pub fn remote(&self, branch: &GitReference) -> GitReference {
+        match self.git.config_get(&format!("branch.{branch}.remote")) {
+            Some(output) => output.stdout,
+            None => "origin".into(),
+        }
+    }
+
+
     /// Current long commit hash
     pub fn current_head(&self) -> Result<GitReference, Box<dyn Error>> {
         self.git.rev_parse()

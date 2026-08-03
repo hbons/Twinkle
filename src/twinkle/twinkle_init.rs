@@ -35,8 +35,9 @@ pub fn twinkle_init(
         return Err("Already inside a Git repository".into());
     }
 
-    repo.git.init()?;
-    repo.set_remote_url(remote_url)?;
+    let branch = repo.git.init()?;
+    let remote = repo.remote(&branch);
+    repo.set_remote_url(&remote, remote_url)?;
 
     twinkle_init_common(&repo, key_pair)?;
 
