@@ -164,12 +164,7 @@ pub fn twinkle_watch_remote(repo: &mut TwinkleRepository, interval: Option<Durat
 
         if !repo.is_busy() {
             let branch = repo.branch().ok_or("Not on a branch")?;
-            let remote = // TODO: repo.remote() (3x)
-                if let Some(output) = repo.git.config_get(&format!("branch.{branch}.remote")) {
-                    output.stdout
-                } else {
-                    "origin".into()
-                };
+            let remote = repo.remote(&branch);
 
             if let Ok(remote_id) = repo.git.ls_remote(&remote, &branch) {
                 if !repo.git.merge_base(&remote_id, &branch)? {
@@ -214,12 +209,7 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
         let status = repo.git.status()?; // TODO: status_staged()
 
         let branch = repo.git.branch_show_current()?;
-        let remote =
-            if let Some(output) = repo.git.config_get(&format!("branch.{branch}.remote")) {
-                output.stdout
-            } else {
-                "origin".into()
-            };
+        let remote = repo.remote(&branch);
 
         if let Some(message) = twinkle_pretty_commit_message(&status) {
             let user = repo.user().ok_or("User not set")?;
@@ -285,12 +275,7 @@ pub fn twinkle_sync_up_delay(attempt: u64) -> Duration {
 
 pub fn twinkle_sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
     let branch = repo.git.branch_show_current()?;
-    let remote =
-        if let Some(output) = repo.git.config_get(&format!("branch.{branch}.remote")) {
-            output.stdout
-        } else {
-            "origin".into()
-        };
+    let remote = repo.remote(&branch);
 
     repo.git.fetch(&remote, &branch)?;
 

@@ -101,16 +101,16 @@ impl TwinkleRepository {
 // remote_url
 impl TwinkleRepository {
     pub fn remote_url(&self) -> Option<SshUrl> {
-        self.git.config_get("remote.origin.url")
+        self.git.config_get("remote.origin.url") // TODO: use .remote()
             .and_then(|v|
                 v.stdout.trim().parse::<SshUrl>().ok()
             )
     }
 
-    pub fn set_remote_url(&self, value: &SshUrl) -> Result<(), Box<dyn Error>>{
+    pub fn set_remote_url(&self, remote: &str, value: &SshUrl) -> Result<(), Box<dyn Error>>{
         self.git.config_set(
-            "remote.origin.url",
-            &value.to_string_standard()
+            &format!("remote.{remote}.url"),
+            &value.to_string_standard(),
         )?;
 
         Ok(())
