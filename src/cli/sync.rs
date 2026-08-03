@@ -30,7 +30,6 @@ use super::util::*;
 
 
 impl App {
-
     pub fn cli_command_sync(&mut self, args: &Vec<String>) -> Result<(), Box<dyn Error>> {
         self.cli_require_args(1, args)?;
 

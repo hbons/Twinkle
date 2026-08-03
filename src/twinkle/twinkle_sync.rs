@@ -176,7 +176,7 @@ pub fn twinkle_watch_remote(repo: &mut TwinkleRepository, interval: Option<Durat
             repo.set_last_checked(Utc::now().timestamp())?;
         }
 
-        thread::sleep(interval);
+        thread::sleep(interval); // TODO: Compare to repo.last_checked() so we can detect wake from sleep
     }
 }
 
