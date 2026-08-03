@@ -41,7 +41,6 @@ impl HostKey {
                 "git.sr.ht"         => Ok(ssh_hostkey_sourcehut()),
                 "git.savannah.org"  => Ok(ssh_hostkey_savannah()),
                 "invent.kde.org"    => Ok(ssh_hostkey_kde()),
-                "launchpad.net"     => Ok(ssh_hostkey_launchpad()),
                 "ssh.dev.azure.com" => Ok(ssh_hostkey_devops()),
                 "git.code.sf.net"   => Ok(ssh_hostkey_sourceforge()),
                 _ => ssh_keyscan(url.host.as_str(), url.port, KeyType::ED25519),

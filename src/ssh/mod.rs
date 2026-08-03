@@ -15,7 +15,6 @@ pub mod keys {
         pub mod gitlab;
         pub mod gnome;
         pub mod kde;
-        pub mod launchpad;
         pub mod prelude;
         pub mod savannah;
         pub mod sourceforge;
