@@ -21,6 +21,7 @@ pub mod objects {
     pub mod merge_status;
     pub mod output;
     pub mod reference;
+    pub mod remote;
     pub mod user;
 }
 
