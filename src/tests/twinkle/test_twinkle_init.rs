@@ -44,6 +44,9 @@ fn test_twinkle_init() {
         assert_eq!(git.config_get(rule.0).unwrap().stdout, rule.1);
     }
 
+    let branch = git.branch_show_current().unwrap();
+    assert_eq!(branch, "main");
+
 
     let path = Path::new("/tmp/twinkle_tests/.git/info/attributes");
 
