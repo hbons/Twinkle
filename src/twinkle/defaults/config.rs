@@ -102,5 +102,5 @@ fn recommended_workers() -> usize {
         .map(|n| n.get())
         .unwrap_or(1);
 
-    (cores / 2).min(8).max(1)
+    (cores / 2).clamp(1, 8)
 }

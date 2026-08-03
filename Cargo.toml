@@ -1,12 +1,15 @@
 [package]
 name = "Twinkle"
 version = "50.0.0"
+description = "Sync files with Git"
 homepage = "https://planetpeanut.studio/twinkle"
 repository = "https://www.github.com/hbons/Twinkle"
 authors = ["Hylke Bons <hello@planetpeanut.studio>"]
-license = "GNU General Public License v3 or later"
+license = "GPL-3.0-or-later"
 readme = "README.md"
 edition = "2021"
+keywords = ["dropbox", "git", "gtk", "network", "sync"]
+categories = ["command-line-utilities", "development-tools", "filesystem", "game-development", "network-programming"]
 
 [dependencies]
 # From the Recommended Crate Directory – https://blessed.rs/
