@@ -15,7 +15,11 @@ use super::objects::remote::GitRemote;
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-push
 
-    pub fn push(&self, remote: &GitRemote, branch: &GitReference) -> Result<(), Box<dyn Error>> {
+    pub fn push(&self,
+        remote: &GitRemote,
+        branch: &GitReference,
+    ) -> Result<(), Box<dyn Error>>
+    {
         self.run("push", &[
             "--progress",
             "--set-upstream",

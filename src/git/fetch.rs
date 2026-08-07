@@ -15,7 +15,11 @@ use super::objects::remote::GitRemote;
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-fetch
 
-    pub fn fetch(&self, remote: &GitRemote, branch: &GitReference) -> Result<(), Box<dyn Error>> {
+    pub fn fetch(&self,
+        remote: &GitRemote,
+        branch: &GitReference,
+    ) -> Result<(), Box<dyn Error>>
+    {
         let output = self.run("fetch", &[
             "--no-recurse-submodules",
             "--progress", // Print progress on stderr
