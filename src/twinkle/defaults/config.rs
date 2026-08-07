@@ -5,6 +5,9 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
+use std::thread;
+
+
 pub const K_ENABLED: &str = "enabled";
 pub const K_ID: &str = "id";
 pub const K_READONLY: &str = "readonly";
@@ -95,10 +98,8 @@ pub fn twinkle_default_git_settings()
 }
 
 
-use std::thread::available_parallelism;
-
 fn recommended_workers() -> usize {
-    let cores = available_parallelism()
+    let cores = thread::available_parallelism()
         .map(|n| n.get())
         .unwrap_or(1);
 

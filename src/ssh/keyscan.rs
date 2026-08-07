@@ -15,14 +15,20 @@ use super::keys::host_key::HostKey;
 use super::keys::key_type::KeyType;
 
 
-pub fn ssh_keyscan(host: &str, port: Option<u16>, key_type: KeyType) -> Result<HostKey, Box<dyn Error>> {
+/// Docs: https://man.openbsd.org/ssh-keyscan
+pub fn ssh_keyscan(
+    host: &str,
+    port: Option<u16>,
+    key_type: KeyType,
+) -> Result<HostKey, Box<dyn Error>>
+{
     let port = port.unwrap_or(22);
 
     let args = [
         "-q", // Don't print server host name and banners in comments
         "-t", &key_type.to_string(), // Key type
         &format!("-p {port}"), // Port
-        host, // Host
+        host,
     ];
 
     log::debug(&format!("ssh-keyscan {}", args.join(" ")));
@@ -34,12 +40,11 @@ pub fn ssh_keyscan(host: &str, port: Option<u16>, key_type: KeyType) -> Result<H
     match ssh_keyscan {
         Ok(output) => {
             if !output.status.success() {
-                log::error(String::from_utf8_lossy(&output.stderr).trim()); // TODO: defer printing
                 let code = output.status.code().unwrap_or_default();
-                return Err(format!("ssh-keyscan exited with error {code}").into());
-            }
+                let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
 
-            // log::log_info(&String::from_utf8_lossy(&output.stdout).trim());
+                return Err(format!("ssh-keyscan exited with error {code}: {stderr}").into());
+            }
 
             let line = String::from_utf8_lossy(&output.stdout);
             let public_key = line.split_whitespace().nth(2).ok_or("No key part")?.to_string();

@@ -20,8 +20,13 @@ use super::keys::key_size::KeySize;
 use super::keys::key_type::KeyType;
 
 
-pub fn ssh_keygen(key_path: &Path, key_type: KeyType, key_size: Option<KeySize>) -> Result<KeyPair, Box<dyn Error>> {
-    // Docs: https://man.openbsd.org/ssh-keygen
+/// Docs: https://man.openbsd.org/ssh-keygen
+pub fn ssh_keygen(
+    key_path: &Path,
+    key_type: KeyType,
+    key_size: Option<KeySize>,
+) -> Result<KeyPair, Box<dyn Error>>
+{
 
     let keys_dir = key_path.parent().ok_or("Could not find parent directory")?;
 
@@ -52,12 +57,11 @@ pub fn ssh_keygen(key_path: &Path, key_type: KeyType, key_size: Option<KeySize>)
     match ssh_keygen {
         Ok(output) => {
             if !output.status.success() {
-                log::error(String::from_utf8_lossy(&output.stderr).trim()); // TODO: defer printing
                 let code = output.status.code().unwrap_or_default();
-                return Err(format!("ssh-keyscan exited with error {code}").into());
-            }
+                let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
 
-            // log::log_info(&String::from_utf8_lossy(&output.stdout).trim());
+                return Err(format!("ssh-keyscan exited with error {code}: {stderr}").into());
+            }
 
             let pubkey_path = key_path.with_extension("key.pub");
 
