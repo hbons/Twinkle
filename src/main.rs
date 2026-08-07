@@ -28,7 +28,7 @@ use std::error::Error;
 use std::process::exit;
 
 use crate::app::{ app_deps, app_version };
-use crate::app::{ App, app_runs_as_root, app_runs_in_terminal };
+use crate::app::{ App, app_runs_as_root };
 use crate::gui::Gui;
 
 
@@ -40,18 +40,18 @@ fn main() -> Result<(), Box<dyn Error>> {
         log::error_and_exit("Cannot run as root")
     }
 
-    if app_runs_in_terminal() {
-        let mut app = App::default();
-        let args = args().collect();
-
-        match app.cli_parse_args(&args) {
-            Ok(_)  => exit(0),
-            Err(e) => log::error_and_exit(&e.to_string())
-        };
+    if let Some(arg) = args().nth(1) {
+        if arg == "gui" {
+            let app = App::default();
+            app.gui_run()?;
+        }
     }
 
-    let app = App::default();
-    app.gui_run()?;
+    let mut app = App::default();
+    let args = args().collect();
 
-    Ok(())
+    match app.cli_parse_args(&args) {
+        Ok(_)  => exit(0),
+        Err(e) => log::error_and_exit(&e.to_string())
+    };
 }
