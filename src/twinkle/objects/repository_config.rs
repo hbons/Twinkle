@@ -20,6 +20,15 @@ use crate::twinkle::twinkle_lfs::TWINKLE_LFS_THRESHOLD;
 use crate::twinkle::defaults::common::twinkle_default_polling_interval;
 use crate::twinkle::objects::repository::TwinkleRepository;
 
+use crate::git::config::{
+    K_COMMIT_GPG_SIGN,
+    K_CORE_SSH_COMMAND,
+    K_TAG_GPG_SIGN, K_USER_EMAIL,
+    K_USER_NAME,
+    K_USER_SIGNING_KEY,
+    K_REMOTE_ORIGIN_URL,
+};
+
 use crate::twinkle::defaults::config::{
     K_ENABLED,
     K_ID,
@@ -100,8 +109,8 @@ impl TwinkleRepository {
 
 // remote_url
 impl TwinkleRepository {
-    pub fn remote_url(&self) -> Option<SshUrl> {
-        self.git.config_get("remote.origin.url") // TODO: use .remote()
+    pub fn remote_url(&self) -> Option<SshUrl> { // TODO: use .remote()
+        self.git.config_get(K_REMOTE_ORIGIN_URL)
             .and_then(|v|
                 v.stdout.trim().parse::<SshUrl>().ok()
             )
@@ -126,8 +135,8 @@ impl TwinkleRepository {
 
 
     pub fn set_user(&self, value: &GitUser) -> Result<(), Box<dyn Error>>{
-        self.git.config_set("user.name", value.name())?;
-        self.git.config_set("user.email", value.email())?;
+        self.git.config_set(K_USER_NAME, value.name())?;
+        self.git.config_set(K_USER_EMAIL, value.email())?;
 
         if let Some(key_pair) = &value.key_pair {
             self.set_user_signing_key(key_pair)?;
@@ -262,19 +271,19 @@ pub fn parse_lfs_size(s: &str) -> u64 {
 impl TwinkleRepository {
     pub fn set_user_signing_key(&self, key_pair: &KeyPair) -> Result<(), Box<dyn Error>>{
         let key_path = &key_pair.private_key_path.to_string_lossy();
-        self.git.config_set("user.signingKey", key_path)?;
+        self.git.config_set(K_USER_SIGNING_KEY, key_path)?;
 
         Ok(())
     }
 
 
     pub fn set_commit_gpg_sign(&self, value: bool) -> Result<(), Box<dyn Error>>{
-        self.git.config_set("commit.gpgSign", &value.to_string())?;
+        self.git.config_set(K_COMMIT_GPG_SIGN, &value.to_string())?;
         Ok(())
     }
 
     pub fn set_tag_gpg_sign(&self, value: bool) -> Result<(), Box<dyn Error>>{
-        self.git.config_set("tag.gpgSign", &value.to_string())?;
+        self.git.config_set(K_TAG_GPG_SIGN, &value.to_string())?;
         Ok(())
     }
 
@@ -293,8 +302,7 @@ impl TwinkleRepository {
             None => SshConfig::default(),
         };
 
-        self.git.config_set("core.sshCommand", // TODO: consts in git crate
-            &format!("ssh -F /dev/null {config}"))?;
+        self.git.config_set(K_CORE_SSH_COMMAND, &format!("ssh -F /dev/null {config}"))?;
 
         Ok(())
     }
