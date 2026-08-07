@@ -26,12 +26,13 @@ pub struct KeyPair {
 
 
 impl KeyPair {
-    // ~/.config/twinkle/keys/github.com.ed25519.key
-    // ~/.config/twinkle/keys/github.com.ed25519.key.pub
-    // ~/.config/twinkle/keys/github.com.ed25519.key.host
-    pub fn from_file(private_key_path: &Path) -> Result<Self, Box<dyn Error>> {
+    pub fn from_files(
+        private_key_path: &Path,
+        public_key_path: &Path,
+    ) -> Result<Self, Box<dyn Error>>
+    {
         let private_key_path = private_key_path.to_path_buf();
-        let public_key_path  = private_key_path.with_extension("key.pub");
+        let public_key_path = public_key_path.to_path_buf();
 
         let private_key = fs::read_to_string(&private_key_path)?;
         let public_key  = fs::read_to_string(&public_key_path)?;

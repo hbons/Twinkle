@@ -36,7 +36,9 @@ pub fn twinkle_keypair_for(host: &String, key_type: KeyType, keys_dir: &Path) ->
     if !key_path.exists() {
         key_pair = twinkle_keypair_new(host, key_type, keys_dir)?;
     } else {
-        key_pair = KeyPair::from_file(&key_path)?;
+        let public_key_path = key_path.with_extension("key.pub");
+        key_pair = KeyPair::from_files(&key_path, &public_key_path)?;
+
         log::debug(&format!("Keys | Found key `{}`", key_pair.private_key_path.to_string_lossy()));
     }
 
