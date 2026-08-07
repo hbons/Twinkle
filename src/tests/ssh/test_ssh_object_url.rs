@@ -49,6 +49,78 @@ fn test_ssh_url_from_str_standard() {
     assert_eq!(url.host, "github.com");
     assert_eq!(url.port, Some(22));
     assert_eq!(url.path, PathBuf::from("hbons/Twinkle"));
+
+
+    let url = "ssh://git@192.168.0.1/hbons/Twinkle".to_string();
+    let url = url.parse::<SshUrl>().unwrap();
+
+    assert_eq!(url.form, SshUrlType::Standard);
+    assert_eq!(url.user, "git");
+    assert_eq!(url.host, "192.168.0.1");
+    assert_eq!(url.port, None);
+    assert_eq!(url.path, PathBuf::from("hbons/Twinkle"));
+}
+
+
+#[test]
+fn test_ssh_url_from_str_standard_ipv6() {
+    let url = "ssh://git@[2001:adb8:85a3:0000:0000:8a1e:0e70:7034]/hbons/Twinkle".to_string();
+    let url = url.parse::<SshUrl>().unwrap();
+
+    assert_eq!(url.form, SshUrlType::Standard);
+    assert_eq!(url.user, "git");
+    assert_eq!(url.host, "[2001:adb8:85a3:0000:0000:8a1e:0e70:7034]");
+    assert_eq!(url.port, None);
+    assert_eq!(url.path, PathBuf::from("hbons/Twinkle"));
+}
+
+
+#[test]
+fn test_ssh_url_from_str_standard_ipv6_with_port() {
+    let url = "ssh://git@[2001:adb8:85a3:0000:0000:8a1e:0e70:7034]:22/hbons/Twinkle".to_string();
+    let url = url.parse::<SshUrl>().unwrap();
+
+    assert_eq!(url.form, SshUrlType::Standard);
+    assert_eq!(url.user, "git");
+    assert_eq!(url.host, "[2001:adb8:85a3:0000:0000:8a1e:0e70:7034]");
+    assert_eq!(url.port, Some(22));
+    assert_eq!(url.path, PathBuf::from("hbons/Twinkle"));
+}
+
+
+#[test]
+fn test_ssh_url_from_str_alternate_ipv6() {
+    let url = "git@[2001:adb8:85a3:0000:0000:8a1e:0e70:7034]:hbons/Twinkle".to_string();
+    let url = url.parse::<SshUrl>().unwrap();
+
+    assert_eq!(url.form, SshUrlType::Alternate);
+    assert_eq!(url.user, "git");
+    assert_eq!(url.host, "[2001:adb8:85a3:0000:0000:8a1e:0e70:7034]");
+    assert_eq!(url.port, None);
+    assert_eq!(url.path, PathBuf::from("hbons/Twinkle"));
+}
+
+
+#[test]
+fn test_ssh_url_to_string_ipv6() {
+    let url_standard  = "ssh://git@[2001:adb8:85a3:0000:0000:8a1e:0e70:7034]/hbons/Twinkle".parse::<SshUrl>().unwrap();
+    let url_alternate = "git@[2001:adb8:85a3:0000:0000:8a1e:0e70:7034]:hbons/Twinkle".parse::<SshUrl>().unwrap();
+
+    assert_eq!(url_standard.to_string(), "ssh://git@[2001:adb8:85a3:0000:0000:8a1e:0e70:7034]/hbons/Twinkle");
+    assert_eq!(url_alternate.to_string(), "git@[2001:adb8:85a3:0000:0000:8a1e:0e70:7034]:hbons/Twinkle");
+}
+
+
+#[test]
+fn test_ssh_url_from_str_alternate() {
+    let url = "git@github.com:hbons/Twinkle".to_string();
+    let url = url.parse::<SshUrl>().unwrap();
+
+    assert_eq!(url.form, SshUrlType::Alternate);
+    assert_eq!(url.user, "git");
+    assert_eq!(url.host, "github.com");
+    assert_eq!(url.port, None);
+    assert_eq!(url.path, PathBuf::from("hbons/Twinkle"));
 }
 
 
@@ -95,19 +167,6 @@ fn test_ssh_url_to_string_with_port() {
 
 
 #[test]
-fn test_ssh_url_from_str_alternate() {
-    let url = "git@github.com:hbons/Twinkle".to_string();
-    let url = url.parse::<SshUrl>().unwrap();
-
-    assert_eq!(url.form, SshUrlType::Alternate);
-    assert_eq!(url.user, "git");
-    assert_eq!(url.host, "github.com");
-    assert_eq!(url.port, None);
-    assert_eq!(url.path, PathBuf::from("hbons/Twinkle"));
-}
-
-
-#[test]
 fn test_ssh_url_to_string_alternate() {
     let url = SshUrl {
         form: SshUrlType::Alternate,
@@ -132,16 +191,3 @@ fn test_ssh_url_to_string_alternate() {
 
     assert_eq!(url.to_string(), url.original);
 }
-
-
-// #[test] // TODO
-// fn test_ssh_url_from_str_standard_ipv6() {
-//     let url = "ssh://git@[2001:adb8:85a4:0000:0000:8a1e:0e70:7034]/hbons/Twinkle".to_string();
-//     let url = url.parse::<SshUrl>().unwrap();
-
-//     assert_eq!(url.form, SshUrlType::Standard);
-//     assert_eq!(url.user, "git");
-//     assert_eq!(url.host, "[2001:0db8:85a3:0000:0000:8a2e:0370:7334]");
-//     assert_eq!(url.port, None);
-//     assert_eq!(url.path, PathBuf::from("hbons/Twinkle"));
-// }
