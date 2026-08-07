@@ -141,6 +141,8 @@ pub fn twinkle_sync(
 }
 
 
+const WATCH_INTERVAL: u64 = 60;
+
 pub fn twinkle_watch_local(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
     loop {
         if !repo.is_busy() {
@@ -151,7 +153,9 @@ pub fn twinkle_watch_local(repo: &TwinkleRepository) -> Result<(), Box<dyn Error
             }
         }
 
-        thread::sleep(Duration::from_secs(3 * 60)); // TODO: Make configurable
+        thread::sleep(
+            Duration::from_secs(WATCH_INTERVAL)
+        );
     }
 }
 
