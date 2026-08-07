@@ -46,7 +46,8 @@ impl str::FromStr for SshUrl {
 impl SshUrl {
     /// ssh://git@github.com/hbons/Twinkle
     /// ssh://git@github.com:22/hbons/Twinkle
-    // TODO: Add IPv6 support: "[2001:adb8:85a4:0000:0000:8a1e:0e70:7034]"
+    /// ssh://git@[2001:adb8:85a4:0000:0000:8a1e:0e70:7034]/hbons/Twinkle
+    /// ssh://git@[2001:adb8:85a4:0000:0000:8a1e:0e70:7034]:22/hbons/Twinkle
     pub fn from_string_standard(s: &str) -> Result<Self, Box<dyn Error>> {
         let s = s.strip_prefix("ssh://").ok_or("No 'ssh://' found")?;
         let (user, host_and_path) = s.split_once('@').ok_or("No 'user@' found")?;
@@ -56,8 +57,13 @@ impl SshUrl {
             return Err("No user found".into());
         }
 
-        let (host, port) = match host_and_port.split_once(':') {
-            Some((host, port)) => (host, Some(port.parse::<u16>()?)),
+        let (host, port) = match host_and_port.rsplit_once(':') {
+            Some((host, port)) => {
+                match port.parse::<u16>().ok() {
+                    Some(p) => (host, Some(p)),
+                    None => (host_and_port, None),
+                }
+            },
             None => (host_and_port, None),
         };
 
@@ -73,10 +79,10 @@ impl SshUrl {
 
 
     /// git@github.com:hbons/Twinkle
-    // TODO: Add IPv6 support: "[2001:adb8:85a4:0000:0000:8a1e:0e70:7034]"
+    /// git@[2001:adb8:85a4:0000:0000:8a1e:0e70:7034]:hbons/Twinkle
     pub fn from_string_alternate(s: &str) -> Result<Self, Box<dyn Error>> {
         let (user, host_and_path) = s.split_once('@').ok_or("No 'user@' found")?;
-        let (host, path) = host_and_path.split_once(':').ok_or("No ':' found")?;
+        let (host, path) = host_and_path.rsplit_once(':').ok_or("No ':' found")?;
 
         if user.is_empty() {
             return Err("No user found".into());
