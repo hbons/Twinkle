@@ -7,6 +7,7 @@
 
 use std::error::Error;
 
+use crate::log;
 use super::objects::change::GitChange;
 use super::objects::environment::GitEnvironment;
 
@@ -26,14 +27,16 @@ impl GitEnvironment {
         let output = &self.run("status", &[
             "--no-renames",
             "--porcelain",
-            extra_arg
+            extra_arg,
         ])?;
 
         let mut changes = Vec::new();
 
         for line in output.stdout.lines() {
-            let change = line.parse::<GitChange>()?;
-            changes.push(change);
+            match line.parse::<GitChange>() {
+                Ok(change) => changes.push(change),
+                Err(e) => log::error(&format!("{e}: `{line}`")),
+            }
         }
 
         Ok(changes)
