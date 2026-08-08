@@ -5,22 +5,32 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-use crate::twinkle::objects::repository::TwinkleRepository;
+use super::repository::TwinkleRepository;
 
 
 impl TwinkleRepository {
+    pub fn unsynced_files(&self) -> Vec<String> {
+        vec![] // TODO: git log origin/main..HEAD --name-status
+    }
+
+
     pub fn ignored_files(&self) -> Vec<String> {
-        vec![]
+        vec![] // TODO: ls-files --ignored --exclude-standard --directory --others
+    }
+
+
+    pub fn deleted_files(&self) -> Vec<String> {
+        vec![] // TODO: git log --diff-filter=D --summary
     }
 
 
     pub fn hidden_files(&self) -> Vec<String> {
-        vec![]
+        vec![] // TODO: git ls-tree HEAD
     }
 
 
     pub fn all_files(&self) -> Vec<String> {
-        _ = self.git.ls_files(); // ls-tree?
-        vec![]
+        _ = self.git.ls_files();
+        vec![] // TODO: ls-tree
     }
 }
