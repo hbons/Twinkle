@@ -89,6 +89,7 @@ pub fn twinkle_default_git_settings()
         ("gpg.format", "ssh".into()),
 
         // Some memory limiting options
+        ("core.bigFileThreshold", "8m".into()),
         ("core.packedGitLimit", "128m".into()),
         ("core.packedGitWindowSize", "128m".into()),
         ("pack.deltaCacheSize", "128m".into()),
