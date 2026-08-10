@@ -14,10 +14,6 @@ use std::path::Path;
 // use gtk::prelude::*;
 // use gtk::{ Builder, Window, WindowType };
 
-// use zbus::blocking::Connection;
-// use zbus::blocking::Proxy;
-// use zvariant::Value;
-
 use crate::app::App;
 use crate::gui::Gui;
 
@@ -110,34 +106,13 @@ impl Gui for App {
 
 
     fn gui_show_notification() -> Result<(), Box<dyn Error>> {
-        // let connection = Connection::session().await?;
+        // let notification = gio::Notification::new("Task Completed");
 
-        // // Create a proxy to org.freedesktop.Notifications
-        // let proxy = zbus::Proxy::new(
-        //     &connection,
-        //     "org.freedesktop.Notifications",        // destination (notification daemon)
-        //     "/org/freedesktop/Notifications",       // object path
-        //     "org.freedesktop.Notifications"         // interface name
-        // ).await?;
+        // let icon = gio::ThemedIcon::new("emblem-success-symbolic");
+        // notification.set_icon(&icon);
+        // notification.set_body(Some("Your background export is finished."));
 
-        // // Call the Notify method
-        // let id: u32 = proxy
-        //     .call(
-        //         "Notify",
-        //         &(
-        //             "my-app",          // app_name
-        //             0u32,              // replaces_id
-        //             "dialog-information", // icon
-        //             "Hello from zbus!",   // summary
-        //             "This is a raw D-Bus notification", // body
-        //             Vec::<&str>::new(), // actions
-        //             std::collections::HashMap::<&str, Value>::new(), // hints
-        //             5000i32            // expire_timeout (ms)
-        //         ),
-        //     )
-        //     .await?;
-
-        // println!("Notification shown with ID: {id}");
+        // app.send_notification(Some("export-status"), &notification);
 
         Ok(())
     }
