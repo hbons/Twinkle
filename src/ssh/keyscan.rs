@@ -26,7 +26,7 @@ pub fn ssh_keyscan(
 ) -> Result<HostKey, Box<dyn Error>>
 {
     let args = [
-        // "-q", // Don't print server host name and banners in comments
+        "-q", // Don't print server host name and banners in comments
         "-t", &key_type.to_string(), // Key type
         "-p", &port.unwrap_or(SSH_DEFAULT_PORT).to_string(), // Port
         host,
