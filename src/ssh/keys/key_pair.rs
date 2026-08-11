@@ -7,7 +7,7 @@
 
 use std::error::Error;
 use std::fs;
-use std::path::{ Path, PathBuf };
+use std::path::PathBuf;
 
 use super::key_type::KeyType;
 
@@ -27,24 +27,21 @@ pub struct KeyPair {
 
 impl KeyPair {
     pub fn from_files(
-        private_key_path: &Path,
-        public_key_path: &Path,
+        private_key_path: &PathBuf,
+        public_key_path: &PathBuf,
     ) -> Result<Self, Box<dyn Error>>
     {
-        let private_key_path = private_key_path.to_path_buf();
-        let public_key_path = public_key_path.to_path_buf();
-
         let private_key = fs::read_to_string(&private_key_path)?;
         let public_key  = fs::read_to_string(&public_key_path)?;
 
         let key_pair = KeyPair {
             key_type: KeyType::from_public_key(&public_key)?,
 
-            private_key_path,
+            private_key_path: private_key_path.clone(),
             private_key: private_key.trim().to_string(),
             passphrase: None,
 
-            public_key_path,
+            public_key_path: public_key_path.clone(),
             public_key: public_key.trim().to_string(),
         };
 
