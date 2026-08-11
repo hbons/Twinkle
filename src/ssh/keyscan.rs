@@ -41,8 +41,13 @@ pub fn ssh_keyscan(
     match ssh_keyscan {
         Ok(output) => {
             if !output.status.success() {
-                let code = output.status.code().unwrap_or_default();
-                let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
+                let code = output.status
+                    .code()
+                    .unwrap_or_default();
+
+                let stderr = String::from_utf8_lossy(&output.stderr)
+                    .trim()
+                    .to_string();
 
                 return Err(format!("ssh-keyscan exited with error {code}: {stderr}").into());
             }
