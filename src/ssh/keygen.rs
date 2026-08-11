@@ -40,7 +40,7 @@ pub fn ssh_keygen(
     };
 
     let args = [
-        // "-q", // Quiet
+        "-q", // Quiet
         "-t", &key_type.to_string(), // Key type
         "-b", &key_size.to_string(), // Key size in bits
         "-P", "", // No passphrase
@@ -57,8 +57,13 @@ pub fn ssh_keygen(
     match ssh_keygen {
         Ok(output) => {
             if !output.status.success() {
-                let code = output.status.code().unwrap_or_default();
-                let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
+                let code = output.status
+                    .code()
+                    .unwrap_or_default();
+
+                let stderr = String::from_utf8_lossy(&output.stderr)
+                    .trim()
+                    .to_string();
 
                 return Err(format!("ssh-keyscan exited with error {code}: {stderr}").into());
             }
