@@ -10,9 +10,9 @@ jobs:
   tests:
     name: Tests
 
-    container:
-      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-50
-      options: --privileged
+    # container:
+    #   image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-50
+    #   options: --privileged
 
     strategy:
       matrix:
@@ -25,13 +25,19 @@ jobs:
     runs-on: ${{ matrix.variant.runner }}
 
     steps:
-    - uses: actions/checkout@v7
-    - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
-      with:
-        build-bundle: false
-        manifest-path: ${{ github.ref_type == 'tag'
-          && 'studio.planetpeanut.Twinkle.yml'
-          || 'studio.planetpeanut.Twinkle.devel.yml' }}
-        cache-key: flatpak-builder-${{ github.sha }}
-        arch: ${{ matrix.variant.arch }}
-        run-tests: true
+      - uses: actions/checkout@v7
+
+      - name: Run tests
+        run: cargo test -- --test-threads=1
+
+    # steps:
+    # - uses: actions/checkout@v7
+    # - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+    #   with:
+    #     build-bundle: false
+    #     manifest-path: ${{ github.ref_type == 'tag'
+    #       && 'studio.planetpeanut.Twinkle.yml'
+    #       || 'studio.planetpeanut.Twinkle.devel.yml' }}
+    #     cache-key: flatpak-builder-${{ github.sha }}
+    #     arch: ${{ matrix.variant.arch }}
+    #     run-tests: true
