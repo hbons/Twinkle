@@ -52,8 +52,21 @@ pub fn ssh_keyscan(
                 return Err(format!("ssh-keyscan exited with error {code}: {stderr}").into());
             }
 
-            let line = String::from_utf8_lossy(&output.stdout);
-            let public_key = line.split_whitespace().nth(2).ok_or("No key part")?.to_string();
+            // "github.com ssh-ed25519 AAAAC…"
+            let first_key_line = String::from_utf8_lossy(&output.stdout)
+                .lines()
+                .filter(|l| !l.starts_with('#')) // Skip banner comments, same as -q
+                .collect::<Vec<_>>()
+                .into_iter()
+                .next()
+                .ok_or("No key line")?
+                .to_string();
+
+            let public_key = first_key_line
+                .split_whitespace()
+                .nth(2)
+                .ok_or("No key body")?
+                .to_string();
 
             let mut host_key = HostKey {
                 host: host.to_string(),
