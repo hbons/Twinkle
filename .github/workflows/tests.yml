@@ -29,8 +29,8 @@ jobs:
 
       - name: Check OpenSSH version
         run: |
-          which ssh-keyscan
-          ssh-keyscan -V
+          which ssh
+          ssh -V
           ssh-keyscan -h
 
       - name: Run tests
