@@ -15,6 +15,9 @@ use super::keys::host_key::HostKey;
 use super::keys::key_type::KeyType;
 
 
+pub const SSH_DEFAULT_PORT: u16 = 22;
+
+
 /// Docs: https://man.openbsd.org/ssh-keyscan
 pub fn ssh_keyscan(
     host: &str,
@@ -22,12 +25,10 @@ pub fn ssh_keyscan(
     key_type: KeyType,
 ) -> Result<HostKey, Box<dyn Error>>
 {
-    let port = port.unwrap_or(22);
-
     let args = [
-        "-q", // Don't print server host name and banners in comments
+        // "-q", // Don't print server host name and banners in comments
         "-t", &key_type.to_string(), // Key type
-        &format!("-p {port}"), // Port
+        "-p", &port.unwrap_or(SSH_DEFAULT_PORT).to_string(), // Port
         host,
     ];
 
