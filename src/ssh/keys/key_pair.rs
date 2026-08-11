@@ -31,8 +31,8 @@ impl KeyPair {
         public_key_path: &PathBuf,
     ) -> Result<Self, Box<dyn Error>>
     {
-        let private_key = fs::read_to_string(&private_key_path)?;
-        let public_key  = fs::read_to_string(&public_key_path)?;
+        let private_key = fs::read_to_string(private_key_path)?;
+        let public_key  = fs::read_to_string(public_key_path)?;
 
         let key_pair = KeyPair {
             key_type: KeyType::from_public_key(&public_key)?,
