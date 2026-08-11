@@ -23,7 +23,7 @@ pub struct HostKey {
     pub host: String,
     pub is_trusted: bool, // TODO: TrustedHostKey and UntrustedHostKey types
     pub key_type: KeyType,
-    pub public_key: String,
+    pub public_key: String, // TODO: PublicKey type
     pub fingerprint: Option<Fingerprint>,
 }
 
