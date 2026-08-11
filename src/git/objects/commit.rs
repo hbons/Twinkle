@@ -9,12 +9,13 @@ use chrono::{ DateTime, Utc };
 
 use super::change::GitChange;
 use super::commit_message::GitCommitMessage;
+use super::id::GitId;
 use super::user::GitUser;
 
 
 #[derive(Debug, Default)]
 pub struct GitCommit {
-    pub id: String,
+    pub id: GitId,
     pub timestamp: DateTime<Utc>,
     pub author: GitUser,
     pub message: GitCommitMessage,

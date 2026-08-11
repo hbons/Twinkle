@@ -18,6 +18,7 @@ pub mod objects {
     pub mod error;
     pub mod file_status;
     pub mod ignore_reason;
+    pub mod id;
     pub mod merge_status;
     pub mod output;
     pub mod reference;
@@ -40,8 +41,8 @@ pub mod ls_remote;
 pub mod merge;
 pub mod merge_base;
 pub mod push;
-pub mod rev_parse;
 pub mod rev_list;
+pub mod rev_parse;
 pub mod status;
 pub mod symbolic_ref;
 pub mod version;
