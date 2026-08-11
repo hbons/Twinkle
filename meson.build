@@ -30,12 +30,12 @@ summary(
 
 cargo = find_program('cargo', required: true)
 
-cargo_build = custom_target(
+custom_target(
   command_name,
   command: [
     'sh', '-c',
     'cd ' + meson.project_source_root() + ' && ' +
-    'cargo build --release && ' +
+    'cargo build --release -features=gnome && ' +
     'cp target/release/' + command_name + ' ' + meson.project_build_root() + '/' + command_name
   ],
   output: command_name,
@@ -54,7 +54,7 @@ test('cargo_test',
 
 
 gnome.post_install(
-    # glib_compile_schemas: true,
-    # gtk_update_icon_cache: true,
-    # update_desktop_database: true,
+    glib_compile_schemas: true,
+    gtk_update_icon_cache: true,
+    update_desktop_database: true,
 )
