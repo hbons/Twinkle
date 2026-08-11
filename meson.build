@@ -21,7 +21,7 @@ subdir('src')
 
 summary(
   {
-    'nightly': get_option('nightly'),
+    'devel': get_option('devel'),
     'bindir': get_option('bindir')
   },
   section: 'Options',
@@ -35,7 +35,7 @@ custom_target(
   command: [
     'sh', '-c',
     'cd ' + meson.project_source_root() + ' && ' +
-    'cargo build --release -features=gnome && ' +
+    'cargo build --release --features=' + get_option('features') + ' && ' +
     'cp target/release/' + command_name + ' ' + meson.project_build_root() + '/' + command_name
   ],
   output: command_name,
