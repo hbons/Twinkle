@@ -21,8 +21,9 @@ subdir('src')
 
 summary(
   {
+    'bindir': get_option('bindir'),
     'devel': get_option('devel'),
-    'bindir': get_option('bindir')
+    'features': get_option('features'),
   },
   section: 'Options',
 )
