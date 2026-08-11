@@ -27,11 +27,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Check OpenSSH version
-        run: |
-          which ssh
-          ssh -V
-          ssh-keyscan -h
+      # - name: Check OpenSSH version
+      #   run: |
+      #     which ssh
+      #     ssh -V
+      #     ssh-keyscan -h
 
       - name: Run tests
         run: cargo test -- --test-threads=1
