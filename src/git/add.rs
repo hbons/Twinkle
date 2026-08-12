@@ -15,7 +15,7 @@ impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-add
 
     pub fn add(&self, path: &Path) -> Result<(), Box<dyn Error>> {
-        let path = path.string
+        let path = path
             .to_str()
             .ok_or("Path is not valid UTF-8")?;
 
