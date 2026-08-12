@@ -86,7 +86,12 @@ impl GitEnvironment {
 
 
     /// Runs with extra environment variables
-    pub fn run_with_env(&self, command: &str, args: &[&str], env: Vec<(String, String)>) -> Result<GitOutput, Box<dyn Error>> {
+    pub fn run_with_env(&self,
+        command: &str,
+        args: &[&str], // TODO: Use OsStr for everything
+        env: Vec<(String, String)>,
+    ) -> Result<GitOutput, Box<dyn Error>>
+    {
         log::debug(&format!("git {} {}", command, args.join(" ")));
 
         let output = Command::new("git")
