@@ -6,6 +6,7 @@
 
 
 use std::env;
+use std::ffi::OsStr;
 use std::path::Path;
 
 use crate::git::objects::environment::GitEnvironment;
@@ -45,7 +46,7 @@ fn get_from_config(path: &Path, name: &str, expect: Option<&str>) -> Outcome {
 
 pub fn is_git_config_valid(path: &Path) -> Outcome {
     let output = GitEnvironment::new(path)
-        .run("config", &["--list"]);
+        .run("config", &[OsStr::new("--list")]);
 
     match output {
         Ok(o) if o.exit_code == 0 => Outcome::Pass(None),
@@ -65,7 +66,11 @@ pub fn is_twinkle_config_valid(path: &Path) -> Outcome {
     }
 
     let output = GitEnvironment::new(path)
-        .run("config", &["--file", &config_path.to_string_lossy(), "--list"]);
+        .run("config", &[
+            OsStr::new("--file"),
+            config_path.as_os_str(),
+            OsStr::new("--list"),
+        ]);
 
     match output {
         Ok(o) if o.exit_code == 0 => Outcome::Pass(None),

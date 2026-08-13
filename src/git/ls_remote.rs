@@ -6,6 +6,7 @@
 
 
 use std::error::Error;
+use std::ffi::OsStr;
 
 use super::objects::environment::GitEnvironment;
 use super::objects::reference::GitReference;
@@ -17,12 +18,12 @@ impl GitEnvironment {
 
     pub fn ls_remote(&self, remote: &GitRemote, branch: &GitReference) -> Result<String, Box<dyn Error>> {
         let output = self.run("ls-remote", &[
-            "--exit-code", // Use exit codes on errors
-            "--heads", // '--branches' after Git 2.46.0 (Sep 11 2024)
-            "--quiet", // Don't print remote to stderr
-            "--", // Safety: No more flags coming after this
-            remote,
-            branch,
+            OsStr::new("--exit-code"), // Use exit codes on errors
+            OsStr::new("--heads"), // '--branches' after Git 2.46.0 (Sep 11 2024)
+            OsStr::new("--quiet"), // Don't print remote to stderr
+            OsStr::new("--"), // Safety: No more flags coming after this
+            OsStr::new(remote),
+            OsStr::new(branch),
         ])?;
 
         match output.exit_code {

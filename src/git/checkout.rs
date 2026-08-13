@@ -6,6 +6,7 @@
 
 
 use std::error::Error;
+use std::ffi::OsStr;
 use std::path::Path;
 
 use super::objects::environment::GitEnvironment;
@@ -17,40 +18,40 @@ impl GitEnvironment {
 
     pub fn checkout_branch(&self, branch: &GitReference) -> Result<(), Box<dyn Error>> {
         self.run("checkout", &[
-            "--quiet",
-            branch,
+            OsStr::new("--quiet"),
+            OsStr::new(branch),
         ])?;
 
         Ok(())
     }
 
 
-    pub fn checkout_file(&self, path: &Path, extra_arg: Option<&str>) -> Result<(), Box<dyn Error>> {
+    pub fn checkout_file(&self, path: &Path, extra_arg: Option<&OsStr>) -> Result<(), Box<dyn Error>> {
         self.run("checkout", &[
             extra_arg.unwrap_or_default(),
-            "--", // Safety: No more flags coming after this
-            path.to_str().ok_or("Path is not valid UTF-8")?,
+            OsStr::new("--"), // Safety: No more flags coming after this
+            path.as_os_str()
         ])?;
 
         Ok(())
     }
 
-
-    pub fn checkout_common_ancestor(&self, path: &Path) -> Result<(), Box<dyn Error>> {
-        self.run("checkout-index", &[
-            "--stage=1", // Common ancestor
-            "--",
-            path.to_str().ok_or("Path is not valid UTF-8")?,
-        ])?;
-
-        Ok(())
-    }
 
     pub fn checkout_ours(&self, path: &Path) -> Result<(), Box<dyn Error>> {
-        self.checkout_file(path, Some("--ours")) // same as checkout-index --stage=2
+        self.checkout_file(path, Some(OsStr::new("--ours"))) // same as checkout-index --stage=2
     }
 
     pub fn checkout_theirs(&self, path: &Path) -> Result<(), Box<dyn Error>> {
-        self.checkout_file(path, Some("--theirs")) // same as checkout-index --stage=3
+        self.checkout_file(path, Some(OsStr::new("--theirs"))) // same as checkout-index --stage=3
+    }
+
+    pub fn checkout_common_ancestor(&self, path: &Path) -> Result<(), Box<dyn Error>> {
+        self.run("checkout-index", &[
+            OsStr::new("--stage=1"), // Common ancestor
+            OsStr::new("--"),
+            path.as_os_str(),
+        ])?;
+
+        Ok(())
     }
 }

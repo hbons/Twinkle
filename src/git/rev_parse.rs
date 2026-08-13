@@ -6,6 +6,7 @@
 
 
 use std::error::Error;
+use std::ffi::OsStr;
 use std::path::PathBuf;
 
 use super::objects::environment::GitEnvironment;
@@ -15,7 +16,12 @@ impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-rev-parse
 
     pub fn rev_parse(&self) -> Result<String, Box<dyn Error>> {
-        match self.run("rev-parse", &["--verify", "HEAD"]) {
+        let rev_parse = self.run("rev-parse", &[
+            OsStr::new("--verify"),
+            OsStr::new("HEAD"),
+        ]);
+
+        match rev_parse {
             Ok(output) => Ok(output.stdout),
             Err(_) => Err("No commits yet".into()), // FIXME: non-git dirs also error...
         }
@@ -23,7 +29,7 @@ impl GitEnvironment {
 
 
     pub fn rev_parse_show_toplevel(&self) -> Result<PathBuf, Box<dyn Error>> {
-        match self.run("rev-parse", &["--show-toplevel"]) {
+        match self.run("rev-parse", &[OsStr::new("--show-toplevel")]) {
             Ok(output) => Ok(PathBuf::from(output.stdout.to_string())),
             Err(_) => Err("No commits yet".into()),
         }

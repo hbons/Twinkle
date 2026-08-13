@@ -5,7 +5,7 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-use std::path::Path;
+use std::{ffi::OsStr, path::Path};
 use crate::git::objects::environment::GitEnvironment;
 
 
@@ -22,14 +22,14 @@ fn test_git_object_environment_new() {
 fn test_git_object_environment_run() {
     let git = GitEnvironment::default();
 
-    let result = git.run("version", &["--build-options"]);
+    let result = git.run("version", &[OsStr::new("--build-options")]);
     assert!(result.is_ok());
 
     let output = result.unwrap();
     assert_eq!(output.exit_code, 0);
     assert!(output.stdout.starts_with("git version"));
 
-    let result = git.run("versiasdfgasdfg", &["--build-options"]);
+    let result = git.run("versiasdfgasdfg", &[OsStr::new("--build-options")]);
     assert!(result.is_err());
 }
 
@@ -41,7 +41,7 @@ fn test_git_object_environment_run_with_env() {
         ("GIT_CONFIG_PARAMETERS".into(), "'user.name=Test Bot'".into()),
     ];
 
-    let result = git.run_with_env("config", &["user.name"], env);
+    let result = git.run_with_env("config", &[OsStr::new("user.name")], env);
     assert_eq!(result.unwrap().stdout.trim(), "Test Bot");
 }
 

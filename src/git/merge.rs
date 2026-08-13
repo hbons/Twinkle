@@ -6,7 +6,10 @@
 
 
 use std::error::Error;
+use std::ffi::OsStr;
 use std::path::Path;
+
+use crate::git::objects::reference::GitReference;
 
 use super::objects::environment::GitEnvironment;
 use super::objects::user::GitUser;
@@ -15,16 +18,16 @@ use super::objects::user::GitUser;
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-merge
 
-    pub fn merge(&self, ref_str: &str) -> Result<(), Box<dyn Error>> {
+    pub fn merge(&self, ref_str: &GitReference) -> Result<(), Box<dyn Error>> {
         if self.is_in_merge() {
             // Note: Never use `git-merge --abort` as it can cause data loss
             return Err("Already in a merge".into());
         }
 
         let output = self.run("merge", &[
-            "-S", // Sign the merge commit (not done implicitly on merge)
-            "--no-edit", // Don't get blocked by interactive editors
-            ref_str
+            OsStr::new("-S"), // Sign the merge commit (not done implicitly on merge) // TODO: test with long flag --gpg-sign
+            OsStr::new("--no-edit"), // Don't get blocked by interactive editors
+            OsStr::new(ref_str),
         ])?;
 
         match output.exit_code {
@@ -40,11 +43,11 @@ impl GitEnvironment {
         }
 
         let output = self.run("log", &[
-            "--format=%an <%ae>",
-            "--max-count=1",
-            "FETCH_HEAD",
-            "--",
-            path.to_str().ok_or("Path is not valid UTF-8")?
+            OsStr::new("--format=%an <%ae>"),
+            OsStr::new("--max-count=1"),
+            OsStr::new("FETCH_HEAD"),
+            OsStr::new("--"),
+            path.as_os_str(),
         ])?;
 
         output.stdout.parse::<GitUser>()

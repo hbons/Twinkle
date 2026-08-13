@@ -6,6 +6,7 @@
 
 
 use std::error::Error;
+use std::ffi::OsStr;
 use std::path::Path;
 
 use super::objects::environment::GitEnvironment;
@@ -31,37 +32,53 @@ impl GitEnvironment {
     //       See: https://git-scm.com/docs/git-config#_deprecated_modes
 
     pub fn config_get(&self, name: &str) -> Option<GitOutput> {
-        self.run("config", &["--local", name]).ok()
+        self.run("config", &[
+            OsStr::new("--local"),
+            OsStr::new(name)
+        ]).ok()
     }
 
-    pub fn config_set(&self, name: &str, value: &str)
-    -> Result<GitOutput, Box<dyn Error>> {
-        self.run("config", &["--local", name, value])
+    pub fn config_set(&self, name: &str, value: &str) -> Result<GitOutput, Box<dyn Error>> { // TODO: Return () result
+        self.run("config", &[
+            OsStr::new("--local"),
+            OsStr::new(name),
+            OsStr::new(value),
+        ])
     }
 
 
     pub fn config_file_get(
         &self,
-        file: &Path,
+        file_path: &Path,
         name: &str,
     ) -> Option<GitOutput>
     {
-        let file = file.to_string_lossy().to_string();
-        self.run("config", &["--file", &file, name]).ok()
+        self.run("config", &[
+            OsStr::new("--file"),
+            file_path.as_os_str(),
+            OsStr::new(name),
+        ]).ok()
     }
 
     pub fn config_file_set(&self,
-        file: &Path,
+        file_path: &Path,
         name: &str,
         value: &str,
     ) -> Result<GitOutput, Box<dyn Error>>
     {
-        let file = file.to_string_lossy().to_string();
-        self.run("config", &["--file", &file, name, value])
+        self.run("config", &[
+            OsStr::new("--file"),
+            file_path.as_os_str(),
+            OsStr::new(name),
+            OsStr::new(value),
+        ])
     }
 
 
     pub fn config_list(&self) -> Result<GitOutput, Box<dyn Error>> {
-        self.run("config", &["--local", "--list"])
+        self.run("config", &[
+            OsStr::new("--local"),
+            OsStr::new("--list"),
+        ])
     }
 }

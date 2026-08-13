@@ -6,6 +6,7 @@
 
 
 use std::error::Error;
+use std::ffi::OsStr;
 use std::str::FromStr;
 
 use chrono::{ DateTime, Utc };
@@ -22,13 +23,14 @@ impl GitEnvironment {
 
     pub fn log(&self, count: usize) -> Result<Vec<GitCommit>, Box<dyn Error>> {
         let output = self.run("log", &[
-            &format!("--max-count={count}"),
-            "--date=unix", // Seconds since epoch
-            "--no-renames", // Show renames as separate 'D' and 'A' lines
-            "--name-status", // List files with change type
-            "--no-color",
-            "--no-decorate", // Don't show the (tracking) branch
-            "--no-merges",
+            OsStr::new(&format!("--max-count={count}")),
+            OsStr::new("--date=unix"), // Seconds since epoch
+            OsStr::new("--no-renames"), // Show renames as separate 'D' and 'A' lines
+            OsStr::new("--name-status"), // List files with change type
+            OsStr::new("--no-color"),
+            OsStr::new("--no-decorate"), // Don't show the (tracking) branch
+            OsStr::new("--no-merges"),
+            // OsStr::new("-z"), // TODO: Separate the commits with NULs instead of newlines. Together with core.quotePath=false allows us to use OsStr
         ])?;
 
         let mut first = true;

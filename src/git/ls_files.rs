@@ -6,6 +6,7 @@
 
 
 use std::error::Error;
+use std::ffi::OsStr;
 use std::path::PathBuf;
 
 use super::objects::environment::GitEnvironment;
@@ -22,14 +23,17 @@ impl GitEnvironment {
 
     pub fn ls_files_ignored(&self) -> Result<Vec<PathBuf>, Box<dyn Error>>{
         let output = self.run("ls-files", &[
-            "--ignored",
-            "--directory", // Don't recurse into ignored directories, just list once
-            "--exclude-standard", // Use .git/info/exclude, .gitignore files, and the global gitignore
-            "--others" // Show untracked files
+            OsStr::new("--ignored"),
+            OsStr::new("--directory"), // Don't recurse into ignored directories, just list once
+            OsStr::new("--exclude-standard"), // Use .git/info/exclude, .gitignore files, and the global gitignore
+            OsStr::new("--others"), // Show untracked files
         ])?;
 
-        let files = output.stdout.trim().split("\n");
-        let files = files.map(PathBuf::from).collect();
+        let files = output.stdout
+            .trim()
+            .split("\n")
+            .map(PathBuf::from)
+            .collect();
 
         Ok(files)
     }

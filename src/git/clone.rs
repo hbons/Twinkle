@@ -6,6 +6,7 @@
 
 
 use std::error::Error;
+use std::ffi::OsStr;
 use std::path::Path;
 
 use crate::ssh::objects::url::SshUrl;
@@ -16,27 +17,27 @@ impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-clone
 
     pub fn clone(&self, url: &str, directory: Option<&Path>, depth: Option<u32>) -> Result<GitEnvironment, Box<dyn Error>> {
-        let mut args: Vec<&str> = Vec::new();
+        let mut args: Vec<&OsStr> = Vec::new();
 
         let mut depth_str = "--depth=".to_string();
         if let Some(d) = depth {
             depth_str.push_str(&format!("{}", d));
-            args.push(&depth_str);
+            args.push(OsStr::new(&depth_str));
         }
 
-        args.push("--no-checkout");
-        args.push("--progress");
-        args.push("--"); // Safety: No more flags coming after this
-        args.push(url);
+        args.push(OsStr::new("--no-checkout"));
+        args.push(OsStr::new("--progress"));
+        args.push(OsStr::new("--")); // Safety: No more flags coming after this
+        args.push(OsStr::new(url));
 
-        if let Some(d) = directory {
-            let dir_str = d.to_str().ok_or("Invalid directory path")?;
-            args.push(dir_str);
+        if let Some(dir) = directory {
+            args.push(dir.as_os_str());
         }
 
         self.run("clone", &args)?;
 
         let url = url.parse::<SshUrl>()?;
+
         let dir_name = match directory {
             Some(d) => d.file_name().ok_or("Could not get name from path")?,
             None => url.path.file_name().ok_or("Could not get name from url")?,

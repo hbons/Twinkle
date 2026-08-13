@@ -5,6 +5,7 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
+use std::ffi::OsStr;
 use std::error::Error;
 use std::path::Path;
 
@@ -15,10 +16,11 @@ impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-add
 
     pub fn add(&self, path: &Path) -> Result<(), Box<dyn Error>> {
-        let path = path.to_str().ok_or("Path is not valid UTF-8")?;
+        // let path = path.to_str().ok_or("Path is not valid UTF-8")?;
+
         self.run("add", &[
-            "--", // Safety: No more flags coming after this
-            path,
+            OsStr::new("--"), // Safety: No more flags coming after this
+            path.as_os_str()
         ])?;
 
         Ok(())

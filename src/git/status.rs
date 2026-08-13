@@ -6,6 +6,7 @@
 
 
 use std::error::Error;
+use std::ffi::OsStr;
 
 use crate::log;
 use super::objects::change::GitChange;
@@ -17,16 +18,16 @@ impl GitEnvironment {
 
     pub fn status(&self) -> Result<Vec<GitChange>, Box<dyn Error>> {
         // Show untracked files/dirs
-        let changes = self.get_changes("--untracked-files=normal")?;
+        let changes = self.get_changes(OsStr::new("--untracked-files=normal"))?;
         // let filtered_changes = changes.iter().filter(|change| change.status == GitFileStatus::Untracked).collect::<Vec<_>>();
         Ok(changes)
     }
 
 
-    fn get_changes(&self, extra_arg: &str) -> Result<Vec<GitChange>, Box<dyn Error>> {
+    fn get_changes(&self, extra_arg: &OsStr) -> Result<Vec<GitChange>, Box<dyn Error>> {
         let output = &self.run("status", &[
-            "--no-renames",
-            "--porcelain",
+            OsStr::new("--no-renames"),
+            OsStr::new("--porcelain"),
             extra_arg,
         ])?;
 

@@ -6,10 +6,11 @@
 
 
 use std::error::Error;
+use std::ffi::OsStr;
 use std::path::{ Path, PathBuf };
 use std::process::Command;
 
-use crate::log;
+// use crate::log;
 use super::output::GitOutput;
 
 
@@ -80,14 +81,25 @@ impl GitEnvironment {
 
 
 impl GitEnvironment {
-    pub fn run(&self, command: &str, args: &[&str]) -> Result<GitOutput, Box<dyn Error>> {
+    pub fn run(
+        &self,
+        command: &str,
+        args: &[&OsStr],
+    ) -> Result<GitOutput, Box<dyn Error>>
+    {
         self.run_with_env(command, args, Vec::new())
     }
 
 
     /// Runs with extra environment variables
-    pub fn run_with_env(&self, command: &str, args: &[&str], env: Vec<(String, String)>) -> Result<GitOutput, Box<dyn Error>> {
-        log::debug(&format!("git {} {}", command, args.join(" ")));
+    pub fn run_with_env(
+        &self,
+        command: &str,
+        args: &[&OsStr],
+        env: Vec<(String, String)>,
+    ) -> Result<GitOutput, Box<dyn Error>>
+    {
+        // log::debug(&format!("git {} {}", command, args.iter().map(|s| s.to_string_lossy()).collect().join(" "))); TOOD
 
         let output = Command::new("git")
             .current_dir(&self.working_dir)

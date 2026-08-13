@@ -6,6 +6,7 @@
 
 
 use std::error::Error;
+use std::ffi::OsStr;
 
 use super::objects::environment::GitEnvironment;
 use super::objects::reference::GitReference;
@@ -21,10 +22,10 @@ impl GitEnvironment {
     ) -> Result<(), Box<dyn Error>>
     {
         self.run("push", &[
-            "--progress",
-            "--set-upstream",
-            remote,
-            branch,
+            OsStr::new("--progress"),
+            OsStr::new("--set-upstream"),
+            OsStr::new(remote),
+            OsStr::new(branch),
         ])?;
 
         Ok(())
