@@ -28,8 +28,6 @@ gnome = [  # TODO
     # "dep:gtk4",
     # "dep:libadwaita",
     # "dep:libsecret",
-    # "dep:zbus",
-    # "dep:zvariant",
 ]
 
 [[bin]]
