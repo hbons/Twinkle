@@ -47,8 +47,14 @@ impl GitUser {
         let git = GitEnvironment::new(path);
 
         format!("{} <{}>",
-            git.config_get("user.name")?.stdout,
-            git.config_get("user.email")?.stdout,
+            String::from_utf8_lossy(
+                &git.config_get("user.name")?
+                    .stdout
+            ),
+            String::from_utf8_lossy(
+                &git.config_get("user.email")?
+                    .stdout
+            ),
         ).parse::<GitUser>().ok()
     }
 }

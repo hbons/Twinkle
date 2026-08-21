@@ -51,7 +51,7 @@ impl TwinkleRepository {
 
     pub fn remote(&self, branch: &GitReference) -> GitReference {
         match self.git.config_get(&format!("branch.{branch}.remote")) {
-            Some(output) => output.stdout,
+            Some(output) => String::from_utf8_lossy(&output.stdout).into(),
             None => "origin".into(),
         }
     }

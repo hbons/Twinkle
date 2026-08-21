@@ -20,6 +20,9 @@ impl GitEnvironment {
             OsStr::new("@{u}..HEAD")
         ])?;
 
-        Ok(output.stdout.parse::<u32>()?)
+        Ok(
+            String::from_utf8_lossy(&output.stdout)
+                .parse::<u32>()?
+        )
     }
 }

@@ -6,9 +6,11 @@
 
 
 use std::error::Error;
-use std::ffi::OsStr;
+use std::ffi::{ OsStr, OsString };
+use std::os::unix::ffi::OsStrExt;
 
 use crate::log;
+
 use super::objects::change::GitChange;
 use super::objects::environment::GitEnvironment;
 
@@ -17,26 +19,64 @@ impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-status
 
     pub fn status(&self) -> Result<Vec<GitChange>, Box<dyn Error>> {
-        // Show untracked files/dirs
-        let changes = self.get_changes(OsStr::new("--untracked-files=normal"))?;
-        // let filtered_changes = changes.iter().filter(|change| change.status == GitFileStatus::Untracked).collect::<Vec<_>>();
+        let changes = self.get_changes(
+            Some(OsStr::new("--untracked-files=normal")),
+        )?;
+
         Ok(changes)
     }
 
 
-    fn get_changes(&self, extra_arg: &OsStr) -> Result<Vec<GitChange>, Box<dyn Error>> {
-        let output = &self.run("status", &[
-            OsStr::new("--no-renames"),
-            OsStr::new("--porcelain"),
-            extra_arg,
+    fn get_changes(
+        &self,
+        extra_arg: Option<&OsStr>,
+    ) -> Result<Vec<GitChange>, Box<dyn Error>>
+    {
+        let mut changes = vec![];
+
+        let output = self.run("status", &[
+            OsStr::new("--porcelain=v1"),
+            OsStr::new("-z"), // Single line, NUL-separated
+            extra_arg.unwrap_or_default(),
         ])?;
 
-        let mut changes = Vec::new();
+        let line: Vec<&OsStr> = output.stdout
+            .split(|&b| b == 0)
+            .filter(|chunk| !chunk.is_empty())
+            .map(OsStr::from_bytes)
+            .collect();
 
-        for line in output.stdout.lines() {
-            match line.parse::<GitChange>() {
+        let mut chunk_iter = line.iter();
+
+        while let Some(&chunk) = chunk_iter.next() {
+            let bytes = chunk.as_bytes();
+
+            let mut byte_iter = bytes.iter();
+            let x = byte_iter.next().ok_or("Missing status code X")?;
+            let y = byte_iter.next().ok_or("Missing status code Y")?;
+
+            let mut s = OsString::from(chunk);
+
+            // For renames/copies, join the next chunk (ORIG_PATH)
+            let chunk =
+                if *x == b'R' || *y == b'R' ||
+                   *x == b'C' || *y == b'C' {
+                       if let Some(orig_path) = chunk_iter.next() {
+                           s.push(OsStr::new("\0"));
+                           s.push(orig_path);
+                           s
+                       } else {
+                           s
+                       }
+                } else {
+                    s
+                };
+
+            match GitChange::from_status_line(&chunk) {
                 Ok(change) => changes.push(change),
-                Err(e) => log::error(&format!("{e}: `{line}`")),
+                Err(e) => log::error(
+                    &format!("{e}: `{}`", chunk.to_string_lossy())
+                ),
             }
         }
 

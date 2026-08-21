@@ -26,15 +26,19 @@ impl GitEnvironment {
             OsStr::new(branch),
         ])?;
 
-        match output.exit_code {
-            0   => (), // Successful connection
-            2   => return Err("No matching remote branch".into()),
-            128 => return Err("No connection".into()),
-            _   => return Err("Unknown error".into()),
+        match output.status.code() {
+            Some(0)   => (), // Successful connection
+            Some(2)   => return Err("No matching remote branch".into()),
+            Some(128) => return Err("No connection".into()),
+            Some(c)   => return Err(format!("Unknown error: {c}").into()),
+            None      => return Err("Unknown error".into()),
         }
 
+        let output = String::from_utf8_lossy(&output.stdout)
+            .to_string(); // TODO: needed?
+
         // '950264636c68591989456e3ba0a5442f93152c1a	refs/heads/main'
-        output.stdout.split('\t').next()
+        output.split('\t').next()
             .map(|remote_id| remote_id.to_string())
             .ok_or_else(|| "Cannot parse remote id".into())
     }

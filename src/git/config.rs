@@ -8,9 +8,9 @@
 use std::error::Error;
 use std::ffi::OsStr;
 use std::path::Path;
+use std::process::Output;
 
 use super::objects::environment::GitEnvironment;
-use super::objects::output::GitOutput;
 
 
 pub const K_CORE_SSH_COMMAND: &str = "core.sshCommand";
@@ -31,14 +31,14 @@ impl GitEnvironment {
     //       Use `git config get/set/list` if they exist.
     //       See: https://git-scm.com/docs/git-config#_deprecated_modes
 
-    pub fn config_get(&self, name: &str) -> Option<GitOutput> {
+    pub fn config_get(&self, name: &str) -> Option<Output> { // TODO: Option<String>
         self.run("config", &[
             OsStr::new("--local"),
             OsStr::new(name)
         ]).ok()
     }
 
-    pub fn config_set(&self, name: &str, value: &str) -> Result<GitOutput, Box<dyn Error>> { // TODO: Return () result
+    pub fn config_set(&self, name: &str, value: &str) -> Result<Output, Box<dyn Error>> { // TODO: Return () result
         self.run("config", &[
             OsStr::new("--local"),
             OsStr::new(name),
@@ -51,20 +51,23 @@ impl GitEnvironment {
         &self,
         file_path: &Path,
         name: &str,
-    ) -> Option<GitOutput>
+    ) -> Option<String>
     {
         self.run("config", &[
             OsStr::new("--file"),
             file_path.as_os_str(),
             OsStr::new(name),
-        ]).ok()
+        ]).map(|o|
+            String::from_utf8_lossy(&o.stdout)
+                .to_string()
+        ).ok()
     }
 
     pub fn config_file_set(&self,
         file_path: &Path,
         name: &str,
         value: &str,
-    ) -> Result<GitOutput, Box<dyn Error>>
+    ) -> Result<Output, Box<dyn Error>> // TODO: Return () result
     {
         self.run("config", &[
             OsStr::new("--file"),
@@ -75,7 +78,7 @@ impl GitEnvironment {
     }
 
 
-    pub fn config_list(&self) -> Result<GitOutput, Box<dyn Error>> {
+    pub fn config_list(&self) -> Result<Output, Box<dyn Error>> {
         self.run("config", &[
             OsStr::new("--local"),
             OsStr::new("--list"),

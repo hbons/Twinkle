@@ -8,10 +8,9 @@
 use std::error::Error;
 use std::ffi::OsStr;
 use std::path::{ Path, PathBuf };
-use std::process::Command;
+use std::process::{ Command, Output };
 
 // use crate::log;
-use super::output::GitOutput;
 
 
 #[derive(Clone, Debug)]
@@ -85,7 +84,7 @@ impl GitEnvironment {
         &self,
         command: &str,
         args: &[&OsStr],
-    ) -> Result<GitOutput, Box<dyn Error>>
+    ) -> Result<Output, Box<dyn Error>>
     {
         self.run_with_env(command, args, Vec::new())
     }
@@ -97,7 +96,7 @@ impl GitEnvironment {
         command: &str,
         args: &[&OsStr],
         env: Vec<(String, String)>,
-    ) -> Result<GitOutput, Box<dyn Error>>
+    ) -> Result<Output, Box<dyn Error>>
     {
         // log::debug(&format!("git {} {}", command, args.iter().map(|s| s.to_string_lossy()).collect().join(" "))); TOOD
 
@@ -109,19 +108,12 @@ impl GitEnvironment {
             .args(args)
             .output()?;
 
-        let git_output = GitOutput {
-            exit_code: output.status.code().unwrap_or(0),
-            stdout: String::from_utf8_lossy(&output.stdout).trim_end().to_string(),
-            stderr: String::from_utf8_lossy(&output.stderr).trim_end().to_string(),
-        };
-
         if output.status.success() {
-            Ok(git_output)
+            Ok(output)
         } else {
             Err(format!(
-                "git-{} errored with output: {}",
-                command,
-                git_output.stderr
+                "git-{command} errored with output: {}",
+                String::from_utf8_lossy(&output.stderr),
             ).into())
         }
     }

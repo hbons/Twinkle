@@ -23,35 +23,47 @@ pub mod twinkle;
 mod tests;
 
 
-use std::env::args;
+// use std::env::args;
 use std::error::Error;
-use std::process::exit;
+use std::path::Path;
+// use std::process::exit;
 
 use crate::app::{ app_deps, app_version };
-use crate::app::{ App, app_runs_as_root };
-use crate::gui::Gui;
+use crate::app::{ App, /* app_runs_as_root */ };
+use crate::git::objects::environment::GitEnvironment;
+// use crate::gui::Gui;
 
 
 fn main() -> Result<(), Box<dyn Error>> {
-    log::debug_base(&app_version());
-    log::debug_base(&app_deps());
+    let git = GitEnvironment::new(Path::new("."));
 
-    if app_runs_as_root() {
-        log::error_and_exit("Cannot run as root")
-    }
-
-    if let Some(arg) = args().nth(1) {
-        if arg == "gui" {
-            let app = App::default();
-            app.gui_run()?;
+    if let Ok(changes) = git.status() {
+        for p in changes.iter().rev() {
+            dbg!(&p);
         }
     }
 
-    let mut app = App::default();
-    let args = args().collect();
+    Ok(())
 
-    match app.cli_parse_args(&args) {
-        Ok(_)  => exit(0),
-        Err(e) => log::error_and_exit(&e.to_string())
-    };
+    // log::debug_base(&app_version());
+    // log::debug_base(&app_deps());
+
+    // if app_runs_as_root() {
+    //     log::error_and_exit("Cannot run as root")
+    // }
+
+    // if let Some(arg) = args().nth(1) {
+    //     if arg == "gui" {
+    //         let app = App::default();
+    //         app.gui_run()?;
+    //     }
+    // }
+
+    // let mut app = App::default();
+    // let args = args().collect();
+
+    // match app.cli_parse_args(&args) {
+    //     Ok(_)  => exit(0),
+    //     Err(e) => log::error_and_exit(&e.to_string())
+    // };
 }

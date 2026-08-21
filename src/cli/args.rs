@@ -83,7 +83,7 @@ impl App {
         let git = GitEnvironment::new(&env::current_dir()?);
 
         if let Ok(output) = git.config_list() {
-            println!("{}", output.stdout);
+            println!("{}", String::from_utf8_lossy(&output.stdout));
         }
 
         Ok(())

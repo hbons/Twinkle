@@ -20,7 +20,7 @@ impl TwinkleRepository {
 
 
     pub fn all_files(&self) -> Vec<String> {
-        _ = self.git.ls_files(); // ls-tree?
+        // _ = self.git.ls_files(); // ls-tree?
         vec![]
     }
 }

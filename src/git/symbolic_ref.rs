@@ -19,7 +19,7 @@ impl GitEnvironment {
         ]);
 
         match symbolic_ref {
-            Ok(output) => Ok(output.stdout),
+            Ok(output) => Ok(String::from_utf8_lossy(&output.stdout).into()),
             Err(_) => Err("Detached HEAD".into()), // Status code `1` on detached HEADs
         }
     }

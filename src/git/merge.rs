@@ -30,9 +30,10 @@ impl GitEnvironment {
             OsStr::new(ref_str),
         ])?;
 
-        match output.exit_code {
-            0 => Ok(()),
-            _ => Err("Merge failed".into()),
+        if output.status.success() {
+            Ok(())
+        } else {
+            Err("Merge failed".into())
         }
     }
 
@@ -50,11 +51,15 @@ impl GitEnvironment {
             path.as_os_str(),
         ])?;
 
-        output.stdout.parse::<GitUser>()
+        String::from_utf8_lossy(&output.stdout)
+            .parse::<GitUser>()
     }
 
 
     pub fn is_in_merge(&self) -> bool {
-        self.working_dir.join(".git").join("MERGE_HEAD").exists()
+        self.working_dir
+            .join(".git")
+            .join("MERGE_HEAD")
+            .exists()
     }
 }

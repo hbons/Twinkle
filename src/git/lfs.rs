@@ -82,13 +82,15 @@ impl GitEnvironment {
 
 
     /// Looks at .gitattributes and committed/staged pointer files
+    /// WARNING: Returned paths are lossy UTF-8
     pub fn lfs_ls_files(&self) -> Result<Vec<PathBuf>, Box<dyn Error>> {
         let output = self.run("lfs", &[
             OsStr::new("ls-files"),
             OsStr::new("--name-only")
         ])?;
 
-        let files = output.stdout.lines()
+        let files = String::from_utf8_lossy(&output.stdout)
+            .lines()
             .map(PathBuf::from)
             .collect();
 
@@ -115,9 +117,9 @@ impl GitEnvironment {
     pub fn lfs_version(&self) -> Option<String> {
         self.run("lfs", &[OsStr::new("--version")])
             .ok()
-            .map(|v| v.stdout
-                .trim()
-                .to_string()
+            .map(|v|
+                String::from_utf8_lossy(&v.stdout)
+                    .to_string()
             )
     }
 }

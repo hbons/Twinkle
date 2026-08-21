@@ -17,24 +17,24 @@ fn get_from_config(path: &Path, name: &str, expect: Option<&str>) -> Outcome {
     let git = GitEnvironment::new(path);
 
     if let Some(output) = git.config_get(name) {
-        let stdout = output.stdout;
+        let s = String::from_utf8_lossy(&output.stdout).to_string();
 
-        if output.exit_code != 0 {
-            return Outcome::Fail(Some(stdout));
+        if !output.status.success() {
+            return Outcome::Fail(Some(s));
         }
 
         if expect.is_none() {
-            return Outcome::Pass(Some(stdout));
+            return Outcome::Pass(Some(s));
         }
 
-        if expect == Some(stdout.as_str().trim()) {
+        if expect == Some(s.as_str().trim()) {
             if expect == Some("") {
                 return Outcome::Pass(Some("\"\"".into()));
             }
 
-            return Outcome::Pass(Some(stdout));
+            return Outcome::Pass(Some(s));
         } else {
-            return Outcome::Fail(Some(stdout));
+            return Outcome::Fail(Some(s));
         }
     }
 
@@ -49,7 +49,7 @@ pub fn is_git_config_valid(path: &Path) -> Outcome {
         .run("config", &[OsStr::new("--list")]);
 
     match output {
-        Ok(o) if o.exit_code == 0 => Outcome::Pass(None),
+        Ok(o) if o.status.success() => Outcome::Pass(None),
         _ => Outcome::Fail(Some("invalid".into())),
     }
 }
@@ -73,7 +73,7 @@ pub fn is_twinkle_config_valid(path: &Path) -> Outcome {
         ]);
 
     match output {
-        Ok(o) if o.exit_code == 0 => Outcome::Pass(None),
+        Ok(o) if o.status.success() => Outcome::Pass(None),
         _ => Outcome::Fail(Some("invalid".into())),
     }
 }

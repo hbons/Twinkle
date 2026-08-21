@@ -23,9 +23,13 @@ impl GitEnvironment {
         ]);
 
         match result {
-            Ok(output) if output.exit_code == 0 => Ok(true), // Commit is in the branch's history
-            Ok(output) if output.exit_code == 1 => Ok(false), // It's not
-            Ok(_) => Ok(false),  // It's not (commit is probably remote)
+            Ok(output) => {
+                if output.status.success() {
+                    Ok(true) // Commit is in the branch's history
+                } else {
+                    Ok(false) // It's not
+                }
+            },
             Err(_) => Ok(false), // It's not (commit is probably remote)
         }
     }

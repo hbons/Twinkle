@@ -23,14 +23,13 @@ impl GitEnvironment {
 
     pub fn log(&self, count: usize) -> Result<Vec<GitCommit>, Box<dyn Error>> {
         let output = self.run("log", &[
-            OsStr::new(&format!("--max-count={count}")),
             OsStr::new("--date=unix"), // Seconds since epoch
-            OsStr::new("--no-renames"), // Show renames as separate 'D' and 'A' lines
+            OsStr::new(&format!("--max-count={count}")),
             OsStr::new("--name-status"), // List files with change type
             OsStr::new("--no-color"),
             OsStr::new("--no-decorate"), // Don't show the (tracking) branch
             OsStr::new("--no-merges"),
-            // OsStr::new("-z"), // TODO: Separate the commits with NULs instead of newlines. Together with core.quotePath=false allows us to use OsStr
+            // OsStr::new("-z"), // Single line, NUL-separated // TODO
         ])?;
 
         let mut first = true;
@@ -38,7 +37,7 @@ impl GitEnvironment {
         let mut commit = GitCommit::default();
         let mut message = String::new();
 
-        for line in output.stdout.lines() {
+        for line in String::from_utf8_lossy(&output.stdout).lines() { // TODO: replace lines(). split on newline byte
             if line.starts_with("commit") && !first {
                 commit.message = message.parse::<GitCommitMessage>()?;
                 log.push(commit);
@@ -95,7 +94,7 @@ fn parse_line(line: &str, commit: &mut GitCommit, message: &mut String) -> Resul
             }
         },
         s if !s.starts_with(" ") => {
-            let change = GitChange::from_str(line)?;
+            let change = GitChange::from_log_line(OsStr::new(line))?;
             commit.changes.push(change);
         },
         _ => {

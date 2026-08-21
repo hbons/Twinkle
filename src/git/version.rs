@@ -14,9 +14,10 @@ impl GitEnvironment {
     pub fn version(&self) -> Option<String> {
         self.run("--version", &[])
             .ok()
-            .map(|v| v.stdout
-                .trim()
-                .to_string()
+            .map(|v|
+                String::from_utf8_lossy(&v.stdout)
+                    .trim()
+                    .into()
             )
     }
 }

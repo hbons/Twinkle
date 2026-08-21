@@ -28,12 +28,13 @@ impl GitEnvironment {
             OsStr::new(branch),
         ])?;
 
-        match output.exit_code {
-            0   => (), // Fetch completed successfully
-            1   => (),
-            2   => return Err("Error: ...".into()),
-            128 => return Err("Error: No connection".into()),
-            _   => return Err("Error: Unknown error".into()),
+        match output.status.code() {
+            Some(0)   => (), // Fetch completed successfully
+            Some(1)   => (),
+            Some(2)   => return Err("Error: ...".into()),
+            Some(128) => return Err("Error: No connection".into()),
+            Some(c)   => return Err(format!("Error: {c}").into()),
+            None      => return Err("Error: Unknown error".into()),
         }
 
         Ok(())

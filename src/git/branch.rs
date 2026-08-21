@@ -19,9 +19,10 @@ impl GitEnvironment {
         let output = self.run("branch", &[OsStr::new("--show-current")])?;
         let branch = output.stdout;
 
-        match branch.as_str() {
-            "" => Err("Not on a branch".into()),
-            _  => Ok(branch),
+        if branch.is_empty() {
+            return Err("Not on a branch".into());
         }
+
+        Ok(String::from_utf8_lossy(&branch).to_string())
     }
 }
