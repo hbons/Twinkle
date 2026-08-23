@@ -27,7 +27,6 @@ pub fn ssh_keygen(
     key_size: Option<KeySize>,
 ) -> Result<KeyPair, Box<dyn Error>>
 {
-
     let keys_dir = key_path.parent().ok_or("Could not find parent directory")?;
 
     if !keys_dir.exists() {
@@ -58,7 +57,7 @@ pub fn ssh_keygen(
         Ok(output) => {
             if !output.status.success() {
                 let code = output.status.code().unwrap_or_default();
-                let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
+                let stderr = String::from_utf8_lossy(output.stderr.trim_ascii_end()).to_string();
 
                 return Err(format!("ssh-keyscan exited with error {code}: {stderr}").into());
             }
@@ -77,38 +76,54 @@ pub fn ssh_keygen(
 
             Ok(key_pair)
         },
-        Err(e) => Err(format!("Could not run ssh-keygen: {e}").into())
+        Err(e) => Err(format!("ssh-keygen error: {e}").into())
     }
 }
 
 
-pub fn ssh_keygen_fingerprint(host_key: &HostKey) -> Result<Fingerprint, Box<dyn Error>> {
-    // Docs: https://man.openbsd.org/ssh-keygen#l
-
+/// Docs: https://man.openbsd.org/ssh-keygen#l
+pub fn ssh_keygen_fingerprint(
+    host_key: &HostKey,
+) -> Result<Fingerprint, Box<dyn Error>>
+{
     let mut child = Command::new("ssh-keygen")
-        .arg("-q") // Quiet
+        .args(["-E", "sha256"]) // Hash algorithm
+        .args(["-f", "/dev/stdin"])
         .arg("-l") // Display fingerprint
-        .arg("-E").arg("sha256") // Hash algorithm
-        .arg("-f").arg("/dev/stdin")
+        .arg("-q") // Quiet
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()?;
 
     {
-        let stdin = child.stdin.as_mut().ok_or("Could not open stdin")?;
+        let stdin = child.stdin
+            .as_mut()
+            .ok_or("Could not open stdin")?;
+
         stdin.write_all(host_key.to_string().as_bytes())?;
     }
 
     let output = child.wait_with_output()?;
 
     if output.status.success() {
-        let line = String::from_utf8_lossy(&output.stdout);
-        let line = line.split_whitespace().nth(1).ok_or("Missing fingerprint output")?;
+        let line = String::from_utf8_lossy(
+            output.stdout.trim_ascii_end()
+        );
 
-        Ok(line.parse::<Fingerprint>()?)
+        Ok(line
+            .split_whitespace()
+            .nth(1)
+            .ok_or("Missing fingerprint output")?
+            .parse::<Fingerprint>()?
+        )
     } else {
-        Err(format!("Could not derive fingerprint: {}",
-            String::from_utf8_lossy(&output.stderr)).into())
+        Err(
+            format!("ssh-keygen error: {}",
+                String::from_utf8_lossy(
+                    output.stderr.trim_ascii_end()
+                )
+            ).into()
+        )
     }
 }

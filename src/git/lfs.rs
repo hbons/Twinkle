@@ -7,7 +7,7 @@
 
 use std::error::Error;
 use std::ffi::OsStr;
-use std::fs::{ self, Permissions};
+use std::fs::{ self, Permissions };
 use std::os::unix::fs::PermissionsExt;
 use std::path::{ Path, PathBuf };
 
@@ -76,16 +76,22 @@ impl GitEnvironment {
 impl GitEnvironment {
     /// Fetching Git LFS objects separately benefits from concurrency
     pub fn lfs_fetch(&self) -> Result<(), Box<dyn Error>> {
-        self.run("lfs", &["fetch"])?;
+        self.run("lfs", &[OsStr::new("fetch")])?;
         Ok(())
     }
 
 
     /// Looks at .gitattributes and committed/staged pointer files
+    /// WARNING: Returned paths are lossy UTF-8
     pub fn lfs_ls_files(&self) -> Result<Vec<PathBuf>, Box<dyn Error>> {
-        let output = self.run("lfs", &["ls-files", "--name-only"])?;
+        let output = self.run("lfs", &[
+            OsStr::new("ls-files"),
+            OsStr::new("--name-only")
+        ])?;
 
-        let files = output.stdout.lines()
+        let files =
+            Self::lossy_and_trim(&output.stdout)
+            .lines()
             .map(PathBuf::from)
             .collect();
 
@@ -94,15 +100,15 @@ impl GitEnvironment {
 
 
     /// Puts the path in .gitattributes under LFS filters
-    pub fn lfs_track(&self, path: &PathBuf) -> Result<(), Box<dyn Error>> {
+    pub fn lfs_track(&self, path: &Path) -> Result<(), Box<dyn Error>> {
         if path.file_name() == Some(OsStr::new(".gitattributes")) {
             return Err("Cannot track .gitattributes".into());
         }
 
         self.run("lfs", &[
-            "track",
-            "--", // Safety: No more flags coming after this
-            &path.to_string_lossy()
+            OsStr::new("track"),
+            OsStr::new("--"), // Safety: No more flags coming after this
+            path.as_os_str(),
         ])?;
 
         Ok(())
@@ -110,11 +116,8 @@ impl GitEnvironment {
 
 
     pub fn lfs_version(&self) -> Option<String> {
-        self.run("lfs", &["--version"])
+        self.run("lfs", &[OsStr::new("--version")])
             .ok()
-            .map(|v| v.stdout
-                .trim()
-                .to_string()
-            )
+            .map(|o| Self::lossy_and_trim(&o.stdout))
     }
 }

@@ -18,7 +18,7 @@ pub const TWINKLE_LFS_THRESHOLD: u64 = 1024 * 1024 * 3; // 3 MB;
 
 pub fn twinkle_lfs_track(
     repo: &TwinkleRepository,
-    change: &GitChange
+    change: &GitChange,
 ) -> Result<(), Box<dyn Error>>
 {
     if change.status_x != Some(GitFileStatus::Untracked) &&

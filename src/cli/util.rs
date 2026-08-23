@@ -58,3 +58,10 @@ pub fn cli_red(s: &str) -> String {
         &format!("\x1b[31m{}\x1b[0m", s)
     )
 }
+
+
+pub fn lossy_and_trim(output: &Vec<u8>) -> String {
+    String::from_utf8_lossy(
+        output.trim_ascii_end()
+    ).to_string()
+}

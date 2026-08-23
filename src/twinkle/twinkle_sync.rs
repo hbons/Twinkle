@@ -288,7 +288,7 @@ pub fn twinkle_sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Err
     }
 
     if OS == "macos" { repo.git.config_set("core.ignoreCase", "true")?; }
-    let merge = repo.git.merge("FETCH_HEAD");
+    let merge = repo.git.merge(&"FETCH_HEAD".into());
 
     if merge.is_err() {
         twinkle_resolve_changes(repo)?;

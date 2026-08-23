@@ -10,19 +10,15 @@ use std::fmt;
 use std::path::Path;
 use std::str;
 
-// use serde::{ Deserialize, Serialize };
-
 use crate::ssh::keys::key_pair::KeyPair;
 use crate::git::objects::environment::GitEnvironment;
 
 
 #[derive(Clone, Debug, Default)]
-// #[derive(Serialize, Deserialize)]
 pub struct GitUser {
     pub name: GitUserName,
     pub email: GitUserEmail,
 
-    // #[serde(skip)]
     pub key_pair: Option<KeyPair>,
 }
 
@@ -47,8 +43,8 @@ impl GitUser {
         let git = GitEnvironment::new(path);
 
         format!("{} <{}>",
-            git.config_get("user.name")?.stdout,
-            git.config_get("user.email")?.stdout,
+            git.config_get("user.name")?,
+            git.config_get("user.email")?,
         ).parse::<GitUser>().ok()
     }
 }
@@ -59,6 +55,8 @@ impl str::FromStr for GitUser {
 
     // 'Hylke Bons <hello@planetpeanut.studio>'
     fn from_str(line: &str) -> Result<Self, Self::Err> {
+        let line = line.trim();
+
         let (name, rest) = line.split_once('<').ok_or("Missing '<'")?;
         let email = rest.strip_suffix('>').ok_or("Missing '>'")?;
 
@@ -85,7 +83,6 @@ impl fmt::Display for GitUser {
 
 
 #[derive(Clone, Debug)]
-// #[derive(Serialize, Deserialize)]
 pub struct GitUserName(String);
 
 impl GitUserName {
@@ -110,7 +107,6 @@ impl Default for GitUserName {
 
 
 #[derive(Clone, Debug)]
-// #[derive(Serialize, Deserialize)]
 pub struct GitUserEmail(String);
 
 impl GitUserEmail {

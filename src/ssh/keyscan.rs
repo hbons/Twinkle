@@ -40,14 +40,21 @@ pub fn ssh_keyscan(
     match ssh_keyscan {
         Ok(output) => {
             if !output.status.success() {
-                let code = output.status.code().unwrap_or_default();
-                let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
-
-                return Err(format!("ssh-keyscan exited with error {code}: {stderr}").into());
+                return Err(format!("ssh-keyscan exited with error {}: {}",
+                    String::from_utf8_lossy(output.stderr.trim_ascii_end()),
+                    output.status.code().unwrap_or_default(),
+                ).into());
             }
 
-            let line = String::from_utf8_lossy(&output.stdout);
-            let public_key = line.split_whitespace().nth(2).ok_or("No key part")?.to_string();
+            let line = String::from_utf8_lossy(
+                output.stdout.trim_ascii_end()
+            );
+
+            let public_key = line
+                .split_whitespace()
+                .nth(2)
+                .ok_or("No key part")?
+                .to_string();
 
             let mut host_key = HostKey {
                 host: host.to_string(),
@@ -63,6 +70,6 @@ pub fn ssh_keyscan(
 
             Ok(host_key)
         },
-        Err(e) => Err(format!("Could not run ssh-keyscan: {e}").into())
+        Err(e) => Err(format!("ssh-keyscan error: {e}").into())
     }
 }

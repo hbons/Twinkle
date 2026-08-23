@@ -55,13 +55,12 @@ pub fn init_id( // TODO: Move to TwinkleRepository
     let config_file = Path::new(COMMON_CONFIG_FILE);
     let abs_config_file = repo.git.working_dir.join(config_file);
 
-    let id =
+    let id = // TODO: validate type, twinkleID/SHA256
         if abs_config_file.exists() {
             repo.git.config_file_get(
                 config_file,
                 &key(K_ID),
             ).ok_or("Missing .id")?
-            .stdout // TODO: validate type, twinkleID
         } else {
             if let Some(parent) = abs_config_file.parent() {
                 fs::create_dir_all(parent)?;

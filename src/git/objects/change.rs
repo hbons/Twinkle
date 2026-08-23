@@ -6,7 +6,8 @@
 
 
 use std::error::Error;
-use std::str;
+use std::ffi::{ OsStr, OsString };
+use std::os::unix::ffi::{ OsStrExt, OsStringExt };
 use std::path::{ Path, PathBuf };
 
 use super::file_status::GitFileStatus;
@@ -23,86 +24,137 @@ pub struct GitChange {
 }
 
 
-impl str::FromStr for GitChange {
-    type Err = Box<dyn Error>;
-
-    /// String can be a file line from git-log or git-status
-    fn from_str(line: &str) -> Result<Self, Self::Err> {
-        if line.contains('\t') {
-            GitChange::from_log_line(line)
-        } else {
-            GitChange::from_status_line(line)
-        }
-    }
-}
-
-
 impl GitChange {
-    // 'A	"src/git.rs"'
-    // 'R100	"src/git.rs"	"src/git stuff.rs"'
-    fn from_log_line(line: &str) -> Result<GitChange, Box<dyn Error>> {
-        let mut parts = line.split('\t');
+    // 'A\0src/git.rs'
+    // 'R100\0src/git_orig.rs^@src/git_new.rs'
+    pub fn from_log_line(line: &OsStr) -> Result<GitChange, Box<dyn Error>> {
+        let mut change = GitChange::default();
 
-        let status_x = parts.next().ok_or("Missing status code X")?;
-        let status_x = status_x.parse::<GitFileStatus>().ok();
+        let status_x = {
+            let mut iter = line.as_bytes().iter();
+
+            // First char is always ASCII (1-byte)
+            let x = iter.next().ok_or("Missing status code X")?;
+            format!("{}", *x as char).parse::<GitFileStatus>().ok()
+        };
 
         if status_x.is_none() {
-            return Err("Missing status code X".into())
+            return Err("Missing status code X".into());
         }
 
-        let path = parts.next().ok_or("Error parsing change path")?;
-        let path = Self::strip_path_quotes(path);
+        change.status_x = status_x.clone();
 
-        let mut change = GitChange {
-            status_x: status_x.clone(),
-            status_y: None,
-            path,
-        };
+        let mut iter = line
+            .as_bytes()
+            .split(|&b| b == 0)
+            .filter(|line| !line.is_empty())
+            .map(OsStr::from_bytes)
+            .collect::<Vec<&OsStr>>()
+            .into_iter();
 
-        if let Some(s) = parts.next() {
-            let orig_path = change.path.clone();
-            let status = Self::wrap_orig_path(orig_path, status_x)?;
+        // Compared to git-status, path order is reversed:
+        // ORIG_PATH first, PATH second
+        if let Some(orig_path) = iter.nth(1) {
+            change.status_x =
+                match status_x {
+                    Some(GitFileStatus::Renamed(_)) |
+                    Some(GitFileStatus::Copied(_)) => {
+                        Self::wrap_orig_path(
+                            Path::new(orig_path),
+                            status_x,
+                        )
+                    },
+                    _ => change.status_x,
+            };
 
-            change.status_x = Some(status);
-            change.path = Self::strip_path_quotes(s);
+            change.path =
+                match iter.next() {
+                    Some(path) => PathBuf::from(path),
+                    None => PathBuf::from(orig_path),
+                };
         }
 
         Ok(change)
     }
 
 
-    // 'A  "src/main.rs"'
-    // ' D "src/main.rs"'
-    // 'RM "src/main.rs" -> "src/main stuff.rs"'
-    fn from_status_line(line: &str) -> Result<GitChange, Box<dyn Error>> {
-        let mut chars = line.chars();
+    // 'A  src/main.rs'
+    // ' D src/main.rs'
+    // 'R  src/main_new.rs\0src/main_orig.rs'
+    // ' C src/main_new.rs\0src/main_orig.rs'
+    pub fn from_status_line(line: &OsStr) -> Result<GitChange, Box<dyn Error>> {
+        let mut change = GitChange::default();
 
-        let status_x = chars.next().ok_or("Missing status code X")?;
-        let status_x = status_x.to_string().parse::<GitFileStatus>().ok();
+        let (status_x, status_y) = {
+            let mut iter = line.as_bytes().iter();
 
-        let status_y = chars.next().ok_or("Missing status code Y")?;
-        let status_y = status_y.to_string().parse::<GitFileStatus>().ok();
+            // First 3 chars are always ASCII (1-byte)
+            let x = iter.next().ok_or("Missing status code X")?;
+            let y = iter.next().ok_or("Missing status code Y")?;
+            let space = iter.next().ok_or("Missing space")?;
 
-        if let Some(space) = chars.next() {
-            if space != ' ' {
+            if *space != b' ' {
                 return Err("Missing space".into());
             }
-        }
 
-        let line = chars.collect::<String>();
-
-        let mut change = GitChange {
-            status_x: status_x.clone(),
-            status_y: status_y.clone(),
-            path: Self::strip_path_quotes(&line),
+            (format!("{}", *x as char).parse::<GitFileStatus>().ok(),
+             format!("{}", *y as char).parse::<GitFileStatus>().ok())
         };
 
-        if let Some((orig_path, path)) = line.split_once("->") {
-            let orig_path = Self::strip_path_quotes(orig_path);
-            let status = Self::wrap_orig_path(orig_path, status_x)?;
+        if status_x.is_none() &&
+           status_y.is_none() {
+               return Err("Missing status code X and Y".into());
+        }
 
-            change.status_x = Some(status);
-            change.path = Self::strip_path_quotes(path);
+        change.status_x = status_x.clone();
+        change.status_y = status_y.clone();
+
+        let mut iter = line
+            .as_bytes()
+            .split(|&b| b == 0)
+            .filter(|line| !line.is_empty())
+            .map(OsStr::from_bytes)
+            .collect::<Vec<&OsStr>>()
+            .into_iter();
+
+        // Compared to git-log, path order is reversed:
+        // PATH first, ORIG_PATH second
+        change.path = {
+            if let Some(chunk) = iter.next() {
+                let bytes = chunk // SAFETY: Checked the 3 bytes above
+                    .as_bytes()[3..]
+                    .to_vec();
+
+                OsString::from_vec(bytes).into()
+            } else {
+                PathBuf::new()
+            }
+        };
+
+        if let Some(orig_path) = iter.next() {
+            change.status_x =
+                match status_x {
+                    Some(GitFileStatus::Renamed(_)) |
+                    Some(GitFileStatus::Copied(_)) => {
+                        Self::wrap_orig_path(
+                            Path::new(orig_path),
+                            status_x,
+                        )
+                    },
+                    _ => change.status_x,
+                };
+
+            change.status_y =
+                match status_y {
+                    Some(GitFileStatus::Renamed(_)) |
+                    Some(GitFileStatus::Copied(_)) => {
+                        Self::wrap_orig_path(
+                            Path::new(orig_path),
+                            status_y,
+                        )
+                    },
+                    _ => change.status_y,
+                }
         }
 
         Ok(change)
@@ -111,33 +163,32 @@ impl GitChange {
 
 
 impl GitChange {
-    /// Strips paths as they may be quoted if containing "unusual" characters
-    fn strip_path_quotes(path: &str) -> PathBuf {
-        // Docs: https://git-scm.com/docs/git-config#Documentation/git-config.txt-corequotePath
-
-        let path = path.trim().trim_matches('"');
-        Path::new(path).to_path_buf()
-    }
-
-
-    /// Wraps a path with the GitFileStatus::Renamed/Copied enum
-    fn wrap_orig_path(new_path: PathBuf, status: Option<GitFileStatus>) -> Result<GitFileStatus, Box<dyn Error>> {
+    /// Wraps a path in a supported GitFileStatus enum
+    fn wrap_orig_path(
+        path: &Path,
+        status: Option<GitFileStatus>,
+    ) -> Option<GitFileStatus>
+    {
         match status {
-            Some(GitFileStatus::Renamed(_)) => Ok(GitFileStatus::Renamed(new_path)),
-            Some(GitFileStatus::Copied(_))  => Ok(GitFileStatus::Copied(new_path)),
-            _ => Err("GitFileStatus is not Renamed or Copied".into()),
+            Some(GitFileStatus::Renamed(_)) =>
+                Some(GitFileStatus::Renamed(
+                    Some(path.to_path_buf()))
+                ),
+            Some(GitFileStatus::Copied(_)) =>
+                Some(GitFileStatus::Copied(
+                    Some(path.to_path_buf()))
+                ),
+            _ => None,
         }
     }
 }
 
 
 impl GitChange {
+    /// e.g. GitFileStatus::D and GitFileStatus::U -> GitMergeStatus::DU
     pub fn as_merge_status(&self) -> Option<GitMergeStatus> {
         match (&self.status_x, &self.status_y) {
-            (Some(x), Some(y)) => {
-                let status = format!("{x}{y}");
-                status.parse::<GitMergeStatus>().ok()
-            }
+            (Some(x), Some(y)) => format!("{x}{y}").parse::<GitMergeStatus>().ok(),
             _ => None,
         }
     }

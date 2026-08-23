@@ -35,7 +35,7 @@ fn test_twinkle_pretty_commit_message_renamed() {
 
     let status = vec![
         GitChange {
-            status_x: Some(GitFileStatus::Renamed(Path::new("test.txt").into())),
+            status_x: Some(GitFileStatus::Renamed(Some(Path::new("test.txt").to_path_buf()))),
             status_y: None,
             path: "test.txt".into(),
         }
@@ -52,7 +52,7 @@ fn test_twinkle_pretty_commit_message_copied() {
 
     let status = vec![
         GitChange {
-            status_x: Some(GitFileStatus::Copied(Path::new("test.txt").into())),
+            status_x: Some(GitFileStatus::Copied(Some(Path::new("test.txt").to_path_buf()))),
             status_y: None,
             path: "test.txt".into(),
         }

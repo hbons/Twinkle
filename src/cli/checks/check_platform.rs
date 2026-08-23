@@ -10,6 +10,7 @@ use std::env::consts::{ ARCH, OS };
 use std::path::Path;
 use std::process::Command;
 
+use crate::cli::util::lossy_and_trim;
 use crate::git::objects::environment::GitEnvironment;
 use super::outcome::Outcome;
 
@@ -52,10 +53,8 @@ pub fn is_openssh_installed(_path: &Path) -> Outcome {
         .output();
 
     match ssh {
-        Ok(o) => Outcome::Pass(Some(
-            String::from_utf8_lossy(&o.stderr)
-                .trim()
-                .to_string())
+        Ok(output) => Outcome::Pass(
+            Some(lossy_and_trim(&output.stderr))
         ),
         _ => Outcome::Missing,
     }
@@ -63,14 +62,14 @@ pub fn is_openssh_installed(_path: &Path) -> Outcome {
 
 pub fn is_git_installed(path: &Path) -> Outcome {
     match GitEnvironment::new(path).version() {
-        Some(s) => Outcome::Pass(Some(s.to_string())),
+        Some(s) => Outcome::Pass(Some(s)),
         _ => Outcome::Missing,
     }
 }
 
 pub fn is_git_lfs_installed(path: &Path) -> Outcome {
     match GitEnvironment::new(path).lfs_version() {
-        Some(s) => Outcome::Pass(Some(s.to_string())),
+        Some(s) => Outcome::Pass(Some(s)),
         _ => Outcome::Missing,
     }
 }

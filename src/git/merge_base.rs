@@ -6,6 +6,7 @@
 
 
 use std::error::Error;
+use std::ffi::OsStr;
 
 use super::objects::environment::GitEnvironment;
 use super::objects::reference::GitReference;
@@ -16,15 +17,19 @@ impl GitEnvironment {
 
     pub fn merge_base(&self, commit_id: &str, branch: &GitReference) -> Result<bool, Box<dyn Error>> {
         let result = self.run("merge-base", &[
-            "--is-ancestor",
-            commit_id,
-            branch,
+            OsStr::new("--is-ancestor"),
+            OsStr::new(commit_id),
+            OsStr::new(branch),
         ]);
 
         match result {
-            Ok(output) if output.exit_code == 0 => Ok(true), // Commit is in the branch's history
-            Ok(output) if output.exit_code == 1 => Ok(false), // It's not
-            Ok(_) => Ok(false),  // It's not (commit is probably remote)
+            Ok(output) => {
+                if output.status.success() {
+                    Ok(true) // Commit is in the branch's history
+                } else {
+                    Ok(false) // It's not
+                }
+            },
             Err(_) => Ok(false), // It's not (commit is probably remote)
         }
     }

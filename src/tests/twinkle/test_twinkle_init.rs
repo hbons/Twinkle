@@ -36,12 +36,12 @@ fn test_twinkle_init() {
 
     let git = GitEnvironment::new(path);
 
-    assert_eq!(git.config_get("twinkle.enabled").unwrap().stdout, "true");
+    assert_eq!(git.config_get("twinkle.enabled").unwrap(), "true");
     assert!(git.config_get("twinkle.id").is_some());
-    assert_eq!(git.config_get("remote.origin.url").unwrap().stdout, remote_url.to_string_standard());
+    assert_eq!(git.config_get("remote.origin.url").unwrap(), remote_url.to_string_standard());
 
     for rule in twinkle_default_git_settings() {
-        assert_eq!(git.config_get(rule.0).unwrap().stdout, rule.1);
+        assert_eq!(git.config_get(rule.0).unwrap(), rule.1);
     }
 
     let branch = git.branch_show_current().unwrap();

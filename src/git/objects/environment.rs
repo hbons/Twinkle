@@ -6,11 +6,11 @@
 
 
 use std::error::Error;
+use std::ffi::OsStr;
 use std::path::{ Path, PathBuf };
-use std::process::Command;
+use std::process::{ Command, Output };
 
-use crate::log;
-use super::output::GitOutput;
+// use crate::log;
 
 
 #[derive(Clone, Debug)]
@@ -80,14 +80,25 @@ impl GitEnvironment {
 
 
 impl GitEnvironment {
-    pub fn run(&self, command: &str, args: &[&str]) -> Result<GitOutput, Box<dyn Error>> {
+    pub fn run(
+        &self,
+        command: &str,
+        args: &[&OsStr],
+    ) -> Result<Output, Box<dyn Error>>
+    {
         self.run_with_env(command, args, Vec::new())
     }
 
 
     /// Runs with extra environment variables
-    pub fn run_with_env(&self, command: &str, args: &[&str], env: Vec<(String, String)>) -> Result<GitOutput, Box<dyn Error>> {
-        log::debug(&format!("git {} {}", command, args.join(" ")));
+    pub fn run_with_env(
+        &self,
+        command: &str,
+        args: &[&OsStr],
+        env: Vec<(String, String)>,
+    ) -> Result<Output, Box<dyn Error>>
+    {
+        // log::debug(&format!("git {} {}", command, args.iter().map(|s| s.to_string_lossy()).collect().join(" "))); // TODO
 
         let output = Command::new("git")
             .current_dir(&self.working_dir)
@@ -97,20 +108,21 @@ impl GitEnvironment {
             .args(args)
             .output()?;
 
-        let git_output = GitOutput {
-            exit_code: output.status.code().unwrap_or(0),
-            stdout: String::from_utf8_lossy(&output.stdout).trim_end().to_string(),
-            stderr: String::from_utf8_lossy(&output.stderr).trim_end().to_string(),
-        };
-
         if output.status.success() {
-            Ok(git_output)
+            Ok(output)
         } else {
-            Err(format!(
-                "git-{} errored with output: {}",
-                command,
-                git_output.stderr
+            Err(format!("git-{command} errored with output: {}",
+                Self::lossy_and_trim(&output.stderr)
             ).into())
         }
+    }
+}
+
+
+impl GitEnvironment {
+    pub fn lossy_and_trim(output: &Vec<u8>) -> String {
+        String::from_utf8_lossy(
+            output.trim_ascii_end()
+        ).to_string()
     }
 }

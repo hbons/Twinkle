@@ -19,7 +19,6 @@ pub mod objects {
     pub mod file_status;
     pub mod ignore_reason;
     pub mod merge_status;
-    pub mod output;
     pub mod reference;
     pub mod remote;
     pub mod user;

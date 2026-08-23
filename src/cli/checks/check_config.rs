@@ -6,6 +6,7 @@
 
 
 use std::env;
+use std::ffi::OsStr;
 use std::path::Path;
 
 use crate::git::objects::environment::GitEnvironment;
@@ -16,24 +17,18 @@ fn get_from_config(path: &Path, name: &str, expect: Option<&str>) -> Outcome {
     let git = GitEnvironment::new(path);
 
     if let Some(output) = git.config_get(name) {
-        let stdout = output.stdout;
-
-        if output.exit_code != 0 {
-            return Outcome::Fail(Some(stdout));
-        }
-
         if expect.is_none() {
-            return Outcome::Pass(Some(stdout));
+            return Outcome::Pass(Some(output));
         }
 
-        if expect == Some(stdout.as_str().trim()) {
+        if expect == Some(output.as_str().trim()) {
             if expect == Some("") {
                 return Outcome::Pass(Some("\"\"".into()));
             }
 
-            return Outcome::Pass(Some(stdout));
+            return Outcome::Pass(Some(output));
         } else {
-            return Outcome::Fail(Some(stdout));
+            return Outcome::Fail(Some(output));
         }
     }
 
@@ -45,10 +40,10 @@ fn get_from_config(path: &Path, name: &str, expect: Option<&str>) -> Outcome {
 
 pub fn is_git_config_valid(path: &Path) -> Outcome {
     let output = GitEnvironment::new(path)
-        .run("config", &["--list"]);
+        .run("config", &[OsStr::new("--list")]);
 
     match output {
-        Ok(o) if o.exit_code == 0 => Outcome::Pass(None),
+        Ok(o) if o.status.success() => Outcome::Pass(None),
         _ => Outcome::Fail(Some("invalid".into())),
     }
 }
@@ -65,10 +60,14 @@ pub fn is_twinkle_config_valid(path: &Path) -> Outcome {
     }
 
     let output = GitEnvironment::new(path)
-        .run("config", &["--file", &config_path.to_string_lossy(), "--list"]);
+        .run("config", &[
+            OsStr::new("--file"),
+            config_path.as_os_str(),
+            OsStr::new("--list"),
+        ]);
 
     match output {
-        Ok(o) if o.exit_code == 0 => Outcome::Pass(None),
+        Ok(o) if o.status.success() => Outcome::Pass(None),
         _ => Outcome::Fail(Some("invalid".into())),
     }
 }

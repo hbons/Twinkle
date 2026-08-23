@@ -5,7 +5,9 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
+use std::path::Path;
 use std::str::FromStr;
+
 use crate::git::objects::file_status::GitFileStatus;
 
 
@@ -31,8 +33,8 @@ fn test_git_object_file_status_display() {
     assert_eq!("A", format!("{}", GitFileStatus::Added));
     assert_eq!("M", format!("{}", GitFileStatus::Modified));
     assert_eq!("D", format!("{}", GitFileStatus::Deleted));
-    assert_eq!("R", format!("{}", GitFileStatus::Renamed("test.txt".into())));
-    assert_eq!("C", format!("{}", GitFileStatus::Copied("test.txt".into())));
+    assert_eq!("R", format!("{}", GitFileStatus::Renamed(Some(Path::new("test.txt").to_path_buf()))));
+    assert_eq!("C", format!("{}", GitFileStatus::Copied(Some(Path::new("test.txt").to_path_buf()))));
     assert_eq!("T", format!("{}", GitFileStatus::TypeChanged));
     assert_eq!("U", format!("{}", GitFileStatus::Unmerged));
     assert_eq!("?", format!("{}", GitFileStatus::Untracked));

@@ -40,7 +40,11 @@ pub fn ssh_util_test_connection(url: &SshUrl, host_key: &HostKey, key_pair: Opti
         .args(args)
         .output()?;
 
-    log::debug(format!("{}", String::from_utf8_lossy(&ssh.stderr)).trim());
+    log::debug(&format!("{}",
+        String::from_utf8_lossy(
+            ssh.stderr.trim_ascii_end()
+        )
+    ));
 
     match ssh.status.code() {
         Some(0) => Ok(()),

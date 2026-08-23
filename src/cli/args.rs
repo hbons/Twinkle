@@ -17,7 +17,7 @@ use super::util::*;
 impl App {
     pub fn cli_parse_args(
         &mut self,
-        args: &Vec<String>
+        args: &Vec<String>,
     ) -> Result<(), Box<dyn Error>>
     {
         self.cli_require_args(1, args)?;
@@ -65,8 +65,9 @@ impl App {
         println!("    --help, --version, --deps, --env");
         println!();
     }
+}
 
-
+impl App {
     pub fn cli_option_version(&self) {
         println!("{}", app_version());
     }
@@ -80,10 +81,12 @@ impl App {
     pub fn cli_option_env(&self) -> Result<(), Box<dyn Error>>{
         println!("{:#?}", self);
 
-        let git = GitEnvironment::new(&env::current_dir()?);
+        let git = GitEnvironment::new(
+            &env::current_dir()?
+        );
 
         if let Ok(output) = git.config_list() {
-            println!("{}", output.stdout);
+            println!("{}", lossy_and_trim(&output.stdout));
         }
 
         Ok(())

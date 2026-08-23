@@ -12,5 +12,9 @@ pub fn ssh_version() -> Option<String> {
     Command::new("ssh").arg("-V")
         .output()
         .ok()
-        .map(|v| String::from_utf8_lossy(&v.stderr).trim().into())
+        .map(|o|
+            String::from_utf8_lossy(
+                o.stderr.trim_ascii_end()
+            ).into()
+        )
 }

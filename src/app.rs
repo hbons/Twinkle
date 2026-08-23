@@ -107,9 +107,15 @@ impl Default for App {
 
 
 pub fn app_runs_as_root() -> bool {
-    match Command::new("id").arg("-u").output() {
-        Ok(output) => String::from_utf8_lossy(&output.stdout).trim() == "0",
+    match Command::new("id").arg("-nu").output() {
         Err(_) => true, // Assume root if we can't check
+        Ok(output) => {
+            let line = String::from_utf8_lossy(
+                output.stdout.trim_ascii_end()
+            );
+
+            line == "root"
+        },
     }
 }
 

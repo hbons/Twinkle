@@ -56,7 +56,7 @@ pub fn is_ssh_agent_has_keys(_path: &Path) -> Outcome {
 pub fn is_ssh_host_reachable(path: &Path) -> Outcome {
     let option = GitEnvironment::new(path)
         .config_get("remote.origin.url")
-        .and_then(|o| o.stdout.parse::<SshUrl>().ok());
+        .and_then(|o| o.parse::<SshUrl>().ok());
 
     if let Some(url) = option {
         if check_host_port(&url.host, url.port.unwrap_or(22), 3) {
@@ -71,7 +71,7 @@ pub fn is_ssh_host_reachable(path: &Path) -> Outcome {
 pub fn is_ssh_host_known(path: &Path) -> Outcome {
     let option = GitEnvironment::new(path)
         .config_get("remote.origin.url")
-        .and_then(|o| o.stdout.parse::<SshUrl>().ok());
+        .and_then(|o| o.parse::<SshUrl>().ok());
 
     if let Some(url) = option {
         let ssh = Command::new("ssh-keygen")
@@ -96,7 +96,7 @@ pub fn is_ssh_host_known(path: &Path) -> Outcome {
 pub fn is_ssh_supported_host(path: &Path) -> Outcome {
     let option = GitEnvironment::new(path)
         .config_get("remote.origin.url")
-        .and_then(|o| o.stdout.parse::<SshUrl>().ok());
+        .and_then(|o| o.parse::<SshUrl>().ok());
 
     if let Some(url) = option {
         if check_host_port(&url.host, url.port.unwrap_or(22), 3) {
@@ -123,7 +123,7 @@ pub fn is_ssh_host_supporting_rsa(path: &Path) -> Outcome {
 fn is_ssh_host_supporting_key_type(path: &Path, key_type: KeyType) -> Outcome {
     let option = GitEnvironment::new(path)
         .config_get("remote.origin.url")
-        .and_then(|o| o.stdout.parse::<SshUrl>().ok());
+        .and_then(|o| o.parse::<SshUrl>().ok());
 
     if let Some(url) = option {
         return match ssh_keyscan(&url.host, Some(url.port.unwrap_or(22)), key_type) {
@@ -141,7 +141,7 @@ pub fn is_ssh_client_key_known_to_host(path: &Path) -> Outcome {
 
     let option = GitEnvironment::new(path)
         .config_get("remote.origin.url")
-        .and_then(|o| o.stdout.parse::<SshUrl>().ok());
+        .and_then(|o| o.parse::<SshUrl>().ok());
 
     if let Some(url) = option {
         let ssh = Command::new("ssh")

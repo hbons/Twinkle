@@ -46,7 +46,7 @@ use crate::twinkle::defaults::config::{
 impl TwinkleRepository {
     pub fn enabled(&self) -> bool {
         if let Some(output) = self.git.config_get(&key(K_ENABLED)) {
-            if let Ok(value) = output.stdout.parse::<bool>() {
+            if let Ok(value) = output.parse::<bool>() {
                 return value;
             }
         }
@@ -70,7 +70,6 @@ impl TwinkleRepository {
     /// Random SHA-256 stored in .git/config
     pub fn id(&self) -> Option<String> {
         self.git.config_get(&key(K_ID))
-            .map(|r| r.stdout)
     }
 
     pub fn set_id(&self, value: &String) -> Result<(), Box<dyn Error>>{
@@ -88,7 +87,7 @@ impl TwinkleRepository {
 impl TwinkleRepository {
     pub fn read_only(&self) -> bool {
         if let Some(output) = self.git.config_get(&key(K_READONLY)) {
-            if let Ok(value) = output.stdout.parse::<bool>() {
+            if let Ok(value) = output.parse::<bool>() {
                 return value;
             }
         }
@@ -111,8 +110,8 @@ impl TwinkleRepository {
 impl TwinkleRepository {
     pub fn remote_url(&self) -> Option<SshUrl> { // TODO: use .remote()
         self.git.config_get(K_REMOTE_ORIGIN_URL)
-            .and_then(|v|
-                v.stdout.trim().parse::<SshUrl>().ok()
+            .and_then(|s|
+                s.trim().parse::<SshUrl>().ok()
             )
     }
 
@@ -153,7 +152,7 @@ impl TwinkleRepository {
         let default = twinkle_default_polling_interval().as_secs();
 
         match self.git.config_get(&key(K_POLLING_INTERVAL)) {
-            Some(output) => Duration::from_mins(parse_polling_interval(&output.stdout)),
+            Some(output) => Duration::from_mins(parse_polling_interval(&output)),
             None => Duration::from_secs(default),
         }
     }
@@ -184,8 +183,8 @@ pub fn parse_polling_interval(s: &str) -> u64 {
 impl TwinkleRepository {
     pub fn last_checked(&self) -> Option<i64> {
         self.git.config_get(&key(K_LAST_CHECK))
-            .and_then(|v|
-                v.stdout.parse::<i64>().ok()
+            .and_then(|s|
+                s.parse::<i64>().ok()
             )
     }
 
@@ -201,8 +200,8 @@ impl TwinkleRepository {
 
     pub fn last_synced(&self) -> Option<i64> {
         self.git.config_get(&key(K_LAST_SYNC))
-            .and_then(|v|
-                v.stdout.parse::<i64>().ok()
+            .and_then(|s|
+                s.parse::<i64>().ok()
             )
     }
 
@@ -221,7 +220,7 @@ impl TwinkleRepository {
 impl TwinkleRepository {
     pub fn lfs_enabled(&self) -> bool {
         if let Some(output) = self.git.config_get(&key(K_LFS_ENABLED)) {
-            if let Ok(value) = output.stdout.parse::<bool>() {
+            if let Ok(value) = output.parse::<bool>() {
                 return value;
             }
         }
@@ -241,7 +240,7 @@ impl TwinkleRepository {
 
     pub fn lfs_size_threshold(&self) -> u64 {
         match self.git.config_get(&key(K_LFS_SIZE_THRESHOLD)) {
-            Some(output) => parse_lfs_size(&output.stdout),
+            Some(output) => parse_lfs_size(&output),
             None => TWINKLE_LFS_THRESHOLD,
         }
     }

@@ -6,6 +6,8 @@
 
 
 use std::error::Error;
+use std::ffi::OsStr;
+
 use super::objects::environment::GitEnvironment;
 
 
@@ -13,9 +15,14 @@ impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-symbolic-ref
 
     pub fn symbolic_ref(&self) -> Result<String, Box<dyn Error>> {
-        match self.run("symbolic-ref", &["--quiet", "HEAD"]) {
-            Ok(output) => Ok(output.stdout),
+        let symbolic_ref = self.run("symbolic-ref", &[
+            OsStr::new("--quiet"),
+            OsStr::new("HEAD")
+        ]);
+
+        match symbolic_ref {
             Err(_) => Err("Detached HEAD".into()), // Status code `1` on detached HEADs
+            Ok(output) => Ok(Self::lossy_and_trim(&output.stdout)),
         }
     }
 }

@@ -19,9 +19,9 @@ pub enum GitFileStatus {
     Modified,
     Deleted,
     /// Holds ORIG_PATH
-    Renamed(PathBuf),
+    Renamed(Option<PathBuf>),
     /// Holds ORIG_PATH
-    Copied(PathBuf),
+    Copied(Option<PathBuf>),
     TypeChanged,
     Unmerged,
     Untracked,
@@ -38,8 +38,8 @@ impl str::FromStr for GitFileStatus {
             Some('A') => Ok(GitFileStatus::Added),
             Some('M') => Ok(GitFileStatus::Modified),
             Some('D') => Ok(GitFileStatus::Deleted),
-            Some('R') => Ok(GitFileStatus::Renamed(PathBuf::new())),
-            Some('C') => Ok(GitFileStatus::Copied(PathBuf::new())),
+            Some('R') => Ok(GitFileStatus::Renamed(None)),
+            Some('C') => Ok(GitFileStatus::Copied(None)),
             Some('T') => Ok(GitFileStatus::TypeChanged),
             Some('U') => Ok(GitFileStatus::Unmerged),
             Some('?') => Ok(GitFileStatus::Untracked),
@@ -51,7 +51,7 @@ impl str::FromStr for GitFileStatus {
 
 
 impl fmt::Display for GitFileStatus {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", match self {
             GitFileStatus::Added       => "A",
             GitFileStatus::Modified    => "M",
