@@ -19,7 +19,9 @@ use crate::twinkle::twinkle_init::twinkle_init;
 
 #[test]
 fn test_twinkle_init() {
-    let path = Path::new("/tmp/twinkle_tests");
+    let tmp_path = Path::new("/tmp/twinkle_tests");
+
+    let path = tmp_path;
     let remote_url = "git@github.com:hbons/SparkleShare"
         .parse::<SshUrl>().unwrap();
 
@@ -48,7 +50,7 @@ fn test_twinkle_init() {
     assert_eq!(branch, "main");
 
 
-    let path = Path::new("/tmp/twinkle_tests/.git/info/attributes");
+    let path = tmp_path.join(".git/info/attributes");
 
     assert_eq!(
         twinkle_default_info_attributes().len(),
@@ -56,7 +58,7 @@ fn test_twinkle_init() {
     );
 
 
-    let path = Path::new("/tmp/twinkle_tests/.git/info/exclude");
+    let path = tmp_path.join(".git/info/exclude");
 
     assert_eq!(
         twinkle_default_info_exclude().len(),
@@ -64,10 +66,10 @@ fn test_twinkle_init() {
     );
 
 
-    let path = Path::new("/tmp/twinkle_tests/.twinkle/config"); // TODO: use the const
+    let path = tmp_path.join(".twinkle/config");
     assert!(path.exists());
 
-    let path = Path::new("/tmp/twinkle_tests/TWINKLE.md");
+    let path = tmp_path.join("TWINKLE.md");
     assert!(path.exists());
 
     assert_eq!(git.log(2).unwrap().len(), 1);
