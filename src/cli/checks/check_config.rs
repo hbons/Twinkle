@@ -56,7 +56,7 @@ pub fn is_twinkle_config_valid(path: &Path) -> Outcome {
     );
 
     if !config_path.exists() {
-        return Outcome::Fail(Some("missing".into()));
+        return Outcome::Missing;
     }
 
     let output = GitEnvironment::new(path)
