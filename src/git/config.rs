@@ -11,6 +11,7 @@ use std::path::Path;
 use std::process::Output;
 
 use super::objects::environment::GitEnvironment;
+use super::objects::version::GitVersion;
 
 
 pub const K_CORE_SSH_COMMAND: &str = "core.sshCommand";
@@ -26,63 +27,121 @@ pub const K_TAG_GPG_SIGN: &str = "tag.gpgSign";
 
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-config
+    //       https://git-scm.com/docs/git-config#_deprecated_modes
 
-    // TODO: Implicit config operations are deprecated since Git 2.44.
-    //       Use `git config get/set/list` if they exist.
-    //       See: https://git-scm.com/docs/git-config#_deprecated_modes
-
-    pub fn config_get(&self, name: &str) -> Option<String> {
-        let output = self.run("config", &[
-            OsStr::new("--local"),
-            OsStr::new(name),
-        ]).ok();
-
-        output.map(|o| Self::lossy_and_trim(&o.stdout))
-    }
-
-    pub fn config_set(&self, name: &str, value: &str) -> Result<Output, Box<dyn Error>> { // TODO: Return () result
-        self.run("config", &[
-            OsStr::new("--local"),
-            OsStr::new(name),
-            OsStr::new(value),
-        ])
-    }
-
-
-    pub fn config_file_get(
+    pub fn config_get(
         &self,
-        file_path: &Path,
         name: &str,
     ) -> Option<String>
     {
-        let output = self.run("config", &[
-            OsStr::new("--file"),
-            file_path.as_os_str(),
-            OsStr::new(name),
-        ]).ok();
+        let args = match self.version {
+            Some(GitVersion::Git3(_)) => vec![
+                OsStr::new("--local"),
+                OsStr::new("get"),
+                OsStr::new(name),
+            ],
+            _ => vec![
+                OsStr::new("--local"),
+                OsStr::new(name),
+            ],
+        };
 
-        output.map(|o| Self::lossy_and_trim(&o.stdout))
+        self.run("config", &args).ok()
+            .map(|o| Self::lossy_and_trim(&o.stdout))
     }
 
-    pub fn config_file_set(&self,
-        file_path: &Path,
+
+    pub fn config_set(
+        &self,
         name: &str,
         value: &str,
-    ) -> Result<Output, Box<dyn Error>> // TODO: Return () result
+    ) -> Result<(), Box<dyn Error>>
     {
-        self.run("config", &[
-            OsStr::new("--file"),
-            file_path.as_os_str(),
-            OsStr::new(name),
-            OsStr::new(value),
-        ])
+        let args = match self.version {
+            Some(GitVersion::Git3(_)) => vec![
+                OsStr::new("--local"),
+                OsStr::new("set"),
+                OsStr::new(name),
+                OsStr::new(value),
+            ],
+            _ => vec![
+                OsStr::new("--local"),
+                OsStr::new(name),
+                OsStr::new(value),
+            ],
+        };
+
+        self.run("config", &args).map(drop)
+    }
+}
+
+
+impl GitEnvironment {
+    pub fn config_get_with_file(
+        &self,
+        name: &str,
+        path: &Path,
+    ) -> Option<String>
+    {
+        let args = match self.version {
+            Some(GitVersion::Git3(_)) => vec![
+                OsStr::new("--file"),
+                path.as_os_str(),
+                OsStr::new("get"),
+                OsStr::new(name),
+            ],
+            _ => vec![
+                OsStr::new("--file"),
+                path.as_os_str(),
+                OsStr::new(name),
+            ],
+        };
+
+        self.run("config", &args).ok()
+            .map(|o| Self::lossy_and_trim(&o.stdout))
     }
 
 
+    pub fn config_set_with_file(&self,
+        name: &str,
+        value: &str,
+        file_path: &Path,
+    ) -> Result<(), Box<dyn Error>>
+    {
+        let args = match self.version {
+            Some(GitVersion::Git3(_)) => vec![
+                OsStr::new("--file"),
+                file_path.as_os_str(),
+                OsStr::new("set"),
+                OsStr::new(name),
+                OsStr::new(value),
+            ],
+            _ => vec![
+                OsStr::new("--file"),
+                file_path.as_os_str(),
+                OsStr::new(name),
+                OsStr::new(value),
+            ],
+        };
+
+        self.run("config", &args).map(drop)
+    }
+}
+
+
+impl GitEnvironment {
     pub fn config_list(&self) -> Result<Output, Box<dyn Error>> {
-        self.run("config", &[
-            OsStr::new("--local"),
-            OsStr::new("--list"),
-        ])
+        let args = match self.version {
+            Some(GitVersion::Git3(_)) => &[
+                OsStr::new("--local"),
+                OsStr::new("list"),
+            ],
+            _ => &[
+                OsStr::new("--local"),
+                OsStr::new("--list"),
+            ],
+        };
+
+        self.run("config", args)
     }
 }

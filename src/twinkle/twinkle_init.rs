@@ -57,9 +57,9 @@ pub fn init_id( // TODO: Move to TwinkleRepository
 
     let id = // TODO: validate type, twinkleID/SHA256
         if abs_config_file.exists() {
-            repo.git.config_file_get(
-                config_file,
+            repo.git.config_get_with_file(
                 &key(K_ID),
+                config_file,
             ).ok_or("Missing .id")?
         } else {
             if let Some(parent) = abs_config_file.parent() {
@@ -68,10 +68,10 @@ pub fn init_id( // TODO: Move to TwinkleRepository
 
             let new_id = twinkle_random_id()?;
 
-            repo.git.config_file_set(
-                config_file,
+            repo.git.config_set_with_file(
                 &key(K_ID),
                 &new_id,
+                config_file,
             )?;
 
             repo.git.add(config_file)?;
