@@ -13,7 +13,7 @@ configuration.set('TWINKLE_APP_ID', 'studio.planetpeanut.Twinkle')
 gnome = import('gnome')
 dependency('gtk4')
 dependency('libadwaita-1')
-# dependency('libsecret-1')  # TODO
+# dependency('libsecret-1')
 
 subdir('data')
 subdir('data/icons')

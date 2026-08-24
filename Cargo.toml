@@ -9,7 +9,8 @@ license = "GPL-3.0-or-later"
 readme = "README.md"
 edition = "2021"
 keywords = ["dropbox", "git", "gtk", "network", "sync"]
-categories = ["command-line-utilities", "development-tools", "filesystem", "game-development", "network-programming"]
+categories = ["command-line-utilities", "development-tools",
+    "filesystem", "game-development", "network-programming"]
 
 [dependencies]
 # From the Recommended Crate Directory – https://blessed.rs/
@@ -21,17 +22,13 @@ sha2 = "0.11.0"
 # gtk4 = { version = "0.10.1", optional = true }
 # libadwaita = { version = "0.8.0", optional = true }
 # libsecret = { version = "0.8.0", optional = true }
-# zbus = { version = "5.11.0", features = ["blocking"], optional = true }
-# zvariant = { version = "5.7.0", optional = true }
 
 [features]
 default = []
-gnome = [  # TODO
+gnome = [
     # "dep:gtk4",
     # "dep:libadwaita",
     # "dep:libsecret",
-    # "dep:zbus",
-    # "dep:zvariant",
 ]
 
 [[bin]]
