@@ -25,7 +25,7 @@ impl GitEnvironment {
         }
 
         let output = self.run("merge", &[
-            OsStr::new("-S"), // Sign the merge commit (not done implicitly on merge) // TODO: test with long flag --gpg-sign
+            OsStr::new("-S"), // Sign the merge commit (not done implicitly on merge)
             OsStr::new("--no-edit"), // Don't get blocked by interactive editors
             OsStr::new(ref_str),
         ])?;
