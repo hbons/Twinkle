@@ -61,8 +61,8 @@ pub fn is_openssh_installed(_path: &Path) -> Outcome {
 }
 
 pub fn is_git_installed(path: &Path) -> Outcome {
-    match GitEnvironment::new(path).version() {
-        Some(s) => Outcome::Pass(Some(s)),
+    match GitEnvironment::new(path).version {
+        Some(s) => Outcome::Pass(Some(s.to_string())),
         _ => Outcome::Missing,
     }
 }
