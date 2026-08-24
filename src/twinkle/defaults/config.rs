@@ -64,7 +64,7 @@ fn _twinkle_default_settings()
 pub fn twinkle_default_git_settings()
 -> Vec<(&'static str, String)>
 {
-    // Important: Keep in sync with the `checklist` cli command
+    // Important: Keep in sync with the `check` cli command
 
     vec![
         // Prevent system/global config interference
@@ -74,8 +74,8 @@ pub fn twinkle_default_git_settings()
         // Cross-platform compatiblity
         ("core.autocrlf", "input".into()), // Text files will keep original line endings when checked out, CRLF chars are normalized to LF when committed
         ("core.fileMode", "false".into()), // Ignore permission changes
-        ("core.ignoreCase", "false".into()), // Be case sensitive explicitly to work on Mac
-        ("core.precomposeUnicode", "true".into()), // Use the same Unicode form on all filesystems
+        ("core.ignoreCase", "false".into()), // Be case sensitive explicitly to work on macOS
+        ("core.precomposeUnicode", "true".into()), // Revert unicode filename decomposition by macOS
         ("core.quotePath", "false".into()), // Output Unicode characters: '"h\303\251"' becomes 'hé'
         ("core.safecrlf", "false".into()),
 
