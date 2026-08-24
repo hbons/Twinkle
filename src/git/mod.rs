@@ -22,6 +22,7 @@ pub mod objects {
     pub mod reference;
     pub mod remote;
     pub mod user;
+    pub mod version;
 }
 
 pub mod add;
@@ -43,4 +44,3 @@ pub mod rev_parse;
 pub mod rev_list;
 pub mod status;
 pub mod symbolic_ref;
-pub mod version;

@@ -134,12 +134,16 @@ pub fn app_version() -> String {
 
 
 pub fn app_deps() -> String {
-    let git = GitEnvironment::default();
+    let git = GitEnvironment::new(Path::new("."));
 
     format!("{}\n{}\n{}",
-        ssh_version().unwrap_or("\x1b[31mOpenSSH: Not found (required)\x1b[0m".into()), // Red
-        git.version().unwrap_or("\x1b[31mGit: Not found (required)\x1b[0m".into()), // Red
-        git.lfs_version().unwrap_or("\x1b[33mGit LFS: Not found (optional)\x1b[0m".into()), // Yellow
+        ssh_version()
+            .unwrap_or("\x1b[31mOpenSSH: Not found (required)\x1b[0m".into()), // Red
+        git.version.as_ref()
+            .map(|v| v.to_string())
+            .unwrap_or("\x1b[31mGit: Not found (required)\x1b[0m".into()), // Red
+        git.lfs_version()
+            .unwrap_or("\x1b[33mGit LFS: Not found (optional)\x1b[0m".into()), // Yellow
     )
 }
 

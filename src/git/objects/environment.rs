@@ -11,11 +11,13 @@ use std::path::{ Path, PathBuf };
 use std::process::{ Command, Output };
 
 // use crate::log;
+use super::version::GitVersion;
 
 
 #[derive(Clone, Debug)]
 #[allow(non_snake_case)]
 pub struct GitEnvironment {
+    pub version: Option<GitVersion>,
     pub working_dir: PathBuf,
 
     pub LC_ALL: String,
@@ -36,6 +38,7 @@ impl Default for GitEnvironment {
         let working_dir  = PathBuf::from(".");
 
         GitEnvironment {
+            version: GitVersion::new(),
             working_dir,
 
             LC_ALL: "C".into(), // Override all locale settings
@@ -98,7 +101,15 @@ impl GitEnvironment {
         env: Vec<(String, String)>,
     ) -> Result<Output, Box<dyn Error>>
     {
-        // log::debug(&format!("git {} {}", command, args.iter().map(|s| s.to_string_lossy()).collect().join(" "))); // TODO
+        crate::log::debug(
+            &format!("git {} {}",
+                command,
+                args.iter()
+                    .map(|s| s.to_string_lossy())
+                    .collect::<Vec<_>>()
+                    .join(" ")
+            )
+        );
 
         let output = Command::new("git")
             .current_dir(&self.working_dir)

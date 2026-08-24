@@ -27,6 +27,7 @@ mod git {
     mod test_git_object_file_status;
     mod test_git_object_merge_status;
     mod test_git_object_user;
+    mod test_git_object_version;
 }
 
 #[cfg(test)]
