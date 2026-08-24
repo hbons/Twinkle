@@ -31,7 +31,7 @@ impl App {
 
     pub fn cli_command_clone(
         &mut self,
-        args: &Vec<String>
+        args: &[String]
     ) -> Result<(), Box<dyn Error>>
     {
         self.cli_require_args(2, args).map_err(|_| {

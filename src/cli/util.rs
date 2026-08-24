@@ -60,7 +60,7 @@ pub fn cli_red(s: &str) -> String {
 }
 
 
-pub fn lossy_and_trim(output: &Vec<u8>) -> String {
+pub fn lossy_and_trim(output: &[u8]) -> String {
     String::from_utf8_lossy(
         output.trim_ascii_end()
     ).to_string()

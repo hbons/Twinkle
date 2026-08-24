@@ -151,7 +151,7 @@ fn init_info_attributes(
 ) -> Result<(), Box<dyn Error>>
 {
     let rules = twinkle_default_info_attributes();
-    repo.write_attribute_rules(rules)
+    repo.write_attribute_rules(&rules)
 }
 
 
@@ -161,7 +161,7 @@ fn init_info_exclude(
 ) -> Result<(), Box<dyn Error>>
 {
     let rules = twinkle_default_info_exclude();
-    repo.write_exclude_rules(rules)
+    repo.write_exclude_rules(&rules)
 }
 
 

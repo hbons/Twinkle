@@ -24,7 +24,7 @@ use super::util::*;
 use crate::twinkle::objects::repository::TwinkleRepository;
 
 impl App {
-    pub fn cli_command_status(&mut self, args: &Vec<String>) -> Result<(), Box<dyn Error>> {
+    pub fn cli_command_status(&mut self, args: &[String]) -> Result<(), Box<dyn Error>> {
         self.cli_require_args(1, args)?;
 
         let default_path = ".".to_string();

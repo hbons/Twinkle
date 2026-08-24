@@ -309,7 +309,7 @@ impl TwinkleRepository {
 
 
 impl TwinkleRepository {
-    pub fn write_attribute_rules(&self, rules: Vec<String>) -> Result<(), Box<dyn Error>> {
+    pub fn write_attribute_rules(&self, rules: &[String]) -> Result<(), Box<dyn Error>> {
         let attributes_path = self.git.working_dir.join(".git/info/attributes");
         let mut buffer = File::create(&attributes_path)?;
         buffer.write_all(rules.join("\n").as_bytes())?;
@@ -320,7 +320,7 @@ impl TwinkleRepository {
     }
 
 
-    pub fn write_exclude_rules(&self, rules: Vec<&str>) -> Result<(), Box<dyn Error>> {
+    pub fn write_exclude_rules(&self, rules: &[&str]) -> Result<(), Box<dyn Error>> {
         let exclude_path = self.git.working_dir.join(".git/info/exclude");
         let mut buffer = File::create(&exclude_path)?;
         buffer.write_all(rules.join("\n").as_bytes())?;

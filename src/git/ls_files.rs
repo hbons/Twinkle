@@ -51,7 +51,7 @@ impl GitEnvironment {
 }
 
 
-fn output_to_paths(output: &Vec<u8>) -> Vec<PathBuf> {
+fn output_to_paths(output: &[u8]) -> Vec<PathBuf> {
     output
         .split(|&b| b == 0) // NUL-byte
         .filter(|path| !path.is_empty())

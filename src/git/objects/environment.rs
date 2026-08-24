@@ -89,7 +89,7 @@ impl GitEnvironment {
         args: &[&OsStr],
     ) -> Result<Output, Box<dyn Error>>
     {
-        self.run_with_env(command, args, Vec::new())
+        self.run_with_env(command, args, &[])
     }
 
 
@@ -98,7 +98,7 @@ impl GitEnvironment {
         &self,
         command: &str,
         args: &[&OsStr],
-        env: Vec<(String, String)>,
+        env: &[(String, String)],
     ) -> Result<Output, Box<dyn Error>>
     {
         crate::log::debug(
@@ -114,7 +114,7 @@ impl GitEnvironment {
         let output = Command::new("git")
             .current_dir(&self.working_dir)
             .envs(self.get_environment())
-            .envs(env)
+            .envs(env.to_vec())
             .arg(command)
             .args(args)
             .output()?;
@@ -131,7 +131,7 @@ impl GitEnvironment {
 
 
 impl GitEnvironment {
-    pub fn lossy_and_trim(output: &Vec<u8>) -> String {
+    pub fn lossy_and_trim(output: &[u8]) -> String {
         String::from_utf8_lossy(
             output.trim_ascii_end()
         ).to_string()

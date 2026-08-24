@@ -43,7 +43,7 @@ fn test_git_object_environment_run_with_env() {
         ("GIT_CONFIG_PARAMETERS".into(), "'user.name=Test Bot'".into()),
     ];
 
-    let result = git.run_with_env("config", &[OsStr::new("user.name")], env);
+    let result = git.run_with_env("config", &[OsStr::new("user.name")], &env);
     assert_eq!(result.unwrap().stdout, "Test Bot\n".as_bytes());
 }
 

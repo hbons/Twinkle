@@ -48,7 +48,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
 
     let mut app = App::default();
-    let args = args().collect();
+    let args: Vec<String> = args().collect();
 
     match app.cli_parse_args(&args) {
         Ok(_)  => exit(0),

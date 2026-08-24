@@ -35,7 +35,7 @@ impl GitEnvironment {
         ]).unwrap_or_default();
 
         fs::write(&path, message)?; // Use a file to prevent encoding problems
-        self.run_with_env("commit", args, env)?;
+        self.run_with_env("commit", args, &env)?;
         fs::remove_file(path)?;
 
         Ok(())

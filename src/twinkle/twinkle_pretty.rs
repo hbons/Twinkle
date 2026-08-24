@@ -47,7 +47,7 @@ pub fn twinkle_pretty_datetime(seconds_from_epoch: i64) -> String {
 
 // '+10, ~7, -3'
 // '~ "README.md"'
-pub fn twinkle_pretty_commit_message(status: &Vec<GitChange>) -> Option<String> {
+pub fn twinkle_pretty_commit_message(status: &[GitChange]) -> Option<String> {
     let (mut added, mut modified, mut deleted) = (0, 0, 0);
     let mut file = String::new();
 

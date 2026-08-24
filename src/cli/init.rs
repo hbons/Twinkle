@@ -17,7 +17,7 @@ use crate::twinkle::twinkle_init::twinkle_init;
 
 
 impl App {
-    pub fn cli_command_init(&self, args: &Vec<String>) -> Result<(), Box<dyn Error>>{
+    pub fn cli_command_init(&self, args: &[String]) -> Result<(), Box<dyn Error>>{
         self.cli_require_args(2, args).map_err(|_| {
             Self::cli_command_init_usage();
             "Missing <user@host:path>"

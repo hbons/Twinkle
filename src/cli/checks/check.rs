@@ -21,7 +21,7 @@ use super::outcome::Outcome;
 impl App {
     pub fn cli_command_check(
         &mut self,
-        args: &Vec<String>,
+        args: &[String],
     ) -> Result<(), Box<dyn Error>>
     {
         self.cli_require_args(1, args)?;
