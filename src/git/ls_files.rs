@@ -18,13 +18,14 @@ impl GitEnvironment {
 
     pub fn ls_files(&self) -> Result<Vec<PathBuf>, Box<dyn Error>> {
         let output = self.run("ls-files", &[
-            OsStr::new("-z"),
+            OsStr::new("-z"), // Single line, NUL-separated
         ])?;
 
         Ok(output_to_paths(&output.stdout))
     }
+}
 
-
+impl GitEnvironment {
     pub fn ls_files_ignored(&self) -> Result<Vec<PathBuf>, Box<dyn Error>>{
         let output = self.run("ls-files", &[
             OsStr::new("--ignored"),
@@ -32,7 +33,7 @@ impl GitEnvironment {
             OsStr::new("--directory"), // Don't recurse into ignored directories, just list once
             OsStr::new("--exclude-standard"), // Use .git/info/exclude, .gitignore files, and the global gitignore
             OsStr::new("--others"), // Show untracked files
-            OsStr::new("-z"),
+            OsStr::new("-z"), // Single line, NUL-separated
         ])?;
 
         Ok(output_to_paths(&output.stdout))
@@ -42,7 +43,7 @@ impl GitEnvironment {
     pub fn ls_files_killed(&self) -> Result<Vec<PathBuf>, Box<dyn Error>>{
         let output = self.run("ls-files", &[
             OsStr::new("--killed"), // Lists problematic untracked paths that block a proper checkout
-            OsStr::new("-z"),
+            OsStr::new("-z"), // Single line, NUL-separated
         ])?;
 
         Ok(output_to_paths(&output.stdout))
