@@ -77,10 +77,7 @@ pub fn twinkle_clone_start(
     let dir = twinkle_default_dir_name(url)?;
     let dir = twinkle_unique_dir(&dir);
 
-    let target_git = git.clone(
-        &url.to_string_standard(),
-        Some(dir.as_ref())
-    )?;
+    let target_git = git.clone(url, Some(&dir))?;
 
     let mut repo = TwinkleRepository::new(&target_git.working_dir);
     repo.git = target_git;

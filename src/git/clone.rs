@@ -16,29 +16,35 @@ use super::objects::environment::GitEnvironment;
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-clone
 
-    pub fn clone(&self, url: &str, directory: Option<&Path>) -> Result<GitEnvironment, Box<dyn Error>> {
+    pub fn clone(
+        &self,
+        url: &SshUrl,
+        directory: Option<&Path>,
+    ) -> Result<GitEnvironment, Box<dyn Error>>
+    {
+        let url_str = url.to_string_standard();
+
         let mut args = vec![
             OsStr::new("--no-checkout"),
             OsStr::new("--progress"),
             OsStr::new("--"), // Safety: No more flags coming after this
-            OsStr::new(url),
+            OsStr::new(&url_str),
         ];
 
         if let Some(dir) = directory {
-            args.push(dir.as_os_str()); // TODO: unwrap_or_default?
+            args.push(dir.as_os_str());
         }
 
         self.run("clone", &args)?;
 
-        let url = url.parse::<SshUrl>()?;
-
-        let dir_name = match directory {
-            Some(d) => d.file_name().ok_or("Could not get name from path")?,
-            None => url.path.file_name().ok_or("Could not get name from url")?,
+        let dir_name = if let Some(d) = directory {
+            d.file_name().ok_or("Could not get name from path")?
+        } else {
+            url.path.file_name().ok_or("Could not get name from url")?
         };
 
         let mut git = Clone::clone(self);
-        git.working_dir = self.working_dir.join(dir_name); // TODO: Allow absolute paths?
+        git.working_dir = self.working_dir.join(dir_name);
 
         Ok(git)
     }
