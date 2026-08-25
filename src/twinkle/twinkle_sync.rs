@@ -306,7 +306,7 @@ pub fn twinkle_sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Err
 pub fn twinkle_has_unpushed_commits(repo: &TwinkleRepository) -> bool {
     match repo.git.rev_list_count() {
         Ok(count) => count > 0,
-        Err(_) => false,
+        Err(_) => true,
     }
 }
 
