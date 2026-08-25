@@ -16,22 +16,16 @@ use super::objects::environment::GitEnvironment;
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-clone
 
-    pub fn clone(&self, url: &str, directory: Option<&Path>, depth: Option<u32>) -> Result<GitEnvironment, Box<dyn Error>> {
-        let mut args: Vec<&OsStr> = Vec::new();
-
-        let mut depth_str = "--depth=".to_string();
-        if let Some(d) = depth {
-            depth_str.push_str(&format!("{}", d));
-            args.push(OsStr::new(&depth_str));
-        }
-
-        args.push(OsStr::new("--no-checkout"));
-        args.push(OsStr::new("--progress"));
-        args.push(OsStr::new("--")); // Safety: No more flags coming after this
-        args.push(OsStr::new(url));
+    pub fn clone(&self, url: &str, directory: Option<&Path>) -> Result<GitEnvironment, Box<dyn Error>> {
+        let mut args = vec![
+            OsStr::new("--no-checkout"),
+            OsStr::new("--progress"),
+            OsStr::new("--"), // Safety: No more flags coming after this
+            OsStr::new(url),
+        ];
 
         if let Some(dir) = directory {
-            args.push(dir.as_os_str());
+            args.push(dir.as_os_str()); // TODO: unwrap_or_default?
         }
 
         self.run("clone", &args)?;
@@ -43,9 +37,9 @@ impl GitEnvironment {
             None => url.path.file_name().ok_or("Could not get name from url")?,
         };
 
-        let mut git_env = Clone::clone(self);
-        git_env.working_dir = self.working_dir.join(dir_name);
+        let mut git = Clone::clone(self);
+        git.working_dir = self.working_dir.join(dir_name); // TODO: Allow absolute paths?
 
-        Ok(git_env)
+        Ok(git)
     }
 }
