@@ -10,7 +10,8 @@ use std::fs;
 use std::path::{ Path, PathBuf };
 
 use crate::git::objects::change::GitChange;
-use crate::git::objects::merge_status::GitMergeStatus;
+use crate::git::objects::status::GitMergeStatus;
+use crate::git::objects::status::GitStatusFilter;
 use crate::git::objects::user::GitUser;
 
 use crate::log;
@@ -22,7 +23,7 @@ use super::objects::repository::TwinkleRepository;
 pub fn twinkle_resolve_changes(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
     log::info("Resolving conflicts…");
 
-    for change in repo.git.status()? {
+    for change in repo.git.status(GitStatusFilter::All)? {
         twinkle_resolve(repo, &change)?;
     }
 
@@ -106,7 +107,7 @@ pub fn twinkle_resolve(
     }
 
     if repo.lfs_enabled() {
-        for change in repo.git.status()? {
+        for change in repo.git.status(GitStatusFilter::All)? {
             // Discard any errors (file may have been deleted)
             _ = twinkle_lfs_track(repo, &change);
         }

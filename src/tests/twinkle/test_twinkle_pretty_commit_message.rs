@@ -8,7 +8,7 @@
 use std::path::Path;
 
 use crate::git::objects::change::GitChange;
-use crate::git::objects::file_status::GitFileStatus;
+use crate::git::objects::status::GitFileStatus;
 use crate::twinkle::twinkle_pretty::twinkle_pretty_commit_message;
 
 #[test]

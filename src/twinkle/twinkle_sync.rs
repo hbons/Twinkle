@@ -12,6 +12,7 @@ use std::time::Duration;
 
 use chrono::Utc;
 
+use crate::git::objects::status_filter::GitStatusFilter; // TODO: Only git import here?
 use crate::log;
 use crate::ssh::util::ssh_util_test_connection;
 use crate::twinkle::twinkle_init::init_id;
@@ -146,7 +147,8 @@ const WATCH_INTERVAL: u64 = 60;
 pub fn twinkle_watch_local(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
     loop {
         if !repo.is_busy() {
-            let status = repo.git.status()?;
+            let status = repo.git.status(GitStatusFilter::All)?;
+
             if !status.is_empty() {
                 repo.set_has_local_changes(true);
                 log::info("Local changes detected…");
@@ -196,21 +198,21 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
             Some(repo.git.GIT_SSH_COMMAND.clone())
         )?;
 
-        let status = repo.git.status()?;
+        let status = repo.git.status(GitStatusFilter::Unstaged)?; // TODO: remove
         let lfs_enabled = repo.lfs_enabled();
 
-        // TODO: loop this, but status() needs to return None when there are no more unstaged changes (status_y)
-        // TODO: need a separate command to check any (staged or unstaged) changes. remove plain status(). status_staged()+status_unstaged()+status_staged_or_unstaged()?
-        for change in status {
-            if lfs_enabled {
-                // Discard any errors (file may have been deleted)
-                _ = twinkle_lfs_track(repo, &change);
+        // while let Some(status) = repo.git.status(GitStatusFilter::Unstaged) { // TODO: use Option and enable. return None when no changes
+            for change in status {
+                if lfs_enabled {
+                    // Discard any errors (file may have been deleted)
+                    _ = twinkle_lfs_track(repo, &change);
+                }
+
+                _ = repo.git.add(&change.path); // TODO: error get eaten and may cause an infinite loop
             }
+        // }
 
-            _ = repo.git.add(&change.path); // TODO: error get eaten and may cause an infinite loop
-        }
-
-        let status = repo.git.status()?; // TODO: status_staged()
+        let status = repo.git.status(GitStatusFilter::Staged)?;
 
         let branch = repo.git.branch_show_current()?;
         let remote = repo.remote(&branch);
@@ -254,7 +256,7 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
             }
         }
 
-        let status = repo.git.status()?;
+        let status = repo.git.status(GitStatusFilter::All)?;
         if !twinkle_has_unpushed_commits(repo) && status.is_empty() {
             break;
         }

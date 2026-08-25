@@ -7,7 +7,7 @@
 
 use std::error::Error;
 
-use crate::git::objects::file_status::GitFileStatus;
+use crate::git::objects::status::GitFileStatus;
 use crate::git::objects::change::GitChange;
 use crate::log;
 

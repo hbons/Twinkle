@@ -10,8 +10,8 @@ use std::ffi::{ OsStr, OsString };
 use std::os::unix::ffi::{ OsStrExt, OsStringExt };
 use std::path::{ Path, PathBuf };
 
-use super::file_status::GitFileStatus;
-use super::merge_status::GitMergeStatus;
+use super::status::GitFileStatus;
+use super::status::GitMergeStatus;
 
 
 #[derive(Debug, Default, PartialEq)]
@@ -20,6 +20,7 @@ pub struct GitChange {
 
     pub status_x: Option<GitFileStatus>,
     pub status_y: Option<GitFileStatus>,
+
     pub path: PathBuf,
 }
 

@@ -9,7 +9,7 @@ use std::path::Path;
 use chrono::{ DateTime, Local };
 
 use crate::git::objects::change::GitChange;
-use crate::git::objects::file_status::GitFileStatus;
+use crate::git::objects::status::GitFileStatus;
 
 
 /// "/Users/hbons/Projects" -> "~/Projects"

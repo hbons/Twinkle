@@ -21,6 +21,8 @@ pub mod objects {
     pub mod merge_status;
     pub mod reference;
     pub mod remote;
+    pub mod status_filter;
+    pub mod status;
     pub mod user;
     pub mod version;
 }

@@ -13,15 +13,32 @@ use crate::log;
 
 use super::objects::change::GitChange;
 use super::objects::environment::GitEnvironment;
+use super::objects::status::GitStatusFilter;
 
 
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-status
 
-    pub fn status(&self) -> Result<Vec<GitChange>, Box<dyn Error>> {
+    pub fn status(
+        &self,
+        filter: GitStatusFilter,
+    ) -> Result<Vec<GitChange>, Box<dyn Error>>
+    {
         let changes = self.get_changes(
             Some(OsStr::new("--untracked-files=normal")),
         )?;
+
+        let changes = match filter {
+            GitStatusFilter::All => changes,
+            GitStatusFilter::Staged =>
+                changes.into_iter()
+                    .filter(|c| c.status_x.is_some())
+                    .collect(),
+            GitStatusFilter::Unstaged =>
+                changes.into_iter()
+                    .filter(|c| c.status_y.is_some())
+                    .collect(),
+        };
 
         Ok(changes)
     }

@@ -9,8 +9,8 @@ use std::ffi::OsStr;
 use std::path::Path;
 
 use crate::git::objects::change::GitChange;
-use crate::git::objects::file_status::GitFileStatus;
-use crate::git::objects::merge_status::GitMergeStatus;
+use crate::git::objects::status::GitFileStatus;
+use crate::git::objects::status::GitMergeStatus;
 
 
 #[test]

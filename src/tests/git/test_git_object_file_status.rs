@@ -8,7 +8,7 @@
 use std::path::Path;
 use std::str::FromStr;
 
-use crate::git::objects::file_status::GitFileStatus;
+use crate::git::objects::status::GitFileStatus;
 
 
 #[test]

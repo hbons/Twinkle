@@ -6,7 +6,7 @@
 
 
 use std::str::FromStr;
-use crate::git::objects::merge_status::GitMergeStatus;
+use crate::git::objects::status::GitMergeStatus;
 
 
 #[test]
