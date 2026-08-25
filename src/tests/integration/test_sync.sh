@@ -13,7 +13,6 @@ gh repo create \
     --private \
     --add-readme
 
-
 twinkle clone \
     git@github.com:$ACCOUNT/$REPO_NAME \
     .
@@ -38,6 +37,10 @@ cd $REPO_NAME_1
 echo " Let's create..." >> README.md
 timeout 45s twinkle sync || true  # --once
 
+test -f README.md
+test -f "README (A).md"
+test -f "README (B).md"
+
 echo "--- README.md ---"
 cat README.md
 printf '\n'
@@ -47,13 +50,8 @@ echo "--- README (B).md ---"
 cat "README (B).md"
 echo "---"
 
-test -f README.md
-test -f "README (A).md"
-test -f "README (B).md"
-
 
 # TODO: Test all conflict paths: AA, UU, AU, UA, DU, UD, DD, XX, QQ
-
 
 # TODO: Doesn't work...
 # source ../common/test_synced.sh

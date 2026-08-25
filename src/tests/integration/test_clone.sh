@@ -19,10 +19,9 @@ cd $REPO_NAME
 touch NEW_FILE
 touch NEW_FILE1
 touch NEW_FILE2
-
 timeout 20s twinkle sync || true  # --once
-source ../common/test_synced.sh
 
+source ../common/test_synced.sh
 twinkle check
 
 cd ..

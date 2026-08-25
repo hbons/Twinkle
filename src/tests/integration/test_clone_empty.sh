@@ -4,21 +4,23 @@ set -euo pipefail
 source ./common/config.sh
 source ./common/install_keys.sh
 
-REPO_NAME=test_init_$TAG
+REPO_NAME=test_clone_empty_$TAG
 
 gh repo create \
     $REPO_NAME \
     --private
 
-touch README.md
-
-twinkle init \
+twinkle clone \
     git@github.com:$ACCOUNT/$REPO_NAME \
     .
 
+cd $REPO_NAME
 timeout 20s twinkle sync || true  # --once
 
-source ./common/test_synced.sh
+source ../common/test_synced.sh
+test -f TWINKLE.md
+
 twinkle check
 
+cd ..
 source ./common/cleanup.sh

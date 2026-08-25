@@ -50,6 +50,11 @@ jobs:
         cd src/tests/integration
         ./test_clone.sh
 
+    - name: Test `clone_empty`
+      run: |
+        cd src/tests/integration
+        ./test_clone_empty.sh
+
     - name: Test `sync`
       run: |
         cd src/tests/integration
