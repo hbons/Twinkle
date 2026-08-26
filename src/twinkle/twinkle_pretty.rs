@@ -47,11 +47,11 @@ pub fn twinkle_pretty_datetime(seconds_from_epoch: i64) -> String {
 
 // '+10, ~7, -3'
 // '~ "README.md"'
-pub fn twinkle_pretty_commit_message(status: &[GitChange]) -> Option<String> {
+pub fn twinkle_pretty_commit_message(changes: &[GitChange]) -> Option<String> {
     let (mut added, mut modified, mut deleted) = (0, 0, 0);
     let mut file = String::new();
 
-    for change in status {
+    for change in changes {
         match change.status_x {
             Some(GitFileStatus::Added)       => { added += 1; },
             Some(GitFileStatus::Modified)    => { modified += 1; },

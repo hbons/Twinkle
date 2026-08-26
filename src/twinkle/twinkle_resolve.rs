@@ -23,9 +23,11 @@ use super::objects::repository::TwinkleRepository;
 pub fn twinkle_resolve_changes(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
     log::info("Resolving conflicts…");
 
-    for change in repo.git.status(GitStatusFilter::All)? {
-        twinkle_resolve(repo, &change)?;
-    }
+    while let Some(changes) = repo.git.status(GitStatusFilter::All) {
+        for change in changes {
+            twinkle_resolve(repo, &change)?;
+        }
+    } // TODO: Prevent infinite loop here
 
     repo.git.commit(repo.user(), "Resolve conflicts")?;
     log::info("Conflicts resolved");
@@ -107,10 +109,12 @@ pub fn twinkle_resolve(
     }
 
     if repo.lfs_enabled() {
-        for change in repo.git.status(GitStatusFilter::All)? {
-            // Discard any errors (file may have been deleted)
-            _ = twinkle_lfs_track(repo, &change);
-        }
+        while let Some(changes) = repo.git.status(GitStatusFilter::All) {
+            for change in changes {
+                // Discard any errors (file may have been deleted)
+                _ = twinkle_lfs_track(repo, &change);
+            }
+        } // TODO: Prevent infinite loop here
     }
 
     Ok(())

@@ -22,11 +22,11 @@ impl GitEnvironment {
     pub fn status(
         &self,
         filter: GitStatusFilter,
-    ) -> Result<Vec<GitChange>, Box<dyn Error>>
+    ) -> Option<Vec<GitChange>>
     {
         let changes = self.get_changes(
             Some(OsStr::new("--untracked-files=normal")),
-        )?;
+        ).ok()?;
 
         let changes = match filter {
             GitStatusFilter::All => changes,
@@ -40,7 +40,11 @@ impl GitEnvironment {
                     .collect(),
         };
 
-        Ok(changes)
+        if changes.is_empty() {
+            return None;
+        }
+
+        Some(changes)
     }
 
 

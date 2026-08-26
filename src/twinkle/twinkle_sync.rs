@@ -147,9 +147,7 @@ const WATCH_INTERVAL: u64 = 60;
 pub fn twinkle_watch_local(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
     loop {
         if !repo.is_busy() {
-            let status = repo.git.status(GitStatusFilter::All)?;
-
-            if !status.is_empty() {
+            if repo.git.status(GitStatusFilter::All).is_some() {
                 repo.set_has_local_changes(true);
                 log::info("Local changes detected…");
             }
@@ -198,10 +196,9 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
             Some(repo.git.GIT_SSH_COMMAND.clone())
         )?;
 
-        let status = repo.git.status(GitStatusFilter::Unstaged)?; // TODO: remove
         let lfs_enabled = repo.lfs_enabled();
 
-        // while let Some(status) = repo.git.status(GitStatusFilter::Unstaged) { // TODO: use Option and enable. return None when no changes
+        while let Some(status) = repo.git.status(GitStatusFilter::Unstaged) {
             for change in status {
                 if lfs_enabled {
                     // Discard any errors (file may have been deleted)
@@ -210,14 +207,14 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
 
                 _ = repo.git.add(&change.path); // TODO: error get eaten and may cause an infinite loop
             }
-        // }
-
-        let status = repo.git.status(GitStatusFilter::Staged)?;
+        } // TODO: Prevent infinite loop here
 
         let branch = repo.git.branch_show_current()?;
         let remote = repo.remote(&branch);
+        let changes = repo.git.status(GitStatusFilter::Staged)
+            .unwrap_or_default(); // We need an empty Vec over None for the next block
 
-        if let Some(message) = twinkle_pretty_commit_message(&status) {
+        if let Some(message) = twinkle_pretty_commit_message(&changes) {
             let user = repo.user().ok_or("User not set")?;
 
             repo.set_user(&user)?;
@@ -256,8 +253,9 @@ pub fn twinkle_sync_up(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error
             }
         }
 
-        let status = repo.git.status(GitStatusFilter::All)?;
-        if !twinkle_has_unpushed_commits(repo) && status.is_empty() {
+        let changes = repo.git.status(GitStatusFilter::All);
+
+        if !twinkle_has_unpushed_commits(repo) && changes.is_none() {
             break;
         }
 
