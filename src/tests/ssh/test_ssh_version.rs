@@ -5,11 +5,11 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-use crate::ssh::version::ssh_version;
+use crate::ssh::util::version;
 
 
 #[test]
 fn test_ssh_version() {
-    let ssh_version = ssh_version().unwrap();
+    let ssh_version = version().unwrap();
     assert!(ssh_version.starts_with("OpenSSH"));
 }

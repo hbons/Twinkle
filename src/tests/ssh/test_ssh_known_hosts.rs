@@ -17,14 +17,14 @@ use crate::ssh::keys::known_hosts::sourceforge::ssh_hostkey_sourceforge;
 use crate::ssh::keys::known_hosts::sourcehut::ssh_hostkey_sourcehut;
 use crate::ssh::keys::known_hosts::devops::ssh_hostkey_devops;
 
-use crate::ssh::keyscan::ssh_keyscan;
+use crate::ssh::keyscan::scan_host;
 use crate::ssh::keys::key_type::KeyType;
 
 
 #[test]
 fn test_ssh_known_hostkey_bitbucket() {
     let pinned_key = ssh_hostkey_bitbucket();
-    let remote_key = ssh_keyscan(&pinned_key.host, None, KeyType::ED25519).unwrap();
+    let remote_key = scan_host(&pinned_key.host, None, KeyType::ED25519).unwrap();
 
     assert_eq!(pinned_key.fingerprint, remote_key.fingerprint);
     assert_eq!(pinned_key.public_key, remote_key.public_key);
@@ -34,7 +34,7 @@ fn test_ssh_known_hostkey_bitbucket() {
 #[test]
 fn test_ssh_known_hostkey_codeberg() {
     let pinned_key = ssh_hostkey_codeberg();
-    let remote_key = ssh_keyscan(&pinned_key.host, None, KeyType::ED25519).unwrap();
+    let remote_key = scan_host(&pinned_key.host, None, KeyType::ED25519).unwrap();
 
     assert_eq!(pinned_key.fingerprint, remote_key.fingerprint);
     assert_eq!(pinned_key.public_key, remote_key.public_key);
@@ -44,7 +44,7 @@ fn test_ssh_known_hostkey_codeberg() {
 #[test]
 fn test_ssh_known_hostkey_github() {
     let pinned_key = ssh_hostkey_github();
-    let remote_key = ssh_keyscan(&pinned_key.host, None, KeyType::ED25519).unwrap();
+    let remote_key = scan_host(&pinned_key.host, None, KeyType::ED25519).unwrap();
 
     assert_eq!(pinned_key.fingerprint, remote_key.fingerprint);
     assert_eq!(pinned_key.public_key, remote_key.public_key);
@@ -54,7 +54,7 @@ fn test_ssh_known_hostkey_github() {
 #[test]
 fn test_ssh_known_hostkey_gitlab() {
     let pinned_key = ssh_hostkey_gitlab();
-    let remote_key = ssh_keyscan(&pinned_key.host, None, KeyType::ED25519).unwrap();
+    let remote_key = scan_host(&pinned_key.host, None, KeyType::ED25519).unwrap();
 
     assert_eq!(pinned_key.fingerprint, remote_key.fingerprint);
     assert_eq!(pinned_key.public_key, remote_key.public_key);
@@ -66,7 +66,7 @@ fn test_ssh_known_hostkey_gnome() {
     let mut pinned_key = ssh_hostkey_gnome();
     pinned_key.host = "ssh.gitlab.gnome.org".into(); // SSH url differs
 
-    let remote_key = ssh_keyscan(&pinned_key.host, None, KeyType::ED25519).unwrap();
+    let remote_key = scan_host(&pinned_key.host, None, KeyType::ED25519).unwrap();
 
     assert_eq!(pinned_key.fingerprint, remote_key.fingerprint);
     assert_eq!(pinned_key.public_key, remote_key.public_key);
@@ -76,7 +76,7 @@ fn test_ssh_known_hostkey_gnome() {
 #[test]
 fn test_ssh_known_hostkey_sourcehut() {
     let pinned_key = ssh_hostkey_sourcehut();
-    let remote_key = ssh_keyscan(&pinned_key.host, None, KeyType::ED25519).unwrap();
+    let remote_key = scan_host(&pinned_key.host, None, KeyType::ED25519).unwrap();
 
     assert_eq!(pinned_key.fingerprint, remote_key.fingerprint);
     assert_eq!(pinned_key.public_key, remote_key.public_key);
@@ -86,7 +86,7 @@ fn test_ssh_known_hostkey_sourcehut() {
 #[test]
 fn test_ssh_known_savannah() {
     let pinned_key = ssh_hostkey_savannah();
-    let remote_key = ssh_keyscan(&pinned_key.host, None, KeyType::ED25519).unwrap();
+    let remote_key = scan_host(&pinned_key.host, None, KeyType::ED25519).unwrap();
 
     assert_eq!(pinned_key.fingerprint, remote_key.fingerprint);
     assert_eq!(pinned_key.public_key, remote_key.public_key);
@@ -96,7 +96,7 @@ fn test_ssh_known_savannah() {
 #[test]
 fn test_ssh_known_hostkey_gitee() {
     let pinned_key = ssh_hostkey_gitee();
-    let remote_key = ssh_keyscan(&pinned_key.host, None, KeyType::ED25519).unwrap();
+    let remote_key = scan_host(&pinned_key.host, None, KeyType::ED25519).unwrap();
 
     assert_eq!(pinned_key.fingerprint, remote_key.fingerprint);
     assert_eq!(pinned_key.public_key, remote_key.public_key);
@@ -106,7 +106,7 @@ fn test_ssh_known_hostkey_gitee() {
 #[test]
 fn test_ssh_known_hostkey_sourceforge() {
     let pinned_key = ssh_hostkey_sourceforge();
-    let remote_key = ssh_keyscan(&pinned_key.host, None, KeyType::ED25519).unwrap();
+    let remote_key = scan_host(&pinned_key.host, None, KeyType::ED25519).unwrap();
 
     assert_eq!(pinned_key.fingerprint, remote_key.fingerprint);
     assert_eq!(pinned_key.public_key, remote_key.public_key);
@@ -116,7 +116,7 @@ fn test_ssh_known_hostkey_sourceforge() {
 #[test]
 fn test_ssh_known_hostkey_devops() {
     let pinned_key = ssh_hostkey_devops();
-    let remote_key = ssh_keyscan(&pinned_key.host, None, KeyType::RSA).unwrap();
+    let remote_key = scan_host(&pinned_key.host, None, KeyType::RSA).unwrap();
 
     assert_eq!(pinned_key.fingerprint, remote_key.fingerprint);
     assert_eq!(pinned_key.public_key, remote_key.public_key);
@@ -126,7 +126,7 @@ fn test_ssh_known_hostkey_devops() {
 #[test]
 fn test_ssh_known_hostkey_kde() {
     let pinned_key = ssh_hostkey_kde();
-    let remote_key = ssh_keyscan(&pinned_key.host, None, KeyType::ED25519).unwrap();
+    let remote_key = scan_host(&pinned_key.host, None, KeyType::ED25519).unwrap();
 
     assert_eq!(pinned_key.fingerprint, remote_key.fingerprint);
     assert_eq!(pinned_key.public_key, remote_key.public_key);

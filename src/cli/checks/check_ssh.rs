@@ -13,8 +13,8 @@ use std::process::{ Command, Stdio };
 use std::time::Duration;
 
 use crate::git::objects::environment::GitEnvironment;
+use crate::ssh;
 use crate::ssh::keys::key_type::KeyType;
-use crate::ssh::keyscan::ssh_keyscan;
 use crate::ssh::objects::url::SshUrl;
 
 use super::outcome::Outcome;
@@ -126,7 +126,7 @@ fn is_ssh_host_supporting_key_type(path: &Path, key_type: KeyType) -> Outcome {
         .and_then(|o| o.parse::<SshUrl>().ok());
 
     if let Some(url) = option {
-        return match ssh_keyscan(&url.host, Some(url.port.unwrap_or(22)), key_type) {
+        return match ssh::keyscan::scan_host(&url.host, Some(url.port.unwrap_or(22)), key_type) {
             Ok(_)  => Outcome::Pass(Some(format!("{:?}", key_type))),
             Err(_) => Outcome::Missing,
         }

@@ -14,8 +14,7 @@ use crate::app::App;
 use crate::log;
 use crate::ssh::objects::url::SshUrl;
 
-use crate::core::clone;
-use crate::core::clone::TwinkleCloneError;
+use crate::core::clone::{ self, TwinkleCloneError };
 
 
 impl App {

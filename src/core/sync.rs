@@ -14,7 +14,7 @@ use chrono::Utc;
 
 use crate::git::objects::status_filter::GitStatusFilter; // TODO: Only git import here?
 use crate::log;
-use crate::ssh::util::ssh_util_test_connection;
+use crate::ssh;
 use crate::core::init;
 
 use super::objects::repository::TwinkleRepository;
@@ -66,7 +66,7 @@ pub fn prepare(
         repo.git.GIT_SSH_COMMAND = util::ssh_command(Some(key_pair));
 
         let remote_url = repo.remote_url().ok_or("Missing remote_url")?;
-        ssh_util_test_connection(&remote_url, &host_key, Some(key_pair))?;
+        ssh::util::test_connection(&remote_url, &host_key, Some(key_pair))?;
 
         log::debug(&format!("✓ Authenticated to {}", remote_url.host));
     }

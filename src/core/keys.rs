@@ -12,7 +12,7 @@ use std::path::Path;
 use crate::log;
 
 use crate::ssh::keys::prelude::*;
-use crate::ssh::keygen::ssh_keygen;
+use crate::ssh;
 use crate::ssh::objects::url::SshUrl;
 
 
@@ -25,7 +25,7 @@ pub fn keypair_new(
     let key_name = format!("{}.{}.key", host, key_type);
     let key_path = keys_dir.join(&key_name);
 
-    let key_pair = ssh_keygen(&key_path, KeyType::default(), None)?;
+    let key_pair = ssh::keygen::generate_keypair(&key_path, KeyType::default(), None)?;
     log::debug(&format!("Keys | Created key `{}`", key_pair.private_key_path.to_string_lossy()));
 
     Ok(key_pair)

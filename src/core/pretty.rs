@@ -26,7 +26,7 @@ pub fn format_dir(dir: &Path) -> String {
     if dir.starts_with(&home_dir) {
         dir.replace(&home_dir, "~")
     } else {
-        dir.into()
+        dir
     }
 }
 

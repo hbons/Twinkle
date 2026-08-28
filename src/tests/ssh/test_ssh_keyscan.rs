@@ -5,7 +5,7 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-use crate::ssh::keyscan::ssh_keyscan;
+use crate::ssh::keyscan::scan_host;
 use crate::ssh::keys::key_type::KeyType;
 
 
@@ -18,17 +18,17 @@ fn test_ssh_keyscan_github() {
     let github_ecdsa_public_key = "AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg=";
     let github_ed25519_public_key = "AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl";
 
-    let host_key = ssh_keyscan(host, Some(port), KeyType::RSA).unwrap();
+    let host_key = scan_host(host, Some(port), KeyType::RSA).unwrap();
     assert_eq!(host_key.host, host);
     assert_eq!(host_key.key_type, KeyType::RSA);
     assert_eq!(host_key.public_key, github_rsa_public_key);
 
-    let host_key = ssh_keyscan(host, Some(port), KeyType::ECDSA).unwrap();
+    let host_key = scan_host(host, Some(port), KeyType::ECDSA).unwrap();
     assert_eq!(host_key.host, host);
     assert_eq!(host_key.key_type, KeyType::ECDSA);
     assert_eq!(host_key.public_key, github_ecdsa_public_key);
 
-    let host_key = ssh_keyscan(host, Some(port), KeyType::ED25519).unwrap();
+    let host_key = scan_host(host, Some(port), KeyType::ED25519).unwrap();
     assert_eq!(host_key.host, host);
     assert_eq!(host_key.key_type, KeyType::ED25519);
     assert_eq!(host_key.public_key, github_ed25519_public_key);
@@ -44,12 +44,12 @@ fn test_ssh_keyscan_gitlab() {
     let gitlab_ecdsa_public_key = "AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFSMqzJeV9rUzU4kWitGjeR4PWSa29SPqJ1fVkhtj3Hw9xjLVXVYrU9QlYWrOLXBpQ6KWjbjTDTdDkoohFzgbEY=";
     let gitlab_ed25519_public_key = "AAAAC3NzaC1lZDI1NTE5AAAAIAfuCHKVTjquxvt6CM6tdG4SLp1Btn/nOeHHE5UOzRdf";
 
-    let host_key = ssh_keyscan(host, Some(port), KeyType::RSA).unwrap();
+    let host_key = scan_host(host, Some(port), KeyType::RSA).unwrap();
     assert_eq!(host_key.public_key, gitlab_rsa_public_key);
 
-    let host_key = ssh_keyscan(host, Some(port), KeyType::ECDSA).unwrap();
+    let host_key = scan_host(host, Some(port), KeyType::ECDSA).unwrap();
     assert_eq!(host_key.public_key, gitlab_ecdsa_public_key);
 
-    let host_key = ssh_keyscan(host, Some(port), KeyType::ED25519).unwrap();
+    let host_key = scan_host(host, Some(port), KeyType::ED25519).unwrap();
     assert_eq!(host_key.public_key, gitlab_ed25519_public_key);
 }

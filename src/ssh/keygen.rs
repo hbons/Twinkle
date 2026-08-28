@@ -6,7 +6,7 @@
 
 
 use std::error::Error;
-use std::fs::{ create_dir_all, read_to_string };
+use std::fs;
 use std::io::Write;
 use std::path::Path;
 use std::process::{ Command, Stdio };
@@ -21,7 +21,7 @@ use super::keys::key_type::KeyType;
 
 
 /// Docs: https://man.openbsd.org/ssh-keygen
-pub fn ssh_keygen(
+pub fn generate_keypair(
     key_path: &Path,
     key_type: KeyType,
     key_size: Option<KeySize>,
@@ -30,7 +30,7 @@ pub fn ssh_keygen(
     let keys_dir = key_path.parent().ok_or("Could not find parent directory")?;
 
     if !keys_dir.exists() {
-        create_dir_all(keys_dir)?;
+        fs::create_dir_all(keys_dir)?;
     }
 
     let key_size = match key_size {
@@ -66,11 +66,11 @@ pub fn ssh_keygen(
 
             let key_pair = KeyPair {
                 key_type,
-                private_key: read_to_string(key_path)?.trim().to_string(),
+                private_key: fs::read_to_string(key_path)?.trim().to_string(),
                 private_key_path: key_path.to_path_buf(),
                 passphrase: None,
 
-                public_key:  read_to_string(&pubkey_path)?.trim().to_string(),
+                public_key: fs::read_to_string(&pubkey_path)?.trim().to_string(),
                 public_key_path: pubkey_path.to_path_buf(),
             };
 
@@ -82,7 +82,7 @@ pub fn ssh_keygen(
 
 
 /// Docs: https://man.openbsd.org/ssh-keygen#l
-pub fn ssh_keygen_fingerprint(
+pub fn derive_fingerprint(
     host_key: &HostKey,
 ) -> Result<Fingerprint, Box<dyn Error>>
 {

@@ -10,13 +10,13 @@ use std::process::Command;
 
 use crate::log;
 
-use super::keygen::ssh_keygen_fingerprint;
+use super::keygen;
 use super::keys::host_key::HostKey;
 use super::keys::key_type::KeyType;
 
 
 /// Docs: https://man.openbsd.org/ssh-keyscan
-pub fn ssh_keyscan(
+pub fn scan_host(
     host: &str,
     port: Option<u16>,
     key_type: KeyType,
@@ -64,7 +64,7 @@ pub fn ssh_keyscan(
                 fingerprint: None,
             };
 
-            if let Ok(fingerprint) = ssh_keygen_fingerprint(&host_key) {
+            if let Ok(fingerprint) = keygen::derive_fingerprint(&host_key) {
                 host_key.fingerprint = Some(fingerprint);
             }
 

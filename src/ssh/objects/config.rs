@@ -50,7 +50,7 @@ impl Default for SshConfig {
 
 
 impl fmt::Display for SshConfig {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut options: Vec<String> = vec![
             format!("-o BatchMode={}", format_bool(self.BatchMode)),
             format!("-o ConnectionAttempts={}", self.ConnectionAttempts),
@@ -62,15 +62,17 @@ impl fmt::Display for SshConfig {
             format!("-o StrictHostKeyChecking={}", format_bool(self.StrictHostKeyChecking)),
         ];
 
-        if let Some(v) = &self.IdentityFile {
+        if let Some(p) = &self.IdentityFile {
             options.push(
-                format!("-o IdentityFile={}", v.to_string_lossy())
+                format!("-o IdentityFile={}",
+                    p.to_string_lossy())
             );
         }
 
-        if let Some(v) = &self.UserKnownHostsFile {
+        if let Some(p) = &self.UserKnownHostsFile {
             options.push(
-                format!("-o UserKnownHostsFile={}", v.to_string_lossy())
+                format!("-o UserKnownHostsFile={}",
+                    p.to_string_lossy())
             );
         }
 

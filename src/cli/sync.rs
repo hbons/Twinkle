@@ -12,9 +12,9 @@ use std::time::Duration;
 use crate::app::App;
 use crate::log;
 
+use crate::core::objects::repository::TwinkleRepository;
 use crate::core::pretty;
 use crate::core::sync;
-use crate::core::objects::repository::TwinkleRepository;
 
 use super::util::*;
 

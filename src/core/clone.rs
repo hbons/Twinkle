@@ -42,14 +42,14 @@ pub fn prepare_keys(
     };
 
     if host_key.fingerprint.is_none() {
-        let fingerprint = ssh::keygen::ssh_keygen_fingerprint(&host_key)?;
+        let fingerprint = ssh::keygen::derive_fingerprint(&host_key)?;
         host_key.fingerprint = Some(fingerprint);
     }
 
     if !host_key.is_trusted {
         Err(Box::new(TwinkleCloneError::NeedsTrust(host_key)))
     } else {
-        match ssh::util::ssh_util_test_connection(url, &host_key, Some(&key_pair)) {
+        match ssh::util::test_connection(url, &host_key, Some(&key_pair)) {
             Err(_) => Err(Box::new(TwinkleCloneError::NeedsAuth(host_key, key_pair))),
             Ok(_) => Ok(key_pair),
         }
