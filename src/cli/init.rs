@@ -8,12 +8,9 @@
 use std::env::current_dir;
 use std::error::Error;
 
-
 use crate::app::App;
-
 use crate::ssh::objects::url::SshUrl;
-use crate::twinkle::twinkle_init::twinkle_init;
-
+use crate::core::init;
 
 
 impl App {
@@ -30,7 +27,7 @@ impl App {
         })?;
 
         let path = current_dir()?;
-        twinkle_init(&path, &ssh_url, None)?;
+        init::init_repo(&path, &ssh_url, None)?;
 
         Ok(())
     }

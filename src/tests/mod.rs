@@ -31,7 +31,7 @@ mod git {
 }
 
 #[cfg(test)]
-mod twinkle {
+mod core {
     mod test_twinkle_default_dir_name;
     mod test_twinkle_default;
     mod test_twinkle_init;

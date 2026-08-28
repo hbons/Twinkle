@@ -18,7 +18,7 @@ use crate::ssh::keys::key_pair::KeyPair;
 
 // "ssh://git@github.com:hbons/Twinkle" -> "Twinkle"
 // "ssh://git@github.com:hbons"         -> "hbons"
-pub fn twinkle_default_dir_name(url: &SshUrl) -> Result<PathBuf, Box<dyn Error>> {
+pub fn default_dir_name(url: &SshUrl) -> Result<PathBuf, Box<dyn Error>> {
     let dir = url.path.file_stem().ok_or("Could not determine path")?;
     Ok(PathBuf::from(dir))
 }
@@ -26,7 +26,7 @@ pub fn twinkle_default_dir_name(url: &SshUrl) -> Result<PathBuf, Box<dyn Error>>
 
 // "Projects/Folder" exists?   -> "Projects/Folder 2"
 // "Projects/Folder 2" exists? -> "Projects/Folder 3" etc.
-pub fn twinkle_unique_dir(dir: &Path) -> PathBuf {
+pub fn unique_dir(dir: &Path) -> PathBuf {
     let mut unique_dir = dir.to_path_buf();
     let mut suffix = 2;
 
@@ -40,7 +40,7 @@ pub fn twinkle_unique_dir(dir: &Path) -> PathBuf {
 }
 
 
-pub fn twinkle_ssh_command(key_pair: Option<&KeyPair>) -> String {
+pub fn ssh_command(key_pair: Option<&KeyPair>) -> String {
     let config = match key_pair {
         Some(key_pair) => {
             SshConfig {
@@ -58,7 +58,7 @@ pub fn twinkle_ssh_command(key_pair: Option<&KeyPair>) -> String {
 
 
 /// Generates a random 256-bit (64 chars) hex string
-pub fn twinkle_random_id() -> Result<String, Box<dyn Error>> {
+pub fn random_id() -> Result<String, Box<dyn Error>> {
     let mut file = File::open("/dev/urandom")?;
 
     let mut buffer = [0u8; 32];

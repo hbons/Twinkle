@@ -8,7 +8,7 @@
 use std::env;
 use std::path::Path;
 
-use crate::twinkle::twinkle_pretty::twinkle_pretty_dir;
+use crate::core::pretty::format_dir;
 
 
 #[test]
@@ -16,18 +16,18 @@ fn test_twinkle_pretty_dir() {
     env::set_var("HOME", "/home/hbons");
 
     let path = Path::new("/home/hbons/Projects");
-    let dir = twinkle_pretty_dir(path);
+    let dir = format_dir(path);
     assert_eq!(dir, "~/Projects");
 
     let path = Path::new("/home/hbons/");
-    let dir = twinkle_pretty_dir(path);
+    let dir = format_dir(path);
     assert_eq!(dir, "~/");
 
     let path = Path::new("/home/hbons");
-    let dir = twinkle_pretty_dir(path);
+    let dir = format_dir(path);
     assert_eq!(dir, "~");
 
     let path = Path::new("");
-    let dir = twinkle_pretty_dir(path);
+    let dir = format_dir(path);
     assert_eq!(dir, "");
 }

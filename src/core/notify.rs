@@ -9,13 +9,19 @@ use std::path::PathBuf;
 use std::sync::mpsc::channel;
 use std::time::Duration;
 
-use notify::{ Config, RecommendedWatcher, RecursiveMode, Result, Watcher };
+use notify::{
+    Config,
+    RecommendedWatcher,
+    RecursiveMode,
+    Result,
+    Watcher,
+};
 
 use crate::log;
-use crate::twinkle::objects::repository::TwinkleRepository;
+use crate::core::objects::repository::TwinkleRepository;
 
 
-pub fn twinkle_notify(repo: &TwinkleRepository) -> Result<()> {
+pub fn watch(repo: &TwinkleRepository) -> Result<()> {
     let (sender, receiver) = channel();
     let mut watcher = RecommendedWatcher::new(sender, Config::default())?;
 

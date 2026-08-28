@@ -16,9 +16,9 @@ use crate::ssh::keys::key_pair::KeyPair;
 use crate::ssh::objects::config::SshConfig;
 use crate::ssh::objects::url::SshUrl;
 
-use crate::twinkle::twinkle_lfs::TWINKLE_LFS_THRESHOLD;
-use crate::twinkle::defaults::common::twinkle_default_polling_interval;
-use crate::twinkle::objects::repository::TwinkleRepository;
+use crate::core::lfs::TWINKLE_LFS_THRESHOLD;
+use crate::core::defaults::common::twinkle_default_polling_interval;
+use crate::core::objects::repository::TwinkleRepository;
 
 use crate::git::config::{
     K_COMMIT_GPG_SIGN,
@@ -29,7 +29,7 @@ use crate::git::config::{
     K_REMOTE_ORIGIN_URL,
 };
 
-use crate::twinkle::defaults::config::{
+use crate::core::defaults::config::{
     K_ENABLED,
     K_ID,
     K_LAST_CHECK,

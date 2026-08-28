@@ -11,10 +11,10 @@ use std::path::Path;
 use crate::git::objects::environment::GitEnvironment;
 use crate::ssh::objects::url::SshUrl;
 
-use crate::twinkle::defaults::config::twinkle_default_git_settings;
-use crate::twinkle::defaults::info::twinkle_default_info_attributes;
-use crate::twinkle::defaults::info::twinkle_default_info_exclude;
-use crate::twinkle::twinkle_init::twinkle_init;
+use crate::core::defaults::config::twinkle_default_git_settings;
+use crate::core::defaults::info::twinkle_default_info_attributes;
+use crate::core::defaults::info::twinkle_default_info_exclude;
+use crate::core::init::init_repo;
 
 
 #[test]
@@ -31,7 +31,7 @@ fn test_twinkle_init() {
 
     fs::create_dir_all(path).unwrap();
 
-    let result = twinkle_init(path, &remote_url, None);
+    let result = init_repo(path, &remote_url, None);
 
     assert!(result.is_ok());
 

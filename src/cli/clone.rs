@@ -14,11 +14,8 @@ use crate::app::App;
 use crate::log;
 use crate::ssh::objects::url::SshUrl;
 
-use crate::twinkle::twinkle_clone::{
-    TwinkleCloneError,
-    twinkle_clone_complete,
-    twinkle_clone_start,
-};
+use crate::core::clone;
+use crate::core::clone::TwinkleCloneError;
 
 
 impl App {
@@ -57,8 +54,8 @@ impl App {
             "Not a valid <path>"
         })?;
 
-        let mut repo = twinkle_clone_start(&ssh_url, None, &path)?;
-        twinkle_clone_complete(&mut repo, None)?;
+        let mut repo = clone::start(&ssh_url, None, &path)?;
+        clone::complete(&mut repo, None)?;
 
         if repo.git.lfs_version().is_none() {
             log::warning("git-lfs command not found");

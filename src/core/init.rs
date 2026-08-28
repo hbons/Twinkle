@@ -12,18 +12,18 @@ use std::path::Path;
 use crate::ssh::keys::key_pair::KeyPair;
 use crate::ssh::objects::url::SshUrl;
 use crate::git::objects::user::GitUser;
-use crate::twinkle::defaults::common::COMMON_CONFIG_FILE;
-use crate::twinkle::defaults::config::{ K_ID, key };
-use crate::twinkle::twinkle_util::twinkle_random_id;
+
+use super::defaults::common::COMMON_CONFIG_FILE;
+use super::defaults::common::{ COMMON_FIRST_COMMIT_MESSAGE, COMMON_FIRST_FILE };
+use super::defaults::config;
+use super::defaults::config::{ K_ID, key };
+use super::defaults::info;
 
 use super::objects::repository::TwinkleRepository;
-use super::defaults::info::twinkle_default_info_attributes;
-use super::defaults::info::twinkle_default_info_exclude;
-use super::defaults::common::{ COMMON_FIRST_COMMIT_MESSAGE, COMMON_FIRST_FILE };
-use super::defaults::config::twinkle_default_git_settings;
+use super::util;
 
 
-pub fn twinkle_init(
+pub fn init_repo(
     path: &Path,
     remote_url: &SshUrl,
     key_pair: Option<&KeyPair>,
@@ -39,7 +39,7 @@ pub fn twinkle_init(
     let remote = repo.remote(&branch);
     repo.set_remote_url(&remote, remote_url)?;
 
-    twinkle_init_common(&repo, key_pair)?;
+    init_common(&repo, key_pair)?;
 
     init_id(&repo)?;
     init_first_commit(&repo)?;
@@ -66,7 +66,7 @@ pub fn init_id( // TODO: Move to TwinkleRepository
                 fs::create_dir_all(parent)?;
             }
 
-            let new_id = twinkle_random_id()?;
+            let new_id = util::random_id()?;
 
             repo.git.config_set_with_file(
                 &key(K_ID),
@@ -106,7 +106,7 @@ pub fn init_first_commit(
 }
 
 
-pub fn twinkle_init_common(
+pub fn init_common(
     repo: &TwinkleRepository,
     key_pair: Option<&KeyPair>,
 ) -> Result<(), Box<dyn Error>>
@@ -137,7 +137,7 @@ fn init_config(
     repo: &TwinkleRepository,
 ) -> Result<(), Box<dyn Error>>
 {
-    for (option, value) in twinkle_default_git_settings() {
+    for (option, value) in config::twinkle_default_git_settings() {
         repo.git.config_set(option, &value)?;
     }
 
@@ -150,7 +150,7 @@ fn init_info_attributes(
     repo: &TwinkleRepository,
 ) -> Result<(), Box<dyn Error>>
 {
-    let rules = twinkle_default_info_attributes();
+    let rules = info::twinkle_default_info_attributes();
     repo.write_attribute_rules(&rules)
 }
 
@@ -160,7 +160,7 @@ fn init_info_exclude(
     repo: &TwinkleRepository,
 ) -> Result<(), Box<dyn Error>>
 {
-    let rules = twinkle_default_info_exclude();
+    let rules = info::twinkle_default_info_exclude();
     repo.write_exclude_rules(&rules)
 }
 

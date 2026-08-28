@@ -51,7 +51,7 @@ impl TwinkleRepository {
 
     pub fn remote(&self, branch: &GitReference) -> GitReference {
         match self.git.config_get(&format!("branch.{branch}.remote")) {
-            Some(output) => output,
+            Some(output) => output, // TODO: map_or?
             None => "origin".into(),
         }
     }

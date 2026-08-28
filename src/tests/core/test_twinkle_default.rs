@@ -7,10 +7,10 @@
 
 use crate::ssh::objects::url::SshUrl;
 
-use crate::twinkle::defaults::info::twinkle_default_info_attributes;
-use crate::twinkle::defaults::info::twinkle_default_info_exclude;
-use crate::twinkle::defaults::config::twinkle_default_git_settings;
-use crate::twinkle::twinkle_init::init_welcome;
+use crate::core::defaults::info::twinkle_default_info_attributes;
+use crate::core::defaults::info::twinkle_default_info_exclude;
+use crate::core::defaults::config::twinkle_default_git_settings;
+use crate::core::init::init_welcome;
 
 
 #[test]

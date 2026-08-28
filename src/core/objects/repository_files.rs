@@ -5,7 +5,7 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-use crate::twinkle::objects::repository::TwinkleRepository;
+use crate::core::objects::repository::TwinkleRepository;
 
 
 impl TwinkleRepository {

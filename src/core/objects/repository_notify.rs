@@ -6,7 +6,7 @@
 
 
 use sha2::{ Sha256, Digest };
-use crate::twinkle::objects::repository::TwinkleRepository;
+use crate::core::objects::repository::TwinkleRepository;
 
 
 pub type TwinkleChannelName = String;

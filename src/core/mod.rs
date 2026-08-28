@@ -19,12 +19,12 @@ pub mod objects {
     pub mod repository_notify;
 }
 
-pub mod twinkle_clone;
-pub mod twinkle_init;
-pub mod twinkle_keys;
-pub mod twinkle_lfs;
-pub mod twinkle_notify;
-pub mod twinkle_pretty;
-pub mod twinkle_resolve;
-pub mod twinkle_util;
-pub mod twinkle_sync;
+pub mod clone;
+pub mod init;
+pub mod keys;
+pub mod lfs;
+pub mod notify;
+pub mod pretty;
+pub mod resolve;
+pub mod util;
+pub mod sync;

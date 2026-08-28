@@ -7,24 +7,24 @@
 
 use std::time::Duration;
 
-use crate::twinkle::defaults::common::twinkle_default_sync_up_delay_bump;
-use crate::twinkle::defaults::common::twinkle_default_sync_up_delay_max;
-use crate::twinkle::twinkle_sync::twinkle_sync_up_delay;
+use crate::core::defaults::common::twinkle_default_sync_up_delay_bump;
+use crate::core::defaults::common::twinkle_default_sync_up_delay_max;
+use crate::core::sync::sync_up_delay;
 
 
 #[test]
 fn test_twinkle_sync_up_delay() {
     let attempts = 0;
-    let delay = twinkle_sync_up_delay(attempts);
+    let delay = sync_up_delay(attempts);
     assert_eq!(delay, Duration::from_secs(0));
 
     let attempts = 1;
-    let delay = twinkle_sync_up_delay(attempts);
+    let delay = sync_up_delay(attempts);
     assert_eq!(delay, Duration::from_secs(0));
 
 
     let attempts = 2;
-    let delay = twinkle_sync_up_delay(attempts);
+    let delay = sync_up_delay(attempts);
     assert_eq!(delay,
         Duration::from_secs(
             twinkle_default_sync_up_delay_bump().as_secs() * (attempts - 1)
@@ -32,7 +32,7 @@ fn test_twinkle_sync_up_delay() {
     );
 
     let attempts = 5;
-    let delay = twinkle_sync_up_delay(attempts);
+    let delay = sync_up_delay(attempts);
     assert_eq!(delay,
         Duration::from_secs(
             twinkle_default_sync_up_delay_bump().as_secs() * (attempts - 1)
@@ -41,7 +41,7 @@ fn test_twinkle_sync_up_delay() {
 
 
     let attempts = 100;
-    let delay = twinkle_sync_up_delay(attempts);
+    let delay = sync_up_delay(attempts);
     assert_eq!(delay,
         twinkle_default_sync_up_delay_max()
     );

@@ -8,19 +8,19 @@
 use std::path::Path;
 
 use crate::ssh::objects::url::SshUrl;
-use crate::twinkle::twinkle_util::twinkle_default_dir_name;
+use crate::core::util::default_dir_name;
 
 
 #[test]
 fn test_twinkle_default_dir_name() {
     let url = "ssh://git@github.com/hbons/Twinkle".parse::<SshUrl>().unwrap();
-    let result = twinkle_default_dir_name(&url);
+    let result = default_dir_name(&url);
 
     assert_eq!(result.unwrap(), Path::new("Twinkle").to_path_buf());
 
 
     let url = "ssh://git@github.com/hbons".parse::<SshUrl>().unwrap();
-    let result = twinkle_default_dir_name(&url);
+    let result = default_dir_name(&url);
 
     assert_eq!(result.unwrap(), Path::new("hbons").to_path_buf());
 }

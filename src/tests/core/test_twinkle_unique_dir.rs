@@ -8,7 +8,7 @@
 use std::fs;
 use std::path::Path;
 
-use crate::twinkle::twinkle_util::twinkle_unique_dir;
+use crate::core::util::unique_dir;
 
 
 #[test]
@@ -22,21 +22,21 @@ fn test_twinkle_unique_dir() {
     fs::create_dir_all(path).unwrap();
 
     let dir = Path::new("./src/tests/.tmp/unique_dir/folder");
-    let dir = twinkle_unique_dir(dir);
+    let dir = unique_dir(dir);
 
     assert_eq!(Path::new("./src/tests/.tmp/unique_dir/folder"), dir);
 
 
     fs::create_dir_all("./src/tests/.tmp/unique_dir/folder").unwrap();
     let dir = Path::new("./src/tests/.tmp/unique_dir/folder");
-    let dir = twinkle_unique_dir(dir);
+    let dir = unique_dir(dir);
 
     assert_eq!(Path::new("./src/tests/.tmp/unique_dir/folder 2"), dir);
 
 
     fs::create_dir_all("./src/tests/.tmp/unique_dir/folder 2").unwrap();
     let dir = Path::new("./src/tests/.tmp/unique_dir/folder");
-    let dir = twinkle_unique_dir(dir);
+    let dir = unique_dir(dir);
 
     assert_eq!(Path::new("./src/tests/.tmp/unique_dir/folder 3"), dir);
 }

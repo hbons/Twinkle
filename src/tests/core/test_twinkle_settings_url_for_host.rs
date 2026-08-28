@@ -5,7 +5,7 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-use crate::twinkle::defaults::hosts::twinkle_host_ssh_settings_url;
+use crate::core::defaults::hosts::twinkle_host_ssh_settings_url;
 
 
 #[test]
