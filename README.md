@@ -148,6 +148,6 @@ Twinkle automatically adds `.twinkle/config` to the repository. This file contai
 
 ## 6. Links
 
-* [Hylke on Mastodon](https://mastodon.social/@hbons)
-* [planetpeanut.studio](https://planetpeanut.studio)
-* [sparkleshare.org](https://sparkleshare.org)
+* Fediverse ～ [@hbons@mastodon.social](https://mastodon.social/@hbons)
+* Matrix channel ～ [#sparkleshare:matrix.org](https://matrix.to/#/#sparkleshare:matrix.org)
+* Website ～ [sparkleshare.org](https://sparkleshare.org)
