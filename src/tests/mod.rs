@@ -32,16 +32,15 @@ mod git {
 
 #[cfg(test)]
 mod core {
-    mod test_twinkle_default_dir_name;
-    mod test_twinkle_default;
-    mod test_twinkle_init;
-    mod test_twinkle_object_repository;
-    mod test_twinkle_pretty_bool;
-    mod test_twinkle_pretty_commit_message;
-    mod test_twinkle_pretty_datetime;
-    mod test_twinkle_pretty_dir;
-    mod test_twinkle_resolve_paths;
-    mod test_twinkle_unique_dir;
-    mod test_twinkle_settings_url_for_host;
-    mod test_twinkle_sync;
+    mod test_default_dir_name;
+    mod test_default;
+    mod test_object_repository;
+    mod test_pretty_bool;
+    mod test_pretty_commit_message;
+    mod test_pretty_datetime;
+    mod test_pretty_dir;
+    mod test_resolve_paths;
+    mod test_unique_dir;
+    mod test_settings_url_for_host;
+    mod test_sync;
 }

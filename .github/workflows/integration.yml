@@ -42,20 +42,20 @@ jobs:
 
     - name: Test `init`
       run: |
-        cd src/tests/integration
+        cd tests
         ./test_init.sh
 
     - name: Test `clone`
       run: |
-        cd src/tests/integration
+        cd tests
         ./test_clone.sh
 
     - name: Test `clone_empty`
       run: |
-        cd src/tests/integration
+        cd tests
         ./test_clone_empty.sh
 
     - name: Test `sync`
       run: |
-        cd src/tests/integration
+        cd tests
         ./test_sync.sh
