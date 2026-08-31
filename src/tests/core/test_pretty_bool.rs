@@ -5,11 +5,14 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-use crate::ssh::util::version;
+use crate::core::pretty::format_bool;
 
 
 #[test]
-fn test_ssh_version() {
-    let ssh_version = version().unwrap();
-    assert!(ssh_version.starts_with("OpenSSH"));
+fn test_pretty_bool() {
+    let pretty_value = format_bool(true);
+    assert_eq!(pretty_value, "Yes".to_string());
+
+    let pretty_value = format_bool(false);
+    assert_eq!(pretty_value, "No".to_string());
 }

@@ -5,11 +5,14 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-use crate::ssh::util::version;
+use crate::core::defaults::hosts::host_ssh_settings_url;
 
 
 #[test]
-fn test_ssh_version() {
-    let ssh_version = version().unwrap();
-    assert!(ssh_version.starts_with("OpenSSH"));
+fn test_settings_url_for() {
+    let url = host_ssh_settings_url("github.com".to_string());
+    assert!(url.is_some());
+
+    let url = host_ssh_settings_url("asdfgasdfg".to_string());
+    assert!(url.is_none());
 }

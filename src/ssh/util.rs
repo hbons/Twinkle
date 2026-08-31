@@ -16,7 +16,7 @@ use super::objects::config::SshConfig;
 use super::objects::url::SshUrl;
 
 
-pub fn ssh_util_test_connection(url: &SshUrl, host_key: &HostKey, key_pair: Option<&KeyPair>) -> Result<(), Box<dyn Error>> {
+pub fn test_connection(url: &SshUrl, host_key: &HostKey, key_pair: Option<&KeyPair>) -> Result<(), Box<dyn Error>> {
     let mut config = SshConfig::default();
 
     if let Some(key_pair) = key_pair {
@@ -52,4 +52,16 @@ pub fn ssh_util_test_connection(url: &SshUrl, host_key: &HostKey, key_pair: Opti
         Some(n) => Err(format!("ssh exited with code {n}").into()),
         None => Err("Could not run ssh".into()),
     }
+}
+
+
+pub fn version() -> Option<String> {
+    Command::new("ssh").arg("-V")
+        .output()
+        .ok()
+        .map(|o|
+            String::from_utf8_lossy(
+                o.stderr.trim_ascii_end()
+            ).into()
+        )
 }

@@ -1,0 +1,48 @@
+//   Twinkle, automatic syncing with Git
+//   Copyright (C) 2025  Hylke Bons (hello@planetpeanut.studio)
+//
+//   This program is free software: you can redistribute it and/or modify it
+//   under the terms of the GNU General Public License v3 or any later version.
+
+
+use std::time::Duration;
+
+use crate::core::defaults::common::default_sync_up_delay_bump;
+use crate::core::defaults::common::default_sync_up_delay_max;
+use crate::core::sync::sync_up_delay;
+
+
+#[test]
+fn test_sync_up_delay() {
+    let attempts = 0;
+    let delay = sync_up_delay(attempts);
+    assert_eq!(delay, Duration::from_secs(0));
+
+    let attempts = 1;
+    let delay = sync_up_delay(attempts);
+    assert_eq!(delay, Duration::from_secs(0));
+
+
+    let attempts = 2;
+    let delay = sync_up_delay(attempts);
+    assert_eq!(delay,
+        Duration::from_secs(
+            default_sync_up_delay_bump().as_secs() * (attempts - 1)
+        )
+    );
+
+    let attempts = 5;
+    let delay = sync_up_delay(attempts);
+    assert_eq!(delay,
+        Duration::from_secs(
+            default_sync_up_delay_bump().as_secs() * (attempts - 1)
+        )
+    );
+
+
+    let attempts = 100;
+    let delay = sync_up_delay(attempts);
+    assert_eq!(delay,
+        default_sync_up_delay_max()
+    );
+}

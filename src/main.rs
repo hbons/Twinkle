@@ -18,7 +18,7 @@ pub mod gtk;
 pub mod gui;
 pub mod log;
 pub mod ssh;
-pub mod twinkle;
+pub mod core;
 
 mod tests;
 

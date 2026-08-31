@@ -37,4 +37,3 @@ pub mod objects {
 pub mod keygen;
 pub mod keyscan;
 pub mod util;
-pub mod version;

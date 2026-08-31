@@ -1,0 +1,42 @@
+//   Twinkle, automatic syncing with Git
+//   Copyright (C) 2025  Hylke Bons (hello@planetpeanut.studio)
+//
+//   This program is free software: you can redistribute it and/or modify it
+//   under the terms of the GNU General Public License v3 or any later version.
+
+
+use std::fs;
+use std::path::Path;
+
+use crate::core::util::unique_dir;
+
+
+#[test]
+fn test_unique_dir() {
+    let path = Path::new("./src/tests/.tmp/unique_dir");
+
+    if path.exists() {
+        fs::remove_dir_all(path).unwrap();
+    }
+
+    fs::create_dir_all(path).unwrap();
+
+    let dir = Path::new("./src/tests/.tmp/unique_dir/folder");
+    let dir = unique_dir(dir);
+
+    assert_eq!(Path::new("./src/tests/.tmp/unique_dir/folder"), dir);
+
+
+    fs::create_dir_all("./src/tests/.tmp/unique_dir/folder").unwrap();
+    let dir = Path::new("./src/tests/.tmp/unique_dir/folder");
+    let dir = unique_dir(dir);
+
+    assert_eq!(Path::new("./src/tests/.tmp/unique_dir/folder 2"), dir);
+
+
+    fs::create_dir_all("./src/tests/.tmp/unique_dir/folder 2").unwrap();
+    let dir = Path::new("./src/tests/.tmp/unique_dir/folder");
+    let dir = unique_dir(dir);
+
+    assert_eq!(Path::new("./src/tests/.tmp/unique_dir/folder 3"), dir);
+}

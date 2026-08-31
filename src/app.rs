@@ -11,7 +11,7 @@ use std::process::Command;
 
 use crate::git::objects::environment::GitEnvironment;
 use crate::log;
-use crate::ssh::version::ssh_version;
+use crate::ssh;
 
 
 #[derive(Debug)]
@@ -137,7 +137,7 @@ pub fn app_deps() -> String {
     let git = GitEnvironment::default();
 
     format!("{}\n{}\n{}",
-        ssh_version()
+        ssh::util::version()
             .unwrap_or("\x1b[31mOpenSSH: Not found (required)\x1b[0m".into()), // Red
         git.version
             .as_ref()

@@ -14,11 +14,7 @@ use crate::app::App;
 use crate::log;
 use crate::ssh::objects::url::SshUrl;
 
-use crate::twinkle::twinkle_clone::{
-    TwinkleCloneError,
-    twinkle_clone_complete,
-    twinkle_clone_start,
-};
+use crate::core::clone::{ self, TwinkleCloneError };
 
 
 impl App {
@@ -57,8 +53,8 @@ impl App {
             "Not a valid <path>"
         })?;
 
-        let mut repo = twinkle_clone_start(&ssh_url, None, &path)?;
-        twinkle_clone_complete(&mut repo, None)?;
+        let mut repo = clone::start(&ssh_url, None, &path)?;
+        clone::complete(&mut repo, None)?;
 
         if repo.git.lfs_version().is_none() {
             log::warning("git-lfs command not found");
@@ -67,7 +63,7 @@ impl App {
         Ok(())
 
         // loop {
-        //     match twinkle_clone_prepare(&ssh_url, &self.app_keys_dir) {
+        //     match clone::prepare(&ssh_url, &self.app_keys_dir) {
         //         Err(e) => match e.downcast_ref::<TwinkleCloneError>() {
         //             Some(TwinkleCloneError::NeedsNetwork) => {
         //                 println!("Could not connect to {}", ssh_url.host);
@@ -81,10 +77,10 @@ impl App {
         //                     host_key.host, cli_dimmed("–"), cli_dimmed(&fingerprint.to_string()));
 
         //                 io::stdout().flush()?;
-        //                 twinkle_hostkey_trust(host_key, &self.app_keys_dir)?;
+        //                 hostkey_trust(host_key, &self.app_keys_dir)?;
         //             },
         //             Some(TwinkleCloneError::NeedsAuth(host_key, key_pair)) => {
-        //                 let url = twinkle_settings_url_for(host_key.host.clone());
+        //                 let url = settings_url_for(host_key.host.clone());
         //                 let url = url.unwrap_or(&host_key.host);
         //                 let settings_url = cli_link(url, None);
 
@@ -103,8 +99,8 @@ impl App {
         //             None => return Err(e),
         //         },
         //         Ok(key_pair) => {
-        //             let mut repo = twinkle_clone_start(&ssh_url, &key_pair, &path)?;
-        //             twinkle_clone_complete(&mut repo, &key_pair)?;
+        //             let mut repo = clone::start(&ssh_url, &key_pair, &path)?;
+        //             clone::complete(&mut repo, &key_pair)?;
         //             self.config.add(&repo)?;
 
         //             return Ok(());

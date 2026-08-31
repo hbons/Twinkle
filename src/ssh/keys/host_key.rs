@@ -14,7 +14,7 @@ use std::path::PathBuf;
 use super::known_hosts::prelude::*;
 use super::fingerprint::Fingerprint;
 use super::key_type::KeyType;
-use super::super::keyscan::ssh_keyscan;
+use super::super::keyscan::scan_host;
 use super::super::objects::url::SshUrl;
 
 
@@ -43,10 +43,10 @@ impl HostKey {
                 "invent.kde.org"    => Ok(ssh_hostkey_kde()),
                 "ssh.dev.azure.com" => Ok(ssh_hostkey_devops()),
                 "git.code.sf.net"   => Ok(ssh_hostkey_sourceforge()),
-                _ => ssh_keyscan(url.host.as_str(), url.port, KeyType::ED25519),
+                _ => scan_host(url.host.as_str(), url.port, KeyType::ED25519),
             }
          } else {
-            ssh_keyscan(url.host.as_str(), url.port, key_type)
+            scan_host(url.host.as_str(), url.port, key_type)
          }
     }
 
