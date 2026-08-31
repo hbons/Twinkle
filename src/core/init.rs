@@ -177,7 +177,10 @@ fn init_lfs(
             None
         };
 
-    repo.git.lfs_config_filters(git_ssh_command.clone())?;
+    if repo.lfs_enabled() {
+        repo.git.lfs_config_set_filter(git_ssh_command.clone())?;
+    }
+
     repo.git.lfs_install_pre_push_hook(git_ssh_command.clone())?;
 
     Ok(())

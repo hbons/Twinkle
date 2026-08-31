@@ -200,11 +200,15 @@ fn sync_up(
         log::info(&format!("Attempt: {attempt}"));
         init::init_id(repo)?;
 
-        repo.git.lfs_config_filters(
-            Some(repo.git.GIT_SSH_COMMAND.clone())
-        )?;
-
         let lfs_enabled = repo.lfs_enabled();
+
+        if lfs_enabled {
+            repo.git.lfs_config_set_filter(
+                Some(repo.git.GIT_SSH_COMMAND.clone())
+            )?;
+        } else {
+            _ = repo.git.lfs_config_unset_filter();
+        }
 
         while let Some(status) = repo.git.status(GitStatusFilter::Unstaged) {
             for change in status {
@@ -242,7 +246,13 @@ fn sync_up(
             return Ok(());
         }
 
-        repo.git.lfs_install_pre_push_hook(Some(repo.git.GIT_SSH_COMMAND.clone()))?;
+        if lfs_enabled {
+            repo.git.lfs_install_pre_push_hook(
+                Some(repo.git.GIT_SSH_COMMAND.clone())
+            )?;
+        } else {
+            _ = repo.git.lfs_uninstall_pre_push_hook();
+        }
 
         let push = repo.git.push(&remote, &branch);
 

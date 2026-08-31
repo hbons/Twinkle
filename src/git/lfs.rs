@@ -26,7 +26,7 @@ impl GitEnvironment {
 
     /// Configures the LFS filters with GIT_SSH_COMMAND
     #[allow(non_snake_case)]
-    pub fn lfs_config_filters(&self, GIT_SSH_COMMAND: Option<String>) -> Result<(), Box<dyn Error>> {
+    pub fn lfs_config_set_filter(&self, GIT_SSH_COMMAND: Option<String>) -> Result<(), Box<dyn Error>> {
         let git_lfs = Path::new("git-lfs");
 
         let env = GIT_SSH_COMMAND
@@ -69,18 +69,26 @@ impl GitEnvironment {
         }
 
         let env = GIT_SSH_COMMAND
-            .map(|v| format!("env GIT_SSH_COMMAND='{v}' ")) // Note ending space
+            .map(|s| format!("env GIT_SSH_COMMAND='{s}' ")) // Note ending space
             .unwrap_or_default();
 
         let hook = format!(
-            "#!/bin/sh\n{}{} pre-push \"$@\"",
-            env,
-            git_lfs.display()
+            "#!/bin/sh\n{}{} pre-push \"$@\"", env, git_lfs.display()
         );
 
         let user_rwx = Permissions::from_mode(0o700);
         fs::write(&hook_path, hook)?;
         fs::set_permissions(&hook_path, user_rwx)?;
+
+        Ok(())
+    }
+
+
+    pub fn lfs_uninstall_pre_push_hook(&self) -> Result<(), Box<dyn Error>> {
+        let path_old = self.working_dir.join(".git/hooks/pre-push");
+        let path_new = self.working_dir.join(".git/hooks/pre-push.disabled");
+
+        fs::rename(path_old, path_new)?;
 
         Ok(())
     }
