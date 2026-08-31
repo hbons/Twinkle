@@ -11,7 +11,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  integration-tests:
+  tests:
     strategy:
       matrix:
         variant:
@@ -32,7 +32,7 @@ jobs:
     - name: Install
       run: cargo install --path .
 
-    - name: Info
+    - name: Versions
       run: |
         gh --version
         gh auth status
@@ -59,3 +59,13 @@ jobs:
       run: |
         cd tests
         ./test_sync.sh
+
+    - name: Test `lfs_clone`
+      run: |
+        cd tests/lfs
+        ./test_lfs_clone.sh
+
+    - name: Test `lfs_sync`
+      run: |
+        cd tests/lfs
+        ./test_lfs_sync.sh
