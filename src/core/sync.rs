@@ -37,7 +37,7 @@ pub fn prepare(
     // TODO: Error on invalid config. --local or --file
 
     if repo.lfs_enabled() &&
-       repo.git.lfs_version().is_none() {
+        repo.git.lfs_version().is_none() {
         return Err("Git LFS enabled but not installed".into());
     }
 
@@ -296,9 +296,8 @@ fn sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
     }
 
     if OS == "macos" { repo.git.config_set(K_CORE_IGNORE_CASE, "true")?; }
-    let merge = repo.git.merge(&"FETCH_HEAD".into());
 
-    if merge.is_err() {
+    if repo.git.merge(&"FETCH_HEAD".into()).is_err() {
         resolve::resolve_changes(repo)?;
     }
 
