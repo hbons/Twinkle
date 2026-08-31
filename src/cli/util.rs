@@ -15,7 +15,12 @@ use crate::git::objects::environment::GitEnvironment;
 
 impl App {
     /// Checks if the minimum amount of args have been passed
-    pub fn cli_require_args(&self, count: usize, args: &[String]) -> Result<(), Box<dyn Error>> {
+    pub fn cli_require_args(
+        &self,
+        count: usize,
+        args: &[String],
+    ) -> Result<(), Box<dyn Error>>
+    {
         if args.len() - 1 < count {
             self.cli_option_help();
             return Err(format!("Command requires {count} arguments").into());
@@ -25,9 +30,15 @@ impl App {
     }
 
     /// Finds the toplevel Git repository and returns the absolute path
-    pub fn cli_prepare_path(&self, path: &Path) -> Result<PathBuf, Box<dyn Error>> {
+    pub fn cli_prepare_path(
+        &self,
+        path: &Path,
+    ) -> Result<PathBuf, Box<dyn Error>>
+    {
         let path = fs::canonicalize(path)?;
-        GitEnvironment::new(&path).rev_parse_show_toplevel()
+
+        GitEnvironment::new(&path)
+            .rev_parse_show_toplevel()
     }
 }
 
