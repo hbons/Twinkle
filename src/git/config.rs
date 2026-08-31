@@ -73,6 +73,29 @@ impl GitEnvironment {
 
         self.run("config", &args).map(drop)
     }
+
+
+    pub fn config_unset(
+        &self,
+        name: &str,
+    ) -> Option<String>
+    {
+        let args = match self.version {
+            Some(GitVersion::Git3(_)) => &[
+                OsStr::new("--local"),
+                OsStr::new("unset"),
+                OsStr::new(name),
+            ],
+            _ => &[
+                OsStr::new("--local"),
+                OsStr::new("--unset"),
+                OsStr::new(name),
+            ],
+        };
+
+        self.run("config", args).ok()
+            .map(|o| Self::lossy_and_trim(&o.stdout))
+    }
 }
 
 
@@ -125,6 +148,32 @@ impl GitEnvironment {
         };
 
         self.run("config", &args).map(drop)
+    }
+
+
+    pub fn config_unset_with_file(
+        &self,
+        name: &str,
+        path: &Path,
+    ) -> Option<String>
+    {
+        let args = match self.version {
+            Some(GitVersion::Git3(_)) => &[
+                OsStr::new("--file"),
+                path.as_os_str(),
+                OsStr::new("unset"),
+                OsStr::new(name),
+            ],
+            _ => &[
+                OsStr::new("--file"),
+                path.as_os_str(),
+                OsStr::new("--unset"),
+                OsStr::new(name),
+            ],
+        };
+
+        self.run("config", args).ok()
+            .map(|o| Self::lossy_and_trim(&o.stdout))
     }
 }
 
