@@ -7,9 +7,10 @@
 
 use std::path::Path;
 
+use crate::core::pretty::format_commit_message;
 use crate::git::objects::change::GitChange;
 use crate::git::objects::status::GitFileStatus;
-use crate::twinkle::twinkle_pretty::twinkle_pretty_commit_message;
+
 
 #[test]
 fn test_pretty_commit_message() {
