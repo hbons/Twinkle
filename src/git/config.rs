@@ -78,7 +78,7 @@ impl GitEnvironment {
     pub fn config_unset(
         &self,
         name: &str,
-    ) -> Option<String>
+    ) -> Result<(), Box<dyn Error>>
     {
         let args = match self.version {
             Some(GitVersion::Git3(_)) => &[
@@ -155,7 +155,7 @@ impl GitEnvironment {
         &self,
         name: &str,
         path: &Path,
-    ) -> Option<String>
+    ) -> Result<(), Box<dyn Error>>
     {
         let args = match self.version {
             Some(GitVersion::Git3(_)) => &[
@@ -172,8 +172,7 @@ impl GitEnvironment {
             ],
         };
 
-        self.run("config", args).ok()
-            .map(|o| Self::lossy_and_trim(&o.stdout))
+        self.run("config", args).map(drop)
     }
 }
 
