@@ -14,6 +14,12 @@ use std::path::{ Path, PathBuf };
 use super::objects::environment::GitEnvironment;
 
 
+pub const K_FILTER_LFS_SMUDGE: &str   = "filter.lfs.smudge";
+pub const K_FILTER_LFS_CLEAN: &str    = "filter.lfs.clean";
+pub const K_FILTER_LFS_PROCESS: &str  = "filter.lfs.process";
+pub const K_FILTER_LFS_REQUIRED: &str = "filter.lfs.required";
+
+
 impl GitEnvironment {
     // Docs: https://git-lfs.com/
     //       https://github.com/git-lfs/git-lfs/security
@@ -33,12 +39,10 @@ impl GitEnvironment {
         let clean = &format!("{} clean -- %f", git_lfs.display());
         let filter_process = &format!("{} filter-process", git_lfs.display());
 
-        self.config_set("filter.lfs.smudge", smudge)?; // Runs on file commit
-        self.config_set("filter.lfs.clean", clean)?; // Runs on file checkout
-        self.config_set("filter.lfs.process", filter_process)?; // Prevents spawning many threads
-        self.config_set("filter.lfs.required", &true.to_string())?;
-
-        Ok(())
+        self.config_set(K_FILTER_LFS_SMUDGE, smudge)?; // Runs on file commit
+        self.config_set(K_FILTER_LFS_CLEAN, clean)?; // Runs on file checkout
+        self.config_set(K_FILTER_LFS_PROCESS, filter_process)?; // Prevents spawning many threads
+        self.config_set(K_FILTER_LFS_REQUIRED, &true.to_string())
     }
 
 
