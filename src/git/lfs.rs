@@ -46,6 +46,16 @@ impl GitEnvironment {
     }
 
 
+    pub fn lfs_config_unset_filter(&self) -> Result<(), Box<dyn Error>> {
+        self.config_unset(K_FILTER_LFS_SMUDGE)?;
+        self.config_unset(K_FILTER_LFS_CLEAN)?;
+        self.config_unset(K_FILTER_LFS_PROCESS)?;
+        self.config_unset(K_FILTER_LFS_REQUIRED)
+    }
+}
+
+
+impl GitEnvironment {
     /// Overwrites the pre-push hook and sets GIT_SSH_COMMAND
     #[allow(non_snake_case)]
     pub fn lfs_install_pre_push_hook(&self, GIT_SSH_COMMAND: Option<String>) -> Result<(), Box<dyn Error>> {
