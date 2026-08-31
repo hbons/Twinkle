@@ -18,9 +18,6 @@ twinkle clone \
     .
 
 mv $REPO_NAME $REPO_NAME_1
-cd $REPO_NAME_1
-# timeout 15s twinkle sync || true  # --once
-cd ..
 
 DEBUG=1 twinkle clone \
     git@github.com:$ACCOUNT/$REPO_NAME \
@@ -52,6 +49,7 @@ echo "---"
 
 
 # TODO: Test all conflict paths: AA, UU, AU, UA, DU, UD, DD, XX, QQ
+# create /tests/sync subdir
 
 # TODO: Doesn't work...
 # source ../common/test_synced.sh
