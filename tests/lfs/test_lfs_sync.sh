@@ -26,9 +26,10 @@ git config twinkle.lfs.enabled true
 git config twinkle.lfs.sizeThreshold 3m
 timeout 20s twinkle sync || true  # --once
 
+test -f .git/hooks/pre-push
+test -f .gitattributes
 test -f $SMALL_FILE
 test -f $LARGE_FILE
-test -f .gitattributes
 ! git lfs ls-files | grep $SMALL_FILE
 git lfs ls-files | grep $LARGE_FILE
 
