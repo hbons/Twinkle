@@ -12,7 +12,9 @@ use std::time::Duration;
 
 use chrono::Utc;
 
-use crate::git::objects::status_filter::GitStatusFilter; // TODO: Only git import here?
+use crate::git::objects::status::GitStatusFilter; // TODO: Only git import here?
+use crate::git::config::K_CORE_IGNORE_CASE;
+
 use crate::log;
 use crate::ssh;
 use crate::core::init;
@@ -293,14 +295,14 @@ fn sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
         repo.git.lfs_fetch()?;
     }
 
-    if OS == "macos" { repo.git.config_set("core.ignoreCase", "true")?; }
+    if OS == "macos" { repo.git.config_set(K_CORE_IGNORE_CASE, "true")?; }
     let merge = repo.git.merge(&"FETCH_HEAD".into());
 
     if merge.is_err() {
         resolve::resolve_changes(repo)?;
     }
 
-    if OS == "macos" { repo.git.config_set("core.ignoreCase", "false")?; }
+    if OS == "macos" { repo.git.config_set(K_CORE_IGNORE_CASE, "false")?; }
 
     log::info(&format!("✓ Fetched and merged. Now at {}", repo.current_head()?));
     Ok(())

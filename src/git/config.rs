@@ -14,7 +14,9 @@ use super::objects::environment::GitEnvironment;
 use super::objects::version::GitVersion;
 
 
+pub const K_CORE_IGNORE_CASE: &str = "core.ignoreCase";
 pub const K_CORE_SSH_COMMAND: &str = "core.sshCommand";
+
 pub const K_REMOTE_ORIGIN_URL: &str = "remote.origin.url";
 
 pub const K_USER_NAME: &str = "user.name";
