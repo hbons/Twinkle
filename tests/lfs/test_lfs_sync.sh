@@ -24,7 +24,7 @@ dd if=/dev/zero of=$LARGE_FILE bs=3M count=1
 
 git config twinkle.lfs.enabled true
 git config twinkle.lfs.sizeThreshold 3m
-timeout 20s twinkle sync || true  # --once
+TWINKLE_MAX_ATTEMPTS=1 twinkle sync
 
 test -f .git/hooks/pre-push
 test -f .gitattributes

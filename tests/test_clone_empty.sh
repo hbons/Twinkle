@@ -15,7 +15,7 @@ twinkle clone \
     .
 
 cd $REPO_NAME
-timeout 20s twinkle sync || true  # --once
+TWINKLE_MAX_ATTEMPTS=4 twinkle sync
 
 source ../common/test_synced.sh
 test -f TWINKLE.md

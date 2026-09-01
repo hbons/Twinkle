@@ -27,12 +27,12 @@ mv $REPO_NAME $REPO_NAME_2
 
 cd $REPO_NAME_2
 echo " ...a conflict!" >> README.md
-timeout 15s twinkle sync || true  # --once
+TWINKLE_MAX_ATTEMPTS=4 twinkle sync
 cd ..
 
 cd $REPO_NAME_1
 echo " Let's create..." >> README.md
-timeout 45s twinkle sync || true  # --once
+TWINKLE_MAX_ATTEMPTS=4 twinkle sync
 
 test -f README.md
 test -f "README (A).md"
