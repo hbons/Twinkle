@@ -6,6 +6,7 @@
 
 
 use std::error::Error;
+use std::env;
 use std::path::Path;
 use std::time::Duration;
 
@@ -47,9 +48,10 @@ impl App {
         let dir = pretty::format_dir(&repo.path);
         let remote_url = repo.remote_url().ok_or("Missing remote_url")?;
         let remote = cli_dimmed(&format!("– {}…\n", remote_url.original));
-        let once = false;
+
+        let once = env::var("TWINKLE_ONCE").ok();
 
         log::log(&format!("Syncing {} {}", cli_bold(&dir), remote));
-        sync::start(&mut repo, interval, once)
+        sync::start(&mut repo, interval, once.is_some())
     }
 }

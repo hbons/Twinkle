@@ -11,7 +11,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  tests:
+  integration:
     strategy:
       matrix:
         variant:
@@ -21,6 +21,7 @@ jobs:
             runner: macos-26
 
     runs-on: ${{ matrix.variant.runner }}
+    timeout-minutes: 8
 
     steps:
     - uses: actions/checkout@v7
@@ -36,30 +37,30 @@ jobs:
 
     - run: rm -Rf .git/
 
-    # - name: Test `init` # TODO
-    #   run: |
-    #     cd tests
-    #     ./test_init.sh
+    - name: Test `init`
+      run: |
+        cd tests
+        ./test_init.sh
 
-    # - name: Test `clone`
-    #   run: |
-    #     cd tests
-    #     ./test_clone.sh
+    - name: Test `clone`
+      run: |
+        cd tests
+        ./test_clone.sh
 
-    # - name: Test `clone_empty`
-    #   run: |
-    #     cd tests
-    #     ./test_clone_empty.sh
+    - name: Test `clone_empty`
+      run: |
+        cd tests
+        ./test_clone_empty.sh
 
     - name: Test `sync`
       run: |
         cd tests
         ./test_sync.sh
 
-    # - name: Test `lfs_clone`
-    #   run: |
-    #     cd tests/lfs
-    #     ./test_lfs_clone.sh
+    - name: Test `lfs_clone`
+      run: |
+        cd tests/lfs
+        ./test_lfs_clone.sh
 
     - name: Test `lfs_sync`
       run: |

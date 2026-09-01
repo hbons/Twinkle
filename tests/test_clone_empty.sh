@@ -15,7 +15,7 @@ twinkle clone \
     .
 
 cd $REPO_NAME
-TWINKLE_MAX_ATTEMPTS=4 twinkle sync
+TWINKLE_ONCE=1 twinkle sync
 
 source ../common/test_synced.sh
 test -f TWINKLE.md

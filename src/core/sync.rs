@@ -5,10 +5,8 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-use std::env;
 use std::env::consts::OS;
 use std::error::Error;
-use std::process;
 use std::thread;
 use std::time::Duration;
 
@@ -198,12 +196,6 @@ fn sync_up(
 {
     let mut attempt = 1;
 
-    let max_attempts =
-        env::var("TWINKLE_MAX_ATTEMPTS").ok()
-            .and_then(|s| s.parse::<u64>().ok())
-            .map(|i| i.clamp(1, 128))
-            .unwrap_or_default();
-
     loop {
         log::info(&format!("Attempt: {attempt}"));
         init::init_id(repo)?;
@@ -285,11 +277,7 @@ fn sync_up(
             break;
         }
 
-        if attempt == max_attempts {
-            process::exit(max_attempts as i32);
-        } else {
-            attempt += 1;
-        }
+        attempt += 1;
     }
 
     Ok(())

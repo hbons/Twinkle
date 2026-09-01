@@ -19,7 +19,7 @@ cd $REPO_NAME
 touch NEW_FILE
 touch NEW_FILE1
 touch NEW_FILE2
-TWINKLE_MAX_ATTEMPTS=4 twinkle sync
+TWINKLE_ONCE=1 twinkle sync
 
 source ../common/test_synced.sh
 twinkle check
