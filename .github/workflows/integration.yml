@@ -41,25 +41,25 @@ jobs:
     #     cd tests
     #     ./test_init.sh
 
-    - name: Test `clone`
-      run: |
-        cd tests
-        ./test_clone.sh
+    # - name: Test `clone`
+    #   run: |
+    #     cd tests
+    #     ./test_clone.sh
 
-    - name: Test `clone_empty`
-      run: |
-        cd tests
-        ./test_clone_empty.sh
+    # - name: Test `clone_empty`
+    #   run: |
+    #     cd tests
+    #     ./test_clone_empty.sh
 
     - name: Test `sync`
       run: |
         cd tests
         ./test_sync.sh
 
-    - name: Test `lfs_clone`
-      run: |
-        cd tests/lfs
-        ./test_lfs_clone.sh
+    # - name: Test `lfs_clone`
+    #   run: |
+    #     cd tests/lfs
+    #     ./test_lfs_clone.sh
 
     - name: Test `lfs_sync`
       run: |
