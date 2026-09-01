@@ -37,6 +37,7 @@ cd $REPO_NAME
 
 test -f .gitattributes
 test -f $LARGE_FILE
+[ $(wc -c < $LARGE_FILE) -eq 1048576 ]
 git config twinkle.lfs.enabled
 git lfs ls-files | grep $LARGE_FILE
 
