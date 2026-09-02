@@ -52,6 +52,9 @@ jobs:
     - name: Test `sync`
       run: cd tests && ./test_sync.sh
 
+    - name: Test `sync_empty`
+      run: cd tests && ./test_sync_empty.sh
+
     - name: Test `lfs_clone`
       run: cd tests/lfs && ./test_lfs_clone.sh
 
