@@ -25,5 +25,9 @@ TWINKLE_ONCE=1 twinkle sync
 test -f README.md
 test -f README2.md
 
+! twinkle init \
+    git@github.com:$ACCOUNT/$REPO_NAME \
+    .
+
 source ../common/test_synced.sh
 source ../common/cleanup.sh
