@@ -23,7 +23,7 @@ impl App {
         let path = Path::new(args.get(2).unwrap_or(&default_path));
         let path = self.cli_prepare_path(path)?;
 
-        let repo = TwinkleRepository::new(&path);
+        let repo = TwinkleRepository::new(&path)?;
         let path = pretty::format_dir(&path);
 
         println!();

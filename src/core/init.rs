@@ -11,6 +11,7 @@ use std::path::Path;
 
 use crate::ssh::keys::key_pair::KeyPair;
 use crate::ssh::objects::url::SshUrl;
+use crate::git::objects::environment::GitEnvironment;
 use crate::git::objects::user::GitUser;
 
 use super::defaults::common::COMMON_CONFIG_FILE;
@@ -29,13 +30,16 @@ pub fn init_repo(
     key_pair: Option<&KeyPair>,
 ) -> Result<TwinkleRepository, Box<dyn Error>>
 {
-    let repo = TwinkleRepository::new(path);
+    let git = GitEnvironment::new(path);
 
-    if repo.git.rev_parse_show_toplevel().is_ok() {
+    if git.rev_parse_show_toplevel().is_ok() {
         return Err("Already inside a Git repository".into());
     }
 
-    let branch = repo.git.init()?;
+    let branch = git.init()?;
+    drop(git);
+
+    let repo = TwinkleRepository::new(path)?;
     let remote = repo.remote(&branch);
     repo.set_remote_url(&remote, remote_url)?;
 

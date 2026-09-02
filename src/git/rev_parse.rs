@@ -35,7 +35,7 @@ impl GitEnvironment {
         ]);
 
         match rev_parse {
-            Err(_) => Err("No commits yet".into()),
+            Err(_) => Err("Not a Git repository".into()),
             Ok(output) => {
                 let s = OsStr::from_bytes(output.stdout.trim_ascii_end());
                 let path = Path::new(s).to_path_buf();

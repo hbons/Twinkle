@@ -78,7 +78,7 @@ pub fn start(
 
     let target_git = git.clone(url, Some(dir.as_ref()))?;
 
-    let mut repo = TwinkleRepository::new(&target_git.working_dir);
+    let mut repo = TwinkleRepository::new(&target_git.working_dir)?;
     repo.git = target_git;
 
     if let Ok(lfs_files) = repo.git.lfs_ls_files() {

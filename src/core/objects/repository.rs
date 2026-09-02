@@ -27,12 +27,15 @@ pub struct TwinkleRepository {
 
 
 impl TwinkleRepository {
-    pub fn new(path: &Path) -> Self {
-        Self {
+    pub fn new(path: &Path) -> Result<Self, Box<dyn Error>> {
+        let git = GitEnvironment::new(path);
+        git.rev_parse_show_toplevel()?;
+
+        Ok(Self {
             path: path.to_path_buf(),
-            git: GitEnvironment::new(path),
+            git,
             ..Default::default()
-        }
+        })
     }
 }
 

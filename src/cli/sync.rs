@@ -37,7 +37,7 @@ impl App {
             .and_then(|s| s.parse::<u64>().ok())
             .map(Duration::from_secs);
 
-        let mut repo = TwinkleRepository::new(&path);
+        let mut repo = TwinkleRepository::new(&path)?;
 
         if !repo.enabled() {
             return Err("Repository is disabled".into());
