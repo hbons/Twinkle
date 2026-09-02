@@ -30,21 +30,21 @@ pub fn init_repo(
     key_pair: Option<&KeyPair>,
 ) -> Result<TwinkleRepository, Box<dyn Error>>
 {
-    let git = GitEnvironment::new(path);
+    let branch = {
+        let git = GitEnvironment::new(path);
 
-    if git.rev_parse_show_toplevel().is_ok() {
-        return Err("Already inside a Git repository".into());
-    }
+        if git.rev_parse_show_toplevel().is_ok() {
+            return Err("Already inside a Git repository".into());
+        }
 
-    let branch = git.init()?;
-    drop(git);
+        git.init()?
+    };
 
     let repo = TwinkleRepository::new(path)?;
     let remote = repo.remote(&branch);
     repo.set_remote_url(&remote, remote_url)?;
 
     init_common(&repo, key_pair)?;
-
     init_id(&repo)?;
     init_first_commit(&repo)?;
 
