@@ -42,6 +42,7 @@ pub mod ls_remote;
 pub mod merge;
 pub mod merge_base;
 pub mod push;
+pub mod remote;
 pub mod rev_parse;
 pub mod rev_list;
 pub mod status;

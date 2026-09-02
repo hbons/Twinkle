@@ -26,7 +26,7 @@ use super::util;
 
 pub fn init_repo(
     path: &Path,
-    remote_url: &SshUrl,
+    url: &SshUrl,
     key_pair: Option<&KeyPair>,
 ) -> Result<TwinkleRepository, Box<dyn Error>>
 {
@@ -42,7 +42,8 @@ pub fn init_repo(
 
     let repo = TwinkleRepository::new(path)?;
     let remote = repo.remote(&branch);
-    repo.set_remote_url(&remote, remote_url)?;
+
+    repo.git.remote_add(&remote, url)?;
 
     init_common(&repo, key_pair)?;
     init_id(&repo)?;

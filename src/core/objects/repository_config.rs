@@ -114,15 +114,6 @@ impl TwinkleRepository {
                 s.trim().parse::<SshUrl>().ok()
             )
     }
-
-    pub fn set_remote_url(&self, remote: &str, value: &SshUrl) -> Result<(), Box<dyn Error>>{
-        self.git.config_set(
-            &format!("remote.{remote}.url"),
-            &value.to_string_standard(),
-        )?;
-
-        Ok(())
-    }
 }
 
 
