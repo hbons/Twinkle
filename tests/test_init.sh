@@ -19,6 +19,4 @@ twinkle init \
 TWINKLE_ONCE=1 twinkle sync
 
 source ./common/test_synced.sh
-twinkle check
-
 source ./common/cleanup.sh

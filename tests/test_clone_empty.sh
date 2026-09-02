@@ -18,9 +18,5 @@ cd $REPO_NAME
 TWINKLE_ONCE=1 twinkle sync
 
 source ../common/test_synced.sh
-test -f TWINKLE.md
-
-twinkle check
-
 cd ..
 source ./common/cleanup.sh

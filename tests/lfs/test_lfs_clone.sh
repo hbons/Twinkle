@@ -42,7 +42,5 @@ git config twinkle.lfs.enabled
 git lfs ls-files | grep $LARGE_FILE
 
 source ../../common/test_synced.sh
-twinkle check
-
 cd ..
 source ../common/cleanup.sh

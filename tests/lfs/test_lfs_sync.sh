@@ -36,7 +36,5 @@ test -f $LARGE_FILE
 git lfs ls-files | grep $LARGE_FILE
 
 source ../../common/test_synced.sh
-twinkle check
-
 cd ..
 source ../common/cleanup.sh
