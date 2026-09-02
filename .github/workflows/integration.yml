@@ -37,6 +37,9 @@ jobs:
 
     - run: rm -Rf .git/
 
+    - name: Test `init`
+      run: cd tests &&./test_init.sh
+
     - name: Test `init_empty`
       run: cd tests &&./test_init_empty.sh
 

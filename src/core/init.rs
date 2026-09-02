@@ -34,7 +34,7 @@ pub fn init_repo(
         let git = GitEnvironment::new(path);
 
         if git.rev_parse_show_toplevel().is_ok() {
-            return Err("Already inside a Git repository".into());
+            return Err("Already inside a Git repository".into()); // TODO: Check if this still works
         }
 
         git.init()?

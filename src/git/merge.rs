@@ -18,14 +18,18 @@ use super::objects::user::GitUser;
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-merge
 
-    pub fn merge(&self, ref_str: &GitReference) -> Result<(), Box<dyn Error>> {
+    pub fn merge(
+        &self,
+        ref_str: &GitReference,
+    ) -> Result<(), Box<dyn Error>>
+    {
         if self.is_in_merge() {
             // Note: Never use `git-merge --abort` as it can cause data loss
             return Err("Already in a merge".into());
         }
 
         let output = self.run("merge", &[
-            OsStr::new("-S"), // Sign the merge commit (not done implicitly on merge)
+            OsStr::new("--allow-unrelated-histories"),
             OsStr::new("--no-edit"), // Don't get blocked by interactive editors
             OsStr::new(ref_str),
         ])?;
@@ -38,7 +42,11 @@ impl GitEnvironment {
     }
 
 
-    pub fn merge_blame(&self, path: &Path) -> Result<GitUser, Box<dyn Error>> {
+    pub fn merge_blame(
+        &self,
+        path: &Path,
+    ) -> Result<GitUser, Box<dyn Error>>
+    {
         if !self.is_in_merge() {
             return Err("Not in a merge".into());
         }
