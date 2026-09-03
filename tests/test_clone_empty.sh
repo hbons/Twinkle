@@ -17,6 +17,10 @@ twinkle clone \
 cd $REPO_NAME
 TWINKLE_ONCE=1 twinkle sync
 
+! twinkle clone \
+    git@github.com:$ACCOUNT/$REPO_NAME \
+    .
+
 source ../common/test_synced.sh
 cd ..
 source ./common/cleanup.sh
