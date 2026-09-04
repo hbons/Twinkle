@@ -9,7 +9,7 @@ use std::env;
 use std::fmt::Debug;
 use std::process;
 
-use chrono::Utc;
+use chrono::Local;
 
 
 pub fn log(message: &str) {
@@ -60,6 +60,6 @@ fn format_line(message: &str) -> String {
 fn format_timestamp() -> String {
     // Docs: https://docs.rs/chrono/latest/chrono/format/strftime
 
-    let now = Utc::now();
+    let now = Local::now();
     now.format("%H:%M:%S").to_string()
 }
