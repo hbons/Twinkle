@@ -219,6 +219,8 @@ fn sync_up(
 
                 _ = repo.git.add(&change.path); // TODO: error get eaten and may cause an infinite loop
             }
+
+            thread::sleep(Duration::from_millis(500)); // Allow file activity to settle
         } // TODO: Prevent infinite loop here
 
         let branch = repo.git.branch_show_current()?;

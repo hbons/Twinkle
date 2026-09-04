@@ -8,6 +8,8 @@
 use std::error::Error;
 use std::fs;
 use std::path::{ Path, PathBuf };
+use std::thread;
+use std::time::Duration;
 
 use crate::git::objects::change::GitChange;
 use crate::git::objects::status::GitMergeStatus;
@@ -27,6 +29,8 @@ pub fn resolve_changes(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
         for change in changes {
             resolve(repo, &change)?;
         }
+
+        thread::sleep(Duration::from_millis(500)); // Allow file activity to settle
     } // TODO: Prevent infinite loop here
 
     repo.git.commit(repo.user(), "Resolve conflicts")?;
