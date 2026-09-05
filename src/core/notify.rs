@@ -28,16 +28,16 @@ pub fn watch(
     repo: &TwinkleRepository,
 ) -> Result<(), Box<dyn Error>>
 {
-    let (sender, receiver) = channel();
+    let (send, recv) = channel();
 
-    let mut watcher = RecommendedWatcher::new(sender, Config::default())?;
+    let mut watcher = RecommendedWatcher::new(send, Config::default())?;
     watcher.watch(&repo.path, RecursiveMode::Recursive)?;
 
     let mut prev_path = PathBuf::new();
     let timeout = Duration::from_millis(NOTIFY_TIMEOUT_MS);
 
     loop {
-        if let Ok(Ok(event)) = receiver.recv_timeout(timeout) {
+        if let Ok(Ok(event)) = recv.recv_timeout(timeout) {
             if repo.is_busy() {
                 continue;
             }
@@ -47,7 +47,7 @@ pub fn watch(
                     continue;
                 }
 
-                log::debug(&format!("Notify | Event: `{}`", path.to_string_lossy()));
+                log::debug(&format!("Notify | Event: `{path:?}`"));
                 repo.set_has_local_changes(true);
 
                 prev_path = path;
@@ -59,5 +59,10 @@ pub fn watch(
 
 fn should_ignore(path: &Path) -> bool {
     path.components()
-        .any(|c| c.as_os_str() == ".git")
+        .any(|c| {
+            let s = c.as_os_str();
+
+            s == ".git" ||
+            s == ".DS_Store"
+        })
 }
