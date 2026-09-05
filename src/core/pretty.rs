@@ -52,7 +52,7 @@ pub fn format_datetime(seconds_from_epoch: i64) -> String {
 
 
 // '+10, ~7, -3'
-// '~ "README.md"'
+// '~ `README.md`'
 pub fn format_commit_message(changes: &[GitChange]) -> Option<String> {
     let (mut added, mut modified, mut deleted) = (0, 0, 0);
     let mut file = String::new();
@@ -74,9 +74,9 @@ pub fn format_commit_message(changes: &[GitChange]) -> Option<String> {
 
     match added + modified + deleted {
         0 => None,
-        1 if added    == 1 => Some(format!("+ \"{file}\"")),
-        1 if modified == 1 => Some(format!("~ \"{file}\"")),
-        1 if deleted  == 1 => Some(format!("− \"{file}\"")),
+        1 if added    == 1 => Some(format!("+ `{file}`")),
+        1 if modified == 1 => Some(format!("~ `{file}`")),
+        1 if deleted  == 1 => Some(format!("− `{file}`")),
         _ => {
             let mut message = Vec::new();
             if added    > 0 { message.push(format!("+{added}")); }

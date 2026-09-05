@@ -25,7 +25,7 @@ fn test_pretty_commit_message() {
         }
     ];
 
-    assert_eq!(format_commit_message(&status), Some("+ \"test.txt\"".to_string()));
+    assert_eq!(format_commit_message(&status), Some("+ `test.txt`".to_string()));
 }
 
 
@@ -59,7 +59,7 @@ fn test_pretty_commit_message_copied() {
         }
     ];
 
-    assert_eq!(format_commit_message(&status), Some("+ \"test.txt\"".to_string()));
+    assert_eq!(format_commit_message(&status), Some("+ `test.txt`".to_string()));
 }
 
 
