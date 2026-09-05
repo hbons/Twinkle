@@ -86,11 +86,11 @@ impl fmt::Display for GitUser {
 pub struct GitUserName(String);
 
 impl GitUserName {
-    pub fn new(name: String) -> Result<Self, String> {
-        if name.trim().is_empty() {
+    pub fn new(s: String) -> Result<Self, String> {
+        if s.trim().is_empty() {
             Err("Name cannot be empty".into())
         } else {
-            Ok(Self(name.trim().into()))
+            Ok(Self(s.trim().into()))
         }
     }
 
@@ -110,9 +110,9 @@ impl Default for GitUserName {
 pub struct GitUserEmail(String);
 
 impl GitUserEmail {
-    pub fn new(email: String) -> Result<Self, String> {
-        if email.contains('@') {
-            Ok(Self(email.trim().into()))
+    pub fn new(s: String) -> Result<Self, String> {
+        if s.contains('@') {
+            Ok(Self(s.trim().into()))
         } else {
             Err("Invalid email address".into())
         }

@@ -14,8 +14,11 @@ use crate::ssh::objects::url::SshUrl;
 use crate::git::objects::environment::GitEnvironment;
 use crate::git::objects::user::GitUser;
 
-use super::defaults::common::COMMON_CONFIG_FILE;
-use super::defaults::common::{ COMMON_FIRST_COMMIT_MESSAGE, COMMON_FIRST_FILE };
+use super::defaults::common::{
+    COMMON_CONFIG_FILE,
+    COMMON_FIRST_COMMIT_MESSAGE,
+    COMMON_FIRST_FILE,
+};
 use super::defaults::config;
 use super::defaults::config::{ K_ID, key };
 use super::defaults::info;

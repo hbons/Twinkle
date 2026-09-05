@@ -5,7 +5,7 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-use sha2::{ Sha256, Digest };
+use sha2::{ Digest, Sha256 };
 use crate::core::objects::repository::TwinkleRepository;
 
 
