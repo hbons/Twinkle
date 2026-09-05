@@ -12,7 +12,7 @@ use std::time::Duration;
 
 use chrono::Utc;
 
-use crate::git::objects::status::GitStatusFilter; // TODO: Only git import here?
+use crate::git::objects::status::GitStatusFilter;
 use crate::git::config::K_CORE_IGNORE_CASE;
 
 use crate::log;
@@ -34,8 +34,6 @@ pub fn prepare(
     repo: &mut TwinkleRepository,
 ) -> Result<(), Box<dyn Error>>
 {
-    // TODO: Error on invalid config. --local or --file
-
     if repo.lfs_enabled() &&
         repo.git.lfs_version().is_none() {
         return Err("Git LFS enabled but not installed".into());

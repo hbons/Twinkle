@@ -59,9 +59,11 @@ pub fn ssh_command(key_pair: Option<&KeyPair>) -> String {
 
 /// Generates a random 256-bit (64 chars) hex string
 pub fn random_id() -> Result<String, Box<dyn Error>> {
+    // TODO: Use portable SystemRng.fill_bytes(&mut buf) when in stable
+    // See: https://doc.rust-lang.org/std/random/struct.SystemRng.html
     let mut file = File::open("/dev/urandom")?;
 
-    let mut buffer = [0u8; 32];
+    let mut buffer = [0u8; 32]; // 32 bytes of 8-bits
     file.read_exact(&mut buffer)?;
 
     let mut hash = String::with_capacity(64);

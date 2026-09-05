@@ -16,7 +16,7 @@ use super::user::GitUser;
 pub struct GitCommit {
     pub id: String,
     pub timestamp: DateTime<Utc>,
-    pub signature: Option<String>, // TODO
+    pub signature: Option<String>,
 
     pub author: GitUser,
     pub message: GitCommitMessage,

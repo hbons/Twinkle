@@ -32,7 +32,7 @@ gnome = [
 ]
 
 [[bin]]
-name = "twinkle"  # TODO: sparkleshare
+name = "twinkle"
 path = "src/main.rs"
 
 [profile.release]
