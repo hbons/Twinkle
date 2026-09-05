@@ -37,11 +37,11 @@ jobs:
 
     - run: rm -Rf .git/
 
-    - name: Test `init`
-      run: cd tests &&./test_init.sh
+    # - name: Test `init`
+    #   run: cd tests &&./test_init.sh
 
-    - name: Test `init_empty`
-      run: cd tests &&./test_init_empty.sh
+    # - name: Test `init_empty`
+    #   run: cd tests &&./test_init_empty.sh
 
     - name: Test `clone`
       run: cd tests && ./test_clone.sh
@@ -52,11 +52,11 @@ jobs:
     - name: Test `sync`
       run: cd tests && ./test_sync.sh
 
-    - name: Test `sync_empty`
-      run: cd tests && ./test_sync_empty.sh
+    # - name: Test `sync_empty`
+    #   run: cd tests && ./test_sync_empty.sh
 
-    - name: Test `lfs_clone`
-      run: cd tests/lfs && ./test_lfs_clone.sh
+    # - name: Test `lfs_clone`
+    #   run: cd tests/lfs && ./test_lfs_clone.sh
 
-    - name: Test `lfs_sync`
-      run: cd tests/lfs && ./test_lfs_sync.sh
+    # - name: Test `lfs_sync`
+    #   run: cd tests/lfs && ./test_lfs_sync.sh

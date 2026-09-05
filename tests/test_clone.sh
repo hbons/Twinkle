@@ -12,8 +12,7 @@ gh repo create \
     --add-readme
 
 twinkle clone \
-    git@github.com:$ACCOUNT/$REPO_NAME \
-    .
+    git@github.com:$ACCOUNT/$REPO_NAME
 
 cd $REPO_NAME
 touch NEW_FILE

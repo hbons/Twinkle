@@ -5,10 +5,8 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-use std::env;
 use std::error::Error;
-use std::fs;
-use std::path::PathBuf;
+use std::path::Path;
 
 use crate::app::App;
 use crate::log;
@@ -43,17 +41,10 @@ impl App {
             "Not a valid <user@host:path>"
         })?;
 
-        let path = match args.get(3) {
-            Some(s) => PathBuf::from(s),
-            None => env::current_dir()?,
-        };
+        let path = args.get(3)
+            .map(Path::new);
 
-        let path = fs::canonicalize(path).map_err(|_| {
-            Self::cli_command_clone_usage();
-            "Not a valid <path>"
-        })?;
-
-        let mut repo = clone::start(&ssh_url, None, &path)?;
+        let mut repo = clone::start(&ssh_url, None, path)?;
         clone::complete(&mut repo, None)?;
 
         if repo.git.lfs_version().is_none() {
