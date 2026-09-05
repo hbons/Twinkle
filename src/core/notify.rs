@@ -5,7 +5,8 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-use std::path::PathBuf;
+use std::error::Error;
+use std::path::{ Path, PathBuf };
 use std::sync::mpsc::channel;
 use std::time::Duration;
 
@@ -13,44 +14,50 @@ use notify::{
     Config,
     RecommendedWatcher,
     RecursiveMode,
-    Result,
     Watcher,
 };
 
-use crate::log;
 use crate::core::objects::repository::TwinkleRepository;
+use crate::log;
 
 
-pub fn watch(repo: &TwinkleRepository) -> Result<()> {
+const NOTIFY_TIMEOUT_MS: u64 = 500;
+
+
+pub fn watch(
+    repo: &TwinkleRepository,
+) -> Result<(), Box<dyn Error>>
+{
     let (sender, receiver) = channel();
-    let mut watcher = RecommendedWatcher::new(sender, Config::default())?;
 
+    let mut watcher = RecommendedWatcher::new(sender, Config::default())?;
     watcher.watch(&repo.path, RecursiveMode::Recursive)?;
 
+    let mut prev_path = PathBuf::new();
+    let timeout = Duration::from_millis(NOTIFY_TIMEOUT_MS);
+
     loop {
-        if let Ok(event) = receiver.recv_timeout(Duration::from_millis(500)) {
+        if let Ok(Ok(event)) = receiver.recv_timeout(timeout) {
             if repo.is_busy() {
                 continue;
             }
 
-            let mut prev_path = PathBuf::new();
-
-            if let Ok(event) = event {
-                for path in event.paths {
-                    if path.components().any(|c| c.as_os_str() == ".git") {
-                        continue;
-                    }
-
-                    if path == prev_path {
-                        continue;
-                    }
-
-                    log::debug(&format!("Notify | Detected a change: `{}`", path.to_string_lossy()));
-                    repo.set_has_local_changes(true);
-
-                    prev_path = path;
+            for path in event.paths {
+                if path == prev_path || should_ignore(&path) {
+                    continue;
                 }
+
+                log::debug(&format!("Notify | Event: `{}`", path.to_string_lossy()));
+                repo.set_has_local_changes(true);
+
+                prev_path = path;
             }
         }
     }
+}
+
+
+fn should_ignore(path: &Path) -> bool {
+    path.components()
+        .any(|c| c.as_os_str() == ".git")
 }
