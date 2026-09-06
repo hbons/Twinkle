@@ -42,7 +42,7 @@ impl App {
         })?;
 
         let path = args.get(3)
-            .map(Path::new); // TODO: cloning "." broke. test for this and "../"
+            .map(Path::new); // TODO: cloning "." broke. test for this and "../". canonicalize if exists
 
         let mut repo = clone::start(&ssh_url, None, path)?;
         clone::complete(&mut repo, None)?;
