@@ -12,16 +12,7 @@ use std::io::Read;
 use std::path::{ Path, PathBuf };
 
 use crate::ssh::objects::config::SshConfig;
-use crate::ssh::objects::url::SshUrl;
 use crate::ssh::keys::key_pair::KeyPair;
-
-
-// "ssh://git@github.com:hbons/Twinkle" -> "Twinkle"
-// "ssh://git@github.com:hbons"         -> "hbons"
-pub fn default_dir_name(url: &SshUrl) -> Result<PathBuf, Box<dyn Error>> {
-    let dir = url.path.file_stem().ok_or("Could not determine path")?;
-    Ok(PathBuf::from(dir))
-}
 
 
 // "Projects/Folder" exists?   -> "Projects/Folder 2"
