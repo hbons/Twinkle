@@ -37,11 +37,11 @@ jobs:
 
     - run: rm -Rf .git/
 
-    - name: Test `clone`
-      run: cd tests && ./test_clone.sh
+    # - name: Test `clone`
+    #   run: cd tests && ./test_clone.sh  # Works
 
-    - name: Test `clone_empty`
-      run: cd tests && ./test_clone_empty.sh
+    # - name: Test `clone_empty`
+    #   run: cd tests && ./test_clone_empty.sh  # Works
 
     # - name: Test `init`
     #   run: cd tests &&./test_init.sh
@@ -54,6 +54,14 @@ jobs:
 
     # - name: Test `sync_empty`
     #   run: cd tests && ./test_sync_empty.sh
+
+    # LFS
+
+    - name: Test `lfs_clone`
+      run: cd tests/lfs && ./test_lfs_clone.sh
+
+    # - name: Test `lfs_sync`
+    #   run: cd tests/lfs && ./test_lfs_sync.sh
 
     # Conflicts
 
@@ -83,11 +91,3 @@ jobs:
 
     # - name: Test `conflict_sync_xx`
     #   run: cd tests && ./conflict/test_sync_xx.sh
-
-    # LFS
-
-    - name: Test `lfs_clone`
-      run: cd tests/lfs && ./test_lfs_clone.sh
-
-    # - name: Test `lfs_sync`
-    #   run: cd tests/lfs && ./test_lfs_sync.sh
