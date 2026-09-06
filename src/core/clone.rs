@@ -6,6 +6,7 @@
 
 
 use std::error::Error;
+use std::env;
 use std::fmt;
 use std::path::Path;
 
@@ -60,11 +61,11 @@ pub fn prepare_keys(
 pub fn start(
     url: &SshUrl,
     key_pair: Option<&KeyPair>,
-    path: &Path,
+    path: Option<&Path>,
 ) -> Result<TwinkleRepository, Box<dyn Error>>
 {
     let git = GitEnvironment {
-        working_dir: path.to_path_buf(),
+        working_dir: env::current_dir()?,
         GIT_SSH_COMMAND: util::ssh_command(key_pair),
         ..Default::default()
     };
@@ -73,10 +74,14 @@ pub fn start(
         return Err("Already inside a Git repository".into());
     }
 
-    let dir = util::default_dir_name(url)?;
-    let dir = util::unique_dir(&dir);
+    let dir = if let Some(p) = path {
+        util::unique_dir(p)
+    } else {
+        let d = url.path.file_stem().ok_or("Could not determine path")?;
+        util::unique_dir(Path::new(&d))
+    };
 
-    let target_git = git.clone(url, Some(dir.as_ref()))?;
+    let target_git = git.clone(url, &dir)?;
 
     let mut repo = TwinkleRepository::new(&target_git.working_dir)?;
     repo.git = target_git;

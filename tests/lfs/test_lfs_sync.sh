@@ -11,9 +11,7 @@ gh repo create \
     --private \
     --add-readme
 
-twinkle clone \
-    git@github.com:$ACCOUNT/$REPO_NAME \
-    .
+twinkle clone git@github.com:$ACCOUNT/$REPO_NAME
 
 cd $REPO_NAME
 

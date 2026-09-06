@@ -29,9 +29,7 @@ git push origin main
 cd ..
 rm -Rf $REPO_NAME
 
-twinkle clone \
-    git@github.com:$ACCOUNT/$REPO_NAME \
-    .
+twinkle clone git@github.com:$ACCOUNT/$REPO_NAME
 
 cd $REPO_NAME
 

@@ -11,15 +11,15 @@ gh repo create \
     --private \
     --add-readme
 
-twinkle clone \
-    git@github.com:$ACCOUNT/$REPO_NAME \
-    .
+
+twinkle clone git@github.com:$ACCOUNT/$REPO_NAME
 
 cd $REPO_NAME
 touch NEW_FILE
-touch NEW_FILE1
 touch NEW_FILE2
+touch NEW_FILE3
 TWINKLE_ONCE=1 twinkle sync
+
 
 source ../common/test_synced.sh
 cd ..

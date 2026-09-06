@@ -19,32 +19,35 @@ impl GitEnvironment {
     pub fn clone(
         &self,
         url: &SshUrl,
-        directory: Option<&Path>,
+        target_dir: &Path,
     ) -> Result<GitEnvironment, Box<dyn Error>>
     {
         let url_str = url.to_string_standard();
 
-        let mut args = vec![
+        let args = vec![
             OsStr::new("--no-checkout"),
             OsStr::new("--progress"),
             OsStr::new("--"), // Safety: No more flags coming after this
             OsStr::new(&url_str),
+            OsStr::new(&target_dir),
         ];
 
-        if let Some(dir) = directory {
-            args.push(dir.as_os_str());
-        }
-
         self.run("clone", &args)?;
-
-        let dir_name = if let Some(d) = directory {
-            d.file_name().ok_or("Could not get name from path")?
-        } else {
-            url.path.file_name().ok_or("Could not get name from url")?
-        };
-
         let mut git = Clone::clone(self);
-        git.working_dir = self.working_dir.join(dir_name);
+
+        // TODO: we need to add a integration test cloning to relative and absolute path arg
+
+        git.working_dir = {
+            if target_dir.is_absolute() {
+                target_dir.to_path_buf()
+            } else {
+                let dir_name = target_dir
+                    .file_name()
+                    .ok_or("Could not get name from path")?;
+
+                self.working_dir.join(dir_name)
+            }
+        };
 
         Ok(git)
     }

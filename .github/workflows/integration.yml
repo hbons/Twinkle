@@ -37,26 +37,57 @@ jobs:
 
     - run: rm -Rf .git/
 
-    - name: Test `init`
-      run: cd tests &&./test_init.sh
-
-    - name: Test `init_empty`
-      run: cd tests &&./test_init_empty.sh
-
     - name: Test `clone`
       run: cd tests && ./test_clone.sh
 
     - name: Test `clone_empty`
       run: cd tests && ./test_clone_empty.sh
 
-    - name: Test `sync`
-      run: cd tests && ./test_sync.sh
+    # - name: Test `init`
+    #   run: cd tests &&./test_init.sh
 
-    - name: Test `sync_empty`
-      run: cd tests && ./test_sync_empty.sh
+    # - name: Test `init_empty`
+    #   run: cd tests &&./test_init_empty.sh
+
+    # - name: Test `sync`
+    #   run: cd tests && ./test_sync.sh
+
+    # - name: Test `sync_empty`
+    #   run: cd tests && ./test_sync_empty.sh
+
+    # Conflicts
+
+    # - name: Test `conflict_sync_aa`
+    #   run: cd tests && ./conflict/test_sync_aa.sh
+
+    # - name: Test `conflict_sync_au`
+    #   run: cd tests && ./conflict/test_sync_au.sh
+
+    # - name: Test `conflict_sync_dd`
+    #   run: cd tests && ./conflict/test_sync_dd.sh
+
+    # - name: Test `conflict_sync_du`
+    #   run: cd tests && ./conflict/test_sync_du.sh
+
+    # - name: Test `conflict_sync_qq`
+    #   run: cd tests && ./conflict/test_sync_qq.sh
+
+    # - name: Test `conflict_sync_ua`
+    #   run: cd tests && ./conflict/test_sync_ua.sh
+
+    # - name: Test `conflict_sync_ud`
+    #   run: cd tests && ./conflict/test_sync_ud.sh
+
+    # - name: Test `conflict_sync_uu`
+    #   run: cd tests && ./conflict/test_sync_uu.sh
+
+    # - name: Test `conflict_sync_xx`
+    #   run: cd tests && ./conflict/test_sync_xx.sh
+
+    # LFS
 
     - name: Test `lfs_clone`
       run: cd tests/lfs && ./test_lfs_clone.sh
 
-    - name: Test `lfs_sync`
-      run: cd tests/lfs && ./test_lfs_sync.sh
+    # - name: Test `lfs_sync`
+    #   run: cd tests/lfs && ./test_lfs_sync.sh

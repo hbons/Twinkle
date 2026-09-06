@@ -10,16 +10,15 @@ gh repo create \
     $REPO_NAME \
     --private
 
-twinkle clone \
-    git@github.com:$ACCOUNT/$REPO_NAME \
-    .
+
+twinkle clone git@github.com:$ACCOUNT/$REPO_NAME
 
 cd $REPO_NAME
 TWINKLE_ONCE=1 twinkle sync
 
 ! twinkle clone \
-    git@github.com:$ACCOUNT/$REPO_NAME \
-    .
+    git@github.com:$ACCOUNT/$REPO_NAME
+
 
 source ../common/test_synced.sh
 cd ..
