@@ -7,7 +7,7 @@ repository = "https://www.github.com/hbons/Twinkle"
 authors = ["Hylke Bons <hello@planetpeanut.studio>"]
 license = "GPL-3.0-or-later"
 readme = "README.md"
-edition = "2021"
+edition = "2024"
 keywords = ["dropbox", "git", "gtk", "network", "sync"]
 categories = ["command-line-utilities", "development-tools",
     "filesystem", "game-development", "network-programming"]

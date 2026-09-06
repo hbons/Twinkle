@@ -13,7 +13,9 @@ use crate::core::pretty::format_dir;
 
 #[test]
 fn test_pretty_dir() {
-    env::set_var("HOME", "/home/hbons");
+    unsafe {
+        env::set_var("HOME", "/home/hbons");
+    }
 
     let path = Path::new("/home/hbons/Projects");
     let dir = format_dir(path);
