@@ -71,8 +71,8 @@ jobs:
     # - name: Test `conflict_sync_au`
     #   run: cd tests && ./conflict/test_sync_au.sh
 
-    # - name: Test `conflict_sync_dd`
-    #   run: cd tests && ./conflict/test_sync_dd.sh
+    - name: Test `conflict_sync_dd`
+      run: cd tests && ./conflict/test_sync_dd.sh
 
     # - name: Test `conflict_sync_du`
     #   run: cd tests && ./conflict/test_sync_du.sh

@@ -4,9 +4,9 @@ set -euo pipefail
 source ./common/config.sh
 source ./common/install_keys.sh
 
-REPO_NAME=test_sync_uu_$TAG
-REPO_NAME_1=test_sync_uu_"$TAG"_1
-REPO_NAME_2=test_sync_uu_"$TAG"_2
+REPO_NAME=test_sync_dd_$TAG
+REPO_NAME_1=test_sync_dd_"$TAG"_1
+REPO_NAME_2=test_sync_dd_"$TAG"_2
 
 gh repo create \
     $REPO_NAME \
@@ -26,27 +26,15 @@ mv $REPO_NAME $REPO_NAME_2
 
 
 cd $REPO_NAME_2
-echo " ...a conflict!" >> README.md
+rm README.md
 TWINKLE_ONCE=1 twinkle sync
 cd ..
 
 cd $REPO_NAME_1
-echo " Let's create..." >> README.md
+rm README.md
 TWINKLE_ONCE=1 twinkle sync
 
-
-test -f README.md
-test -f "README (A).md"
-test -f "README (B).md"
-
-echo "--- README.md ---"
-cat README.md
-printf '\n'
-echo "--- README (A).md ---"
-cat "README (A).md"
-echo "--- README (B).md ---"
-cat "README (B).md"
-echo "---"
+! test -f README.md
 
 
 # TODO: Doesn't work...
