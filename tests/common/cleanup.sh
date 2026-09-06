@@ -15,7 +15,7 @@ gh repo delete \
     --yes
 
 gh api -X DELETE "user/keys/$KEY_ID"
-gh api -X DELETE "user/ssh_signing_keys/$SIGNING_KEY_ID"
+# gh api -X DELETE "user/ssh_signing_keys/$SIGNING_KEY_ID"  # TODO: Clean up when we test signing
 
 rm -f "$KEY_FILE"
 rm -f "$KEY_FILE.pub"
