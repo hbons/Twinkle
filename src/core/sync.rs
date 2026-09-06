@@ -83,16 +83,21 @@ pub fn start(
 {
     prepare(repo)?;
 
+    if once {
+        repo.set_has_remote_changes(true);
+    }
+
+    if has_unpushed_commits(repo) ||
+       repo.git.status(GitStatusFilter::All).is_some() {
+        repo.set_has_local_changes(true);
+    }
+
     let repo_c1 = repo.clone();
     let repo_c2 = repo.clone();
     let mut repo_c3 = repo.clone();
     thread::spawn(move || { _ = notify::watch(&repo_c1); });
     thread::spawn(move || { _ = watch_local(&repo_c2); });
     thread::spawn(move || { _ = watch_remote(&mut repo_c3, interval); });
-
-    if has_unpushed_commits(repo) {
-        repo.set_has_local_changes(true);
-    }
 
     let mut start_sync = false;
 

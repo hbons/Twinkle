@@ -40,8 +40,7 @@ cd ..
 
 
 cd $REPO_NAME_1
-# TWINKLE_ONCE=1 twinkle sync
-git pull
+TWINKLE_ONCE=1 twinkle sync
 test -f README.md
 test -f README2.md
 
