@@ -11,8 +11,7 @@
 
 #[cfg(test)]
 mod core {
-    mod test_default_dir_name; // TODO: test_core_?
-    mod test_default;
+    mod test_default; // TODO: test_core_?
     mod test_object_repository;
     mod test_pretty_bool;
     mod test_pretty_commit_message;
