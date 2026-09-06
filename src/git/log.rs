@@ -26,13 +26,13 @@ impl GitEnvironment {
 
     pub fn log(&self, count: usize) -> Result<Vec<GitCommit>, Box<dyn Error>> {
         let output = self.run("log", &[
+            OsStr::new("-z"), // Single line, NUL-separated
             OsStr::new("--date=unix"), // Seconds since epoch
             OsStr::new(&format!("--max-count={count}")),
             OsStr::new("--name-status"), // List files with change type
             OsStr::new("--no-color"),
             OsStr::new("--no-decorate"), // Don't show the (tracking) branch
             OsStr::new("--no-merges"),
-            OsStr::new("-z"), // Single line, NUL-separated
         ])?;
 
         let mut first = true;

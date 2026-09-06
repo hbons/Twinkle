@@ -54,8 +54,8 @@ impl GitEnvironment {
     ) -> Result<Vec<GitChange>, Box<dyn Error>>
     {
         let output = self.run("status", &[
-            OsStr::new("--porcelain=v1"),
             OsStr::new("-z"), // Single line, NUL-separated
+            OsStr::new("--porcelain=v1"),
             extra_arg.unwrap_or_default(),
         ])?;
 

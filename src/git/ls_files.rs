@@ -42,8 +42,8 @@ impl GitEnvironment {
 
     pub fn ls_files_killed(&self) -> Result<Vec<PathBuf>, Box<dyn Error>>{
         let output = self.run("ls-files", &[
-            OsStr::new("--killed"), // Lists problematic untracked paths that block a proper checkout
             OsStr::new("-z"), // Single line, NUL-separated
+            OsStr::new("--killed"), // Lists problematic untracked paths that block a proper checkout
         ])?;
 
         Ok(output_to_paths(&output.stdout))
