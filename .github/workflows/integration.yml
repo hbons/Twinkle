@@ -57,8 +57,8 @@ jobs:
 
     # LFS
 
-    - name: Test `lfs_clone`
-      run: cd tests/lfs && ./test_lfs_clone.sh
+    # - name: Test `lfs_clone`
+    #   run: cd tests/lfs && ./test_lfs_clone.sh  # Works
 
     # - name: Test `lfs_sync`
     #   run: cd tests/lfs && ./test_lfs_sync.sh

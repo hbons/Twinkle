@@ -115,7 +115,9 @@ pub fn start(
             match sync_up(repo) {
                 Ok(_) => {
                     repo.set_has_local_changes(false);
-                    repo.set_last_synced(Utc::now().timestamp())?;
+
+                    let now = Utc::now().timestamp();
+                    repo.set_last_synced(now)?;
                 },
                 Err(e) => log::error(&e.to_string()),
             }
@@ -125,7 +127,9 @@ pub fn start(
             match sync_down(repo) {
                 Ok(_) => {
                     repo.set_has_remote_changes(false);
-                    repo.set_last_synced(Utc::now().timestamp())?;
+
+                    let now = Utc::now().timestamp();
+                    repo.set_last_synced(now)?;
                 },
                 Err(e) => log::error(&e.to_string()),
             }
@@ -174,7 +178,8 @@ pub fn watch_remote(
                 repo.set_has_remote_changes(true);
             }
 
-            repo.set_last_checked(Utc::now().timestamp())?;
+            let now = Utc::now().timestamp();
+            repo.set_last_checked(now)?;
         }
 
         thread::sleep(interval); // TODO: Compare to repo.last_checked() so we can detect wake from sleep

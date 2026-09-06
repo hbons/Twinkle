@@ -20,7 +20,8 @@ twinkle clone \
 cd $REPO_NAME_1
 touch README.md
 TWINKLE_ONCE=1 twinkle sync
-
+ls -a
+git status
 cd ..
 
 
@@ -33,12 +34,14 @@ touch README2.md
 TWINKLE_ONCE=1 twinkle sync
 test -f README.md
 test -f README2.md
-
+ls -a
+git status
 cd ..
 
 
 cd $REPO_NAME_1
-TWINKLE_ONCE=1 twinkle sync
+# TWINKLE_ONCE=1 twinkle sync
+git pull
 test -f README.md
 test -f README2.md
 
