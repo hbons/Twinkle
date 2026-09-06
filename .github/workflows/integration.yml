@@ -49,8 +49,8 @@ jobs:
     # - name: Test `init_empty`
     #   run: cd tests &&./test_init_empty.sh
 
-    # - name: Test `sync`
-    #   run: cd tests && ./test_sync.sh
+    - name: Test `sync`
+      run: cd tests && ./test_sync.sh
 
     # - name: Test `sync_empty`
     #   run: cd tests && ./test_sync_empty.sh
