@@ -11,15 +11,16 @@ use std::os::unix::ffi::OsStrExt;
 use std::path::{ Path, PathBuf };
 
 use super::objects::environment::GitEnvironment;
+use super::objects::reference::GitReference;
 
 
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-rev-parse
 
-    pub fn rev_parse(&self) -> Result<String, Box<dyn Error>> {  // TODO: GitID
+    pub fn rev_parse(&self, reference: &GitReference) -> Result<String, Box<dyn Error>> {  // TODO: return GitID
         let rev_parse = self.run("rev-parse", &[
             OsStr::new("--verify"),
-            OsStr::new("HEAD"),
+            OsStr::new(&reference),
         ]);
 
         match rev_parse {

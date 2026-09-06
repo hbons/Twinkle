@@ -62,7 +62,7 @@ impl TwinkleRepository {
 
     /// Current long commit hash
     pub fn current_head(&self) -> Result<GitReference, Box<dyn Error>> {
-        self.git.rev_parse()
+        self.git.rev_parse(&"HEAD".into())
     }
 
 
@@ -82,7 +82,7 @@ impl TwinkleRepository {
 
 
     pub fn is_empty(&self) -> bool {
-        self.git.rev_parse().is_err()
+        self.git.rev_parse(&"HEAD".into()).is_err()
     }
 }
 
