@@ -1,12 +1,19 @@
 #!/usr/bin/env bash
 
+#   Twinkle, automatic syncing with Git
+#   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
+#
+#   This program is free software: you can redistribute it and/or modify it
+#   under the terms of the GNU General Public License v3 or any later version.
+
+
 set -euo pipefail
 source ./common/config.sh
 source ./common/install_keys.sh
 
-REPO_NAME=test_sync_uu_$TAG
-REPO_NAME_1=test_sync_uu_"$TAG"_1
-REPO_NAME_2=test_sync_uu_"$TAG"_2
+REPO_NAME="test_sync_uu_$TAG"
+REPO_NAME_1="${REPO_NAME}_1"
+REPO_NAME_2="${REPO_NAME}_2"
 
 gh repo create \
     $REPO_NAME \
@@ -25,27 +32,33 @@ DEBUG=1 twinkle clone \
 mv $REPO_NAME $REPO_NAME_2
 
 
-cd $REPO_NAME_2
-echo " ...a conflict!" >> README.md
+cd $REPO_NAME_1
+echo "Alice" > README.md
+git config user.name "Alice"
 TWINKLE_ONCE=1 twinkle sync
+
 cd ..
 
-cd $REPO_NAME_1
-echo " Let's create..." >> README.md
+cd $REPO_NAME_2
+echo "Bob" > README.md
+git config user.name "Bob"
 TWINKLE_ONCE=1 twinkle sync
 
 
 test -f README.md
-test -f "README (A).md"
-test -f "README (B).md"
+test -f "README (Alice).md"
+test -f "README (Bob).md"
+test "$(cat "README (Alice).md")" = "Alice"
+test "$(cat "README (Bob).md")" = "Bob"
+
 
 echo "--- README.md ---"
 cat README.md
 printf '\n'
-echo "--- README (A).md ---"
-cat "README (A).md"
-echo "--- README (B).md ---"
-cat "README (B).md"
+echo "--- README (Alice).md ---"
+cat "README (Alice).md"
+echo "--- README (Bob).md ---"
+cat "README (Bob).md"
 echo "---"
 
 

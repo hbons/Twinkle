@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+#   Twinkle, automatic syncing with Git
+#   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
+#
+#   This program is free software: you can redistribute it and/or modify it
+#   under the terms of the GNU General Public License v3 or any later version.
+
+
 set -euo pipefail
 source ../common/config.sh
 source ../common/install_keys.sh
@@ -11,8 +18,8 @@ gh repo create \
     --private \
     --add-readme
 
-twinkle clone git@github.com:$ACCOUNT/$REPO_NAME
 
+twinkle clone git@github.com:$ACCOUNT/$REPO_NAME
 cd $REPO_NAME
 
 SMALL_FILE=small_file.txt
@@ -24,6 +31,7 @@ git config twinkle.lfs.enabled true
 git config twinkle.lfs.sizeThreshold 3m
 TWINKLE_ONCE=1 twinkle sync
 
+
 test -f .git/hooks/pre-push
 test -f .gitattributes
 test -f $SMALL_FILE
@@ -32,6 +40,7 @@ test -f $LARGE_FILE
 [ $(wc -c < $LARGE_FILE) -eq 3145728 ]
 ! git lfs ls-files | grep $SMALL_FILE
 git lfs ls-files | grep $LARGE_FILE
+
 
 source ../../common/test_synced.sh
 cd ..

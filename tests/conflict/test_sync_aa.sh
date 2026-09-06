@@ -11,14 +11,13 @@ set -euo pipefail
 source ./common/config.sh
 source ./common/install_keys.sh
 
-REPO_NAME="test_sync_dd_$TAG"
+REPO_NAME="test_sync_aa_$TAG"
 REPO_NAME_1="${REPO_NAME}_1"
 REPO_NAME_2="${REPO_NAME}_2"
 
 gh repo create \
     $REPO_NAME \
-    --private \
-    --add-readme
+    --private
 
 
 DEBUG=1 twinkle clone \
@@ -33,15 +32,22 @@ mv $REPO_NAME $REPO_NAME_2
 
 
 cd $REPO_NAME_1
-rm README.md
+echo "Alice" >> README.md
+git config user.name "Alice"
 TWINKLE_ONCE=1 twinkle sync
+
 cd ..
 
 cd $REPO_NAME_2
-rm README.md
+echo "Bob" >> README.md
+git config user.name "Bob"
 TWINKLE_ONCE=1 twinkle sync
 
-! test -f README.md
+
+test -f README.md
+test -f "README (Alice).md"
+test "$(cat "README.md")" = "Bob"
+test "$(cat "README (Alice).md")" = "Alice"
 
 
 # TODO: Doesn't work...

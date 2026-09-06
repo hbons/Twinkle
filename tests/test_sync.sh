@@ -1,12 +1,19 @@
 #!/usr/bin/env bash
 
+#   Twinkle, automatic syncing with Git
+#   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
+#
+#   This program is free software: you can redistribute it and/or modify it
+#   under the terms of the GNU General Public License v3 or any later version.
+
+
 set -euo pipefail
 source ./common/config.sh
 source ./common/install_keys.sh
 
-REPO_NAME=test_sync_$TAG
-REPO_NAME_1=test_sync_"$TAG"_1
-REPO_NAME_2=test_sync_"$TAG"_2
+REPO_NAME="test_sync_$TAG"
+REPO_NAME_1="${REPO_NAME}_1"
+REPO_NAME_2="${REPO_NAME}_2"
 
 gh repo create \
     $REPO_NAME \
@@ -17,30 +24,27 @@ twinkle clone \
     git@github.com:$ACCOUNT/$REPO_NAME \
     $REPO_NAME_1
 
-cd $REPO_NAME_1
-touch README.md
-TWINKLE_ONCE=1 twinkle sync
-ls -a
-git status
-cd ..
-
-
 twinkle clone \
     git@github.com:$ACCOUNT/$REPO_NAME \
     $REPO_NAME_2
 
+
+cd $REPO_NAME_1
+touch README.md
+TWINKLE_ONCE=1 twinkle sync
+
+cd ..
+
 cd $REPO_NAME_2
 touch README2.md
 TWINKLE_ONCE=1 twinkle sync
-test -f README.md
-test -f README2.md
-ls -a
-git status
-cd ..
 
+cd ..
 
 cd $REPO_NAME_1
 TWINKLE_ONCE=1 twinkle sync
+
+
 test -f README.md
 test -f README2.md
 
