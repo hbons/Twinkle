@@ -25,10 +25,12 @@ gh ssh-key add \
     --title "$KEY_TITLE" \
     $KEY_FILE.pub
 
-gh ssh-key add \
-    --type signing \
-    --title "$KEY_TITLE" \
-    $KEY_FILE.pub
+# TODO: Not testing signing yet
+
+# gh ssh-key add \
+#     --type signing \
+#     --title "$KEY_TITLE" \
+#     $KEY_FILE.pub
 
 
 export KEY_ID=$(
