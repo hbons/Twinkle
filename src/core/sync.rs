@@ -170,14 +170,8 @@ pub fn watch_remote(
         );
 
         if !repo.is_busy() {
-            let branch = repo.branch().ok_or("Not on a branch")?;
-            let remote = repo.remote(&branch);
-
-            if let Ok(remote_id) = repo.git.ls_remote(&remote, &branch) {
-                if !repo.git.merge_base(&remote_id, &branch)? {
-                    repo.set_has_remote_changes(true);
-                    log::info("Remote changes detected…");
-                }
+            if let Ok(true) = has_unfetched_commits(repo) {
+                repo.set_has_remote_changes(true);
             }
 
             repo.set_last_checked(Utc::now().timestamp())?;
@@ -323,6 +317,23 @@ fn has_unpushed_commits(repo: &TwinkleRepository) -> bool { // TODO: Move to Rep
         Ok(count) => count > 0,
         Err(_) => true,
     }
+}
+
+
+fn has_unfetched_commits(repo: &TwinkleRepository) -> Result<bool, Box<dyn Error>> { // TODO: Move to Repository
+    let branch = repo.branch().ok_or("Not on a branch")?;
+    let remote = repo.remote(&branch);
+
+    if let Ok(remote_id) = repo.git.ls_remote(&remote, &branch) {
+        if !repo.git.merge_base(&remote_id, &branch)? {
+            repo.set_has_remote_changes(true);
+            log::info("✓ Unfetched commits found");
+
+            return Ok(true);
+        }
+    }
+
+    Ok(false)
 }
 
 
