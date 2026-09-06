@@ -65,9 +65,6 @@ impl GitEnvironment {
 
 
     pub fn is_in_merge(&self) -> bool {
-        self.working_dir
-            .join(".git")
-            .join("MERGE_HEAD")
-            .exists()
+        self.rev_parse(&"MERGE_HEAD".into()).is_ok()
     }
 }
