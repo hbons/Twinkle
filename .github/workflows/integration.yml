@@ -37,6 +37,9 @@ jobs:
 
     - run: rm -Rf .git/
 
+    - name: Test `check`
+      run: cd tests && ./test_check.sh
+
     # - name: Test `clone`
     #   run: cd tests && ./test_clone.sh  # Works
 
