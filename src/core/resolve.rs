@@ -83,9 +83,7 @@ pub fn resolve(
                 repo.git.checkout_ours(path)?;
                 repo.git.add(path)?;
             },
-            GitMergeStatus::UU |
-            GitMergeStatus::AU |
-            GitMergeStatus::UA => {
+            GitMergeStatus::UU => {
                 if repo.git.checkout_ours(path).is_ok() {
                     fs::rename(repo.abs_path(path), repo.abs_path(&ours))?;
                     repo.git.add(&ours)?;
@@ -100,11 +98,21 @@ pub fn resolve(
                     repo.git.add(path)?;
                 }
             },
-            GitMergeStatus::UD => {
-                repo.git.checkout_ours(&change.path)?;
-                repo.git.add(&change.path)?
+            GitMergeStatus::UA |
+            GitMergeStatus::AU => {
+                // Usually appears in a group on renames (DD + AU + UA)
+                if repo.git.checkout_common_ancestor(path).is_ok() {
+                    repo.git.add(path)?;
+                }
             },
-            GitMergeStatus::DU => repo.git.add(&change.path)?, // Our version is checked out
+            GitMergeStatus::UD => {
+                if repo.git.checkout_ours(path).is_ok() {
+                    repo.git.add(path)?;
+                }
+            },
+            GitMergeStatus::DU => {
+                repo.git.add(path)?; // Ours is checked out
+            },
             GitMergeStatus::DD => ( /* Nothing to do */ ),
             GitMergeStatus::QQ => ( /* Nothing to do */ ),
             GitMergeStatus::XX => ( /* Nothing to do */ ),
