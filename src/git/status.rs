@@ -24,12 +24,16 @@ impl GitEnvironment {
         filter: GitStatusFilter,
     ) -> Option<Vec<GitChange>>
     {
-        let changes = self.get_changes(
-            Some(OsStr::new("--untracked-files=normal")),
-        ).ok()?;
+        let arg = match filter {
+            GitStatusFilter::Tracked => OsStr::new("--untracked-files=no"),
+            _ => OsStr::new("--untracked-files=normal"),
+        };
+
+        let changes = self.get_changes(Some(arg)).ok()?;
 
         let changes = match filter {
-            GitStatusFilter::All => changes,
+            GitStatusFilter::All |
+            GitStatusFilter::Tracked => changes,
             GitStatusFilter::Staged =>
                 changes.into_iter()
                     .filter(|c| c.status_x.is_some())

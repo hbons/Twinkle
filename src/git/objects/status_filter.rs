@@ -7,6 +7,7 @@
 
 pub enum GitStatusFilter {
     All,
+    Tracked,
     Staged,
     Unstaged,
 }
