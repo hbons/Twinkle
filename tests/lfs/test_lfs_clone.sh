@@ -40,7 +40,7 @@ twinkle clone git@github.com:$ACCOUNT/$REPO_NAME
 
 cd $REPO_NAME
 
-test -f .gitattributes
+grep $LARGE_FILE .gitattributes
 test -f $LARGE_FILE
 [ $(wc -c < $LARGE_FILE) -eq 1048576 ]
 git config twinkle.lfs.enabled

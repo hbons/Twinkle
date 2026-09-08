@@ -32,14 +32,15 @@ git config twinkle.lfs.sizeThreshold 3m
 TWINKLE_ONCE=1 twinkle sync
 
 
-test -f .git/hooks/pre-push
-test -f .gitattributes
+! grep $SMALL_FILE .gitattributes
+grep $LARGE_FILE .gitattributes
 test -f $SMALL_FILE
 test -f $LARGE_FILE
 [ $(wc -c < $SMALL_FILE) -eq 0 ]
 [ $(wc -c < $LARGE_FILE) -eq 3145728 ]
 ! git lfs ls-files | grep $SMALL_FILE
 git lfs ls-files | grep $LARGE_FILE
+test -f .git/hooks/pre-push
 
 
 source ../../common/test_synced.sh

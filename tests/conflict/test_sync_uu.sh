@@ -52,16 +52,6 @@ test "$(cat "README (Alice).md")" = "Alice"
 test "$(cat "README (Bob).md")" = "Bob"
 
 
-echo "--- README.md ---"
-cat README.md
-printf '\n'
-echo "--- README (Alice).md ---"
-cat "README (Alice).md"
-echo "--- README (Bob).md ---"
-cat "README (Bob).md"
-echo "---"
-
-
 # TODO: Doesn't work...
 # source ../common/test_synced.sh
 LOCAL=$(git rev-parse HEAD)
