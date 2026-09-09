@@ -10,8 +10,11 @@ use std::path::Path;
 
 use chrono::{ DateTime, Local };
 
+use crate::cli::util;
 use crate::git::objects::change::GitChange;
+use crate::git::objects::reference::GitReference;
 use crate::git::objects::status::GitFileStatus;
+use crate::ssh::objects::url::SshUrl;
 
 
 /// "/Users/hbons/Projects" -> "~/Projects"
@@ -86,4 +89,36 @@ pub fn format_commit_message(changes: &[GitChange]) -> Option<String> {
             Some(message.join(", "))
         }
     }
+}
+
+
+// github.com:hbons/notes | 5cce3 | A `TWINKLE.md`
+pub fn format_repo_change(
+    url: &SshUrl,
+    _branch: &GitReference,
+    hash: &str, // TODO: GitId
+    change: &GitChange,
+) -> Option<String>
+{
+    let status = change.status_x.clone()?;
+    let s = status.to_string();
+
+    let letter = match status {
+        GitFileStatus::Added       => util::cli_green(&s),
+        GitFileStatus::Copied(_)   => util::cli_green(&s),
+        GitFileStatus::Modified    => util::cli_yellow(&s),
+        GitFileStatus::Renamed(_)  => util::cli_yellow(&s),
+        GitFileStatus::TypeChanged => util::cli_yellow(&s),
+        GitFileStatus::Unmerged    => util::cli_red(&s),
+        GitFileStatus::Deleted     => util::cli_red(&s),
+        GitFileStatus::Ignored     => s,
+        GitFileStatus::Untracked   => s,
+    };
+
+    let host = url.to_string_alternate();
+    let host = host
+        .strip_prefix("git@")
+        .unwrap_or(&host);
+
+    Some(format!("{host} | {hash} | {letter} `{:?}`", change.path))
 }
