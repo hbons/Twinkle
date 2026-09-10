@@ -157,7 +157,7 @@ pub fn watch_local(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
         if !repo.is_busy() {
             if repo.git.status(GitStatusFilter::All).is_some() {
                 repo.set_has_local_changes(true);
-                log::info("Local changes detected…");
+                log::debug("Local changes detected…");
             }
         }
 
@@ -199,7 +199,7 @@ fn sync_up(
     let mut attempt = 1;
 
     loop {
-        log::info(&format!("Attempt: {attempt}"));
+        log::debug(&format!("Attempt: {attempt}"));
         init::init_id(repo)?;
 
         let lfs_enabled = repo.lfs_enabled();
@@ -236,14 +236,14 @@ fn sync_up(
             repo.set_user(&user)?;
             repo.git.commit(Some(user), &message)?;
 
-            log::info(&format!("✓ Committed to `{branch}`. Now at {}", repo.current_head()?));
+            log::debug(&format!("✓ Committed to `{branch}`. Now at {}", repo.current_head()?));
         } else {
             if !has_unpushed_commits(repo) {
-                log::info(&format!("Nothing new to commit. Still at {}", repo.current_head()?));
+                log::debug(&format!("Nothing new to commit. Still at {}", repo.current_head()?));
                 return Ok(());
             }
 
-            log::info("✓ Unpushed commits found");
+            log::debug("✓ Unpushed commits found");
         }
 
         if repo.read_only() {
@@ -269,7 +269,7 @@ fn sync_up(
 
                 if fetch.is_err() { // TODO: Only delay on network errors?
                     let delay = sync_up_delay(attempt);
-                    log::info(&format!("Retrying in {}s…", delay.as_secs()));
+                    log::debug(&format!("Retrying in {}s…", delay.as_secs()));
                     thread::sleep(delay);
                 }
             }
@@ -337,7 +337,7 @@ fn has_unfetched_commits(repo: &TwinkleRepository) -> Result<bool, Box<dyn Error
     if let Ok(remote_id) = repo.git.ls_remote(&remote, &branch) {
         if !repo.git.merge_base(&remote_id, &branch)? {
             repo.set_has_remote_changes(true);
-            log::info("✓ Unfetched commits found");
+            log::debug("✓ Unfetched commits found");
 
             return Ok(true);
         }
