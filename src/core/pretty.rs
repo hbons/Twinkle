@@ -92,23 +92,44 @@ pub fn format_commit_message(changes: &[GitChange]) -> Option<String> {
 }
 
 
-// github.com:hbons/notes | 5cce3 | A `TWINKLE.md`
+// github.com:hbons/notes ↓ 5cce3 • A `TWINKLE.md`
 pub fn format_repo_change(
     url: &SshUrl,
     _branch: &GitReference,
     hash: &str, // TODO: GitId
     change: &GitChange,
+    symbol: &str,
 ) -> Option<String>
 {
-    let status = change.status_x.clone()?;
-    let letter = format_file_status(&status);
-
     let host = url.to_string_alternate();
     let host = host
         .strip_prefix("git@")
         .unwrap_or(&host);
 
-    Some(format!("{host} | {hash} | {letter} `{}`", change.path.display()))
+    let dot = util::cli_dimmed("•");
+
+    let status = change.status_x.clone()?;
+    let letter = format_file_status(&status);
+
+    let change = format_change(change);
+
+    Some(format!("{host} {symbol} {hash} {dot} {letter} {change}"))
+}
+
+
+pub fn format_change(change: &GitChange) -> String {
+    match &change.status_x {
+        Some(GitFileStatus::Copied(Some(orig_path))) |
+        Some(GitFileStatus::Renamed(Some(orig_path))) => {
+            let arrow = util::cli_dimmed("→");
+
+            format!("`{}` {arrow} `{}`",
+                orig_path.display(),
+                change.path.display(),
+            )
+        }
+        _ => format!("`{}`", change.path.display()),
+    }
 }
 
 

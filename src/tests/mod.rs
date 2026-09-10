@@ -17,6 +17,7 @@ mod core {
     mod test_pretty_commit_message;
     mod test_pretty_datetime;
     mod test_pretty_dir;
+    mod test_pretty_repo_change;
     mod test_resolve_paths;
     mod test_unique_dir;
     mod test_settings_url_for_host;

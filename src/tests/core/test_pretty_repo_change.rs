@@ -5,6 +5,7 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
+use crate::cli::util;
 use crate::core::pretty::{
     format_file_status,
     format_repo_change,
@@ -24,19 +25,19 @@ fn test_pretty_repo_change() {
             path: "test.txt".into(),
         };
 
-    let letter = format_file_status(&change.status_x.clone().unwrap());
-
     let url = "ssh://git@github.com:22/hbons/Twinkle".parse::<SshUrl>().unwrap();
     let branch = "main".to_string();
     let hash = "97b9e";
+    let dot = util::cli_dimmed("•");
+    let letter = format_file_status(&change.status_x.clone().unwrap());
 
-    let s = format_repo_change(&url, &branch, hash, &change).unwrap();
+    let s = format_repo_change(&url, &branch, hash, &change, "!").unwrap();
 
-    assert_eq!(s, format!("github.com:hbons/Twinkle | {hash} | {letter} `test.txt`"));
+    assert_eq!(s, format!("github.com:hbons/Twinkle ! {hash} {dot} {letter} `test.txt`"));
 
 
     let change = GitChange::default();
-    let r = format_repo_change(&url, &branch, hash, &change);
+    let r = format_repo_change(&url, &branch, hash, &change, "!");
 
     assert!(r.is_none());
 }
