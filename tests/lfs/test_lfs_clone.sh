@@ -28,8 +28,7 @@ git lfs install
 git lfs track $LARGE_FILE
 git add $LARGE_FILE
 git add .gitattributes
-git config user.email "Test Bot"
-git config user.name "ci@localhost"
+git config user.name "Alice"
 git commit -m "Add large file"
 git push origin main
 
