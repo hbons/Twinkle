@@ -24,15 +24,36 @@ use super::objects::user::GitUser;
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-log
 
-    pub fn log(&self, count: usize) -> Result<Vec<GitCommit>, Box<dyn Error>> {
+    pub fn log(
+        &self,
+        max: Option<i32>,
+    ) -> Result<Vec<GitCommit>, Box<dyn Error>>
+    {
+        self.log_internal(None, max)
+    }
+
+
+    pub fn log_fetched(&self) -> Result<Vec<GitCommit>, Box<dyn Error>> {
+        self.log_internal(Some("..FETCH_HEAD"), None)
+    }
+
+
+    fn log_internal(
+        &self,
+        reference: Option<&str>,
+        max: Option<i32>,
+    ) -> Result<Vec<GitCommit>, Box<dyn Error>>
+    {
         let output = self.run("log", &[
             OsStr::new("-z"), // Single line, NUL-separated
             OsStr::new("--date=unix"), // Seconds since epoch
-            OsStr::new(&format!("--max-count={count}")),
+            OsStr::new(&format!("--max-count={}", max.unwrap_or(i32::MAX))),
             OsStr::new("--name-status"), // List files with change type
             OsStr::new("--no-color"),
             OsStr::new("--no-decorate"), // Don't show the (tracking) branch
             OsStr::new("--no-merges"),
+            OsStr::new("--"),
+            OsStr::new(reference.unwrap_or("HEAD")),
         ])?;
 
         let mut first = true;
