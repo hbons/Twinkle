@@ -62,11 +62,11 @@ pub fn format_commit_message(changes: &[GitChange]) -> Option<String> {
 
     for change in changes {
         match change.status_x {
-            Some(GitFileStatus::Added)       => { added += 1; },
-            Some(GitFileStatus::Modified)    => { modified += 1; },
-            Some(GitFileStatus::Deleted)     => { deleted += 1; },
-            Some(GitFileStatus::Renamed(_))  => { deleted += 1; added += 1; },
-            Some(GitFileStatus::Copied(_))   => { added += 1; },
+            Some(GitFileStatus::Added)      => { added += 1; },
+            Some(GitFileStatus::Modified)   => { modified += 1; },
+            Some(GitFileStatus::Deleted)    => { deleted += 1; },
+            Some(GitFileStatus::Renamed(_)) => { deleted += 1; added += 1; },
+            Some(GitFileStatus::Copied(_))  => { added += 1; },
             _ => ()
         };
 
