@@ -21,7 +21,7 @@ jobs:
             runner: macos-26
 
     runs-on: ${{ matrix.variant.runner }}
-    timeout-minutes: 8
+    timeout-minutes: 16
 
     steps:
     - uses: actions/checkout@v7
@@ -36,6 +36,8 @@ jobs:
         twinkle --deps
 
     - run: rm -Rf .git/
+
+    # Core
 
     - name: Test `clone`
       run: cd tests && ./test_clone.sh
@@ -77,9 +79,6 @@ jobs:
     - name: Test `conflict_sync_du`
       run: cd tests && ./conflict/test_sync_du.sh
 
-    # - name: Test `conflict_sync_qq`
-    #   run: cd tests && ./conflict/test_sync_qq.sh  # TODO
-
     - name: Test `conflict_sync_ua`
       run: cd tests && ./conflict/test_sync_ua.sh
 
@@ -88,6 +87,3 @@ jobs:
 
     - name: Test `conflict_sync_uu`
       run: cd tests && ./conflict/test_sync_uu.sh
-
-    # - name: Test `conflict_sync_xx`
-    #   run: cd tests && ./conflict/test_sync_xx.sh  # TODO
