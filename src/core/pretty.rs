@@ -101,9 +101,21 @@ pub fn format_repo_change(
 ) -> Option<String>
 {
     let status = change.status_x.clone()?;
+    let letter = format_file_status(&status);
+
+    let host = url.to_string_alternate();
+    let host = host
+        .strip_prefix("git@")
+        .unwrap_or(&host);
+
+    Some(format!("{host} | {hash} | {letter} `{}`", change.path.display()))
+}
+
+
+pub fn format_file_status(status: &GitFileStatus) -> String {
     let s = status.to_string();
 
-    let letter = match status {
+    match status {
         GitFileStatus::Added       => util::cli_green(&s),
         GitFileStatus::Copied(_)   => util::cli_green(&s),
         GitFileStatus::Modified    => util::cli_yellow(&s),
@@ -113,12 +125,5 @@ pub fn format_repo_change(
         GitFileStatus::Deleted     => util::cli_red(&s),
         GitFileStatus::Ignored     => s,
         GitFileStatus::Untracked   => s,
-    };
-
-    let host = url.to_string_alternate();
-    let host = host
-        .strip_prefix("git@")
-        .unwrap_or(&host);
-
-    Some(format!("{host} | {hash} | {letter} `{:?}`", change.path))
+    }
 }
