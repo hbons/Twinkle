@@ -6,6 +6,7 @@
 
 
 use std::error::Error;
+use std::env;
 use std::fs;
 use std::path::{ Path, PathBuf };
 
@@ -52,27 +53,48 @@ pub fn cli_link(url: &str, label: Option<&str>) -> String {
     format!("\x1b]8;;{}\x1b\\{}\x1b]8;;\x1b\\", url, label.unwrap_or(url))
 }
 
+/// Docs: https://no-color.org
+pub fn cli_no_color() -> bool {
+    if let Ok(v) = env::var("NO_COLOR") {
+        v == "1"
+    } else {
+        false
+    }
+}
+
 pub fn cli_green(s: &str) -> String {
-    cli_bold(
-        &format!("\x1b[32m{}\x1b[0m", s)
-    )
+    let s = cli_bold(s);
+
+    if cli_no_color() {
+        s.into()
+    } else {
+        format!("\x1b[32m{}\x1b[0m", s)
+    }
 }
 
 pub fn cli_yellow(s: &str) -> String {
-    cli_bold(
-        &format!("\x1b[33m{}\x1b[0m", s)
-    )
+    let s = cli_bold(s);
+
+    if cli_no_color() {
+        s.into()
+    } else {
+        format!("\x1b[33m{}\x1b[0m", s)
+    }
 }
 
 pub fn cli_red(s: &str) -> String {
-    cli_bold(
-        &format!("\x1b[31m{}\x1b[0m", s)
-    )
+    let s = cli_bold(s);
+
+    if cli_no_color() {
+        s.into()
+    } else {
+        format!("\x1b[31m{}\x1b[0m", s)
+    }
 }
 
 
 pub fn lossy_and_trim(output: &[u8]) -> String {
     String::from_utf8_lossy(
         output.trim_ascii_end()
-    ).to_string()
+    ).into()
 }
