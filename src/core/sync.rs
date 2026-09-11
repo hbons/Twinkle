@@ -318,9 +318,9 @@ fn sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
         repo.git.lfs_fetch()?;
     }
 
-    if OS == "macos" { repo.git.config_set(K_CORE_IGNORE_CASE, "true")?; }
+    let last_commit = repo.git.rev_parse(&"HEAD".into())?;
 
-    // TODO: get the commit here
+    if OS == "macos" { repo.git.config_set(K_CORE_IGNORE_CASE, "true")?; }
 
     if repo.git.merge(&"FETCH_HEAD".into()).is_err() {
         resolve::resolve_changes(repo)?;
@@ -330,14 +330,12 @@ fn sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
 
     log::debug(&format!("✓ Fetched and merged. Now at {}", repo.current_head()?));
 
-    for commit in repo.git.log_since_merge()? {
+    for commit in repo.git.log_since(&last_commit)? {
         let url = repo.remote_url().ok_or("Missing remote url")?;
         let hash = &commit.id;
-        // let hash = &hash[..5];
+        let hash = &hash[..5];
 
-        dbg!(&commit); // TODO: broken
         for change in commit.changes {
-
             if let Some(s) = pretty::format_repo_change(&url, &branch, hash, &change, "↓") {
                 println!("{s}");
             }
