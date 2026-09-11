@@ -261,10 +261,19 @@ fn sync_up(
         let push = repo.git.push(&remote, &branch);
 
         match push {
-            Ok(_)  => log::info(&format!("✓ Pushed to `{remote}`. Local and remote at {}", repo.current_head()?)),
-            Err(e) => {
-                dbg!(e);
-                log::info("✗ Push failed. Fetching…");
+            Ok(_)  => {
+                let url = repo.remote_url().ok_or("Missing remote url")?;
+                let hash = repo.git.rev_parse(&"HEAD".into())?;
+                let hash = &hash[..5];
+
+                for change in changes {
+                    if let Some(s) = pretty::format_repo_change(&url, &branch, hash, &change, "↑") {
+                        println!("{s}");
+                    }
+                }
+            },
+            Err(_) => {
+                log::debug("✗ Push failed. Fetching…");
                 let fetch = sync_down(repo);
 
                 if fetch.is_err() { // TODO: Only delay on network errors?
@@ -311,13 +320,30 @@ fn sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
 
     if OS == "macos" { repo.git.config_set(K_CORE_IGNORE_CASE, "true")?; }
 
+    // TODO: get the commit here
+
     if repo.git.merge(&"FETCH_HEAD".into()).is_err() {
         resolve::resolve_changes(repo)?;
     }
 
     if OS == "macos" { repo.git.config_set(K_CORE_IGNORE_CASE, "false")?; }
 
-    log::info(&format!("✓ Fetched and merged. Now at {}", repo.current_head()?));
+    log::debug(&format!("✓ Fetched and merged. Now at {}", repo.current_head()?));
+
+    for commit in repo.git.log_since_merge()? {
+        let url = repo.remote_url().ok_or("Missing remote url")?;
+        let hash = &commit.id;
+        // let hash = &hash[..5];
+
+        dbg!(&commit); // TODO: broken
+        for change in commit.changes {
+
+            if let Some(s) = pretty::format_repo_change(&url, &branch, hash, &change, "↓") {
+                println!("{s}");
+            }
+        }
+    }
+
     Ok(())
 }
 

@@ -59,10 +59,12 @@ impl GitEnvironment {
         let mut commit = GitCommit::default();
         let mut message = String::new();
 
-        let lines: Vec<&OsStr> = output.stdout
-            .split(|&b| b == b'\n')
-            .filter(|chunk| !chunk.is_empty())
-            .map(OsStr::from_bytes)
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        let lines: Vec<&OsStr> = stdout
+            .split("\0\0") // Commits are separated by a double NUL
+            .flat_map(|commit| commit.split('\n'))
+            .filter(|line| !line.is_empty())
+            .map(|line| OsStr::from_bytes(line.as_bytes()))
             .collect();
 
         for line in lines {
