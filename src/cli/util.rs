@@ -66,7 +66,7 @@ pub fn cli_green(s: &str) -> String {
     let s = cli_bold(s);
 
     if cli_no_color() {
-        s.into()
+        s
     } else {
         format!("\x1b[32m{}\x1b[0m", s)
     }
@@ -76,7 +76,7 @@ pub fn cli_yellow(s: &str) -> String {
     let s = cli_bold(s);
 
     if cli_no_color() {
-        s.into()
+        s
     } else {
         format!("\x1b[33m{}\x1b[0m", s)
     }
@@ -86,7 +86,7 @@ pub fn cli_red(s: &str) -> String {
     let s = cli_bold(s);
 
     if cli_no_color() {
-        s.into()
+        s
     } else {
         format!("\x1b[31m{}\x1b[0m", s)
     }
