@@ -11,13 +11,9 @@ use std::path::Path;
 use std::time::Duration;
 
 use crate::app::App;
-use crate::log;
 
 use crate::core::objects::repository::TwinkleRepository;
-use crate::core::pretty;
 use crate::core::sync;
-
-use super::util::*;
 
 
 impl App {
@@ -45,13 +41,7 @@ impl App {
 
         // TODO: Stop if no user set or let git commit fail?
 
-        let dir = pretty::format_dir(&repo.path);
-        let remote_url = repo.remote_url().ok_or("Missing remote_url")?;
-        let remote = cli_dimmed(&format!("– {}…\n", remote_url.original));
-
         let once = env::var("TWINKLE_ONCE").ok();
-
-        log::log(&format!("Syncing {} {}", cli_bold(&dir), remote));
         sync::start(&mut repo, interval, once.is_some())
     }
 }
