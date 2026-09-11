@@ -47,6 +47,7 @@ git config user.name "Bob"
 TWINKLE_ONCE=1 twinkle sync
 
 
+! git rev-parse MERGE_HEAD
 test -f README_A.md
 test -f README_B.md
 test "$(cat "README_A.md")" = "Alice"

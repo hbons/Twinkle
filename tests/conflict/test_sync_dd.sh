@@ -41,6 +41,8 @@ cd $REPO_NAME_2
 rm README.md
 TWINKLE_ONCE=1 twinkle sync
 
+
+! git rev-parse MERGE_HEAD
 ! test -f README.md
 
 
