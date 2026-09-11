@@ -23,7 +23,7 @@ use super::objects::repository::TwinkleRepository;
 
 
 pub fn resolve_changes(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
-    log::info("Resolving conflicts…");
+    log::debug("Resolving conflicts…");
 
     while let Some(changes) = repo.git.status(GitStatusFilter::Tracked) {
         for change in changes {
@@ -34,7 +34,7 @@ pub fn resolve_changes(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
     } // TODO: Prevent infinite loop here
 
     repo.git.commit(repo.user(), "Resolve conflicts")?;
-    log::info("Conflicts resolved");
+    log::debug("Conflicts resolved");
 
     Ok(())
 }
@@ -51,7 +51,7 @@ pub fn resolve(
     let path = &change.path;
 
     if let Some(status) = &merge_status {
-        log::info(&format!("Resolve | {status} | {}", path.display()));
+        log::debug(&format!("Resolve | {status} | {}", path.display()));
     }
 
     let our_user = repo.user().ok_or("Missing user")?;
