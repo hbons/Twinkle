@@ -20,7 +20,7 @@ use crate::ssh::objects::url::SshUrl;
 /// "/Users/hbons/Projects" -> "~/Projects"
 pub fn format_dir(dir: &Path) -> String {
     let home_dir = env::var("HOME")
-        .unwrap_or("".to_string());
+        .unwrap_or_default();
 
     let dir = dir
         .to_string_lossy()
@@ -107,10 +107,7 @@ pub fn format_repo_change(
         .unwrap_or(&host);
 
     let dot = util::cli_dimmed("•");
-
-    let status = change.status_x.clone()?;
-    let letter = format_file_status(&status);
-
+    let letter = format_file_status(&change.status_x.clone()?);
     let change = format_change(change);
 
     Some(format!("{host} {symbol} {hash} {dot} {letter} {change}"))
