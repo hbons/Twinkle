@@ -33,8 +33,8 @@ impl GitEnvironment {
     }
 
 
-    pub fn log_fetched(&self) -> Result<Vec<GitCommit>, Box<dyn Error>> {
-        self.log_internal(Some("..FETCH_HEAD"), None)
+    pub fn log_since_merge(&self) -> Result<Vec<GitCommit>, Box<dyn Error>> {
+        self.log_internal(Some("ORIG_HEAD.."), None)
     }
 
 
@@ -51,8 +51,6 @@ impl GitEnvironment {
             OsStr::new("--name-status"), // List files with change type
             OsStr::new("--no-color"),
             OsStr::new("--no-decorate"), // Don't show the (tracking) branch
-            OsStr::new("--no-merges"),
-            OsStr::new("--"),
             OsStr::new(reference.unwrap_or("HEAD")),
         ])?;
 
