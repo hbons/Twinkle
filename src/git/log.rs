@@ -51,6 +51,7 @@ impl GitEnvironment {
             OsStr::new("--name-status"), // List files with change type
             OsStr::new("--no-color"),
             OsStr::new("--no-decorate"), // Don't show the (tracking) branch
+            OsStr::new("--no-merges"), // Merges don't have a --name-status
             OsStr::new(reference.unwrap_or("HEAD")),
         ])?;
 
@@ -116,6 +117,7 @@ fn parse_line(line: &OsStr, commit: &mut GitCommit, message: &mut String) -> Res
                 None => return Err("Error parsing commit id".into()),
             }
         },
+        s if s.starts_with("Merge:") => (),
         s if s.starts_with("Author:") => {
             let lossy_line = lossy_line.strip_prefix("Author:").ok_or("Error parsing author")?;
             commit.author = GitUser::from_str(lossy_line)?;
