@@ -37,6 +37,14 @@ impl GitEnvironment {
         self.log_internal(Some("ORIG_HEAD.."), None)
     }
 
+    pub fn log_since(
+        &self,
+        reference: &str, // TODO: GitId
+    ) -> Result<Vec<GitCommit>, Box<dyn Error>>
+    {
+        self.log_internal(Some(&format!("{reference}..")), None)
+    }
+
 
     fn log_internal(
         &self,
@@ -180,7 +188,7 @@ fn parse_line_name_status(line: &OsStr) -> Option<Vec<GitChange>> {
 
     while let Some(&chunk) = iter.next() {
         let x_byte = chunk.as_bytes();
-        let path = *iter.next().unwrap();
+        let path = *iter.next().unwrap(); // TODO
 
         let bytes = [
             x_byte,
