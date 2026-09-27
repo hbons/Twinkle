@@ -9,5 +9,6 @@ pub enum GitStatusFilter {
     All,
     Tracked,
     Staged,
+    Unmerged,
     Unstaged,
 }

@@ -33,22 +33,31 @@ impl GitEnvironment {
 
         let changes = match filter {
             GitStatusFilter::All |
-            GitStatusFilter::Tracked => changes,
+            GitStatusFilter::Tracked =>
+                changes,
             GitStatusFilter::Staged =>
                 changes.into_iter()
-                    .filter(|c| c.status_x.is_some())
+                    .filter(|c|
+                        c.status_x.is_some())
+                    .collect(),
+            GitStatusFilter::Unmerged =>
+                changes.into_iter()
+                    .filter(|c|
+                        c.status_x.is_some() &&
+                        c.status_y.is_some())
                     .collect(),
             GitStatusFilter::Unstaged =>
                 changes.into_iter()
-                    .filter(|c| c.status_y.is_some())
+                    .filter(|c|
+                        c.status_y.is_some())
                     .collect(),
         };
 
         if changes.is_empty() {
-            return None;
+            None
+        } else {
+            Some(changes)
         }
-
-        Some(changes)
     }
 
 
