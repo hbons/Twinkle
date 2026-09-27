@@ -22,3 +22,10 @@ pub struct GitCommit {
     pub message: GitCommitMessage,
     pub changes: Vec<GitChange>,
 }
+
+
+impl GitCommit {
+    pub fn short_id(&self) -> &str {
+        &self.id[..5]
+    }
+}

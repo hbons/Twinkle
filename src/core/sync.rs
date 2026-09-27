@@ -332,10 +332,11 @@ fn sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
 
     for commit in repo.git.log_since_merge()? {
         let url = repo.remote_url().ok_or("Missing remote url")?;
-        let hash = &commit.id;
-        // let hash = &hash[..5];
 
-        dbg!(&commit); // TODO: broken
+        let hash = &commit
+            .short_id()
+            .to_owned();
+
         for change in commit.changes {
 
             if let Some(s) = pretty::format_repo_change(&url, &branch, hash, &change, "↓") {
