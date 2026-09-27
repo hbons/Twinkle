@@ -25,7 +25,7 @@ use super::objects::repository::TwinkleRepository;
 pub fn resolve_changes(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
     log::debug("Resolving conflicts…");
 
-    while let Some(changes) = repo.git.status(GitStatusFilter::Tracked) {
+    while let Some(changes) = repo.git.status(GitStatusFilter::Unmerged) {
         for change in changes {
             resolve(repo, &change)?;
         }
