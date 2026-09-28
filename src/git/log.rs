@@ -17,6 +17,7 @@ use super::objects::change::GitChange;
 use super::objects::commit::GitCommit;
 use super::objects::commit_message::GitCommitMessage;
 use super::objects::environment::GitEnvironment;
+use super::objects::id::GitId;
 use super::objects::user::GitUser;
 
 
@@ -35,10 +36,10 @@ impl GitEnvironment {
 
     pub fn log_since(
         &self,
-        reference: &str, // TODO: GitId
+        id: &GitId,
     ) -> Result<Vec<GitCommit>, Box<dyn Error>>
     {
-        self.log_internal(Some(&format!("{reference}..")), None)
+        self.log_internal(Some(&format!("{id}..")), None)
     }
 
     // pub fn log_since_merge(
@@ -123,7 +124,7 @@ fn parse_line(
         },
         s if s.starts_with("commit") => {
             match parse_line_id(lossy_line) {
-                Some(id) => commit.id = id.to_owned(),
+                Some(s) => commit.id = s.parse::<GitId>()?,
                 None => return Err("Error parsing commit id".into()),
             }
         },

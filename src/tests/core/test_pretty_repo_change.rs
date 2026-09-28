@@ -12,6 +12,7 @@ use crate::core::pretty::{
 };
 
 use crate::git::objects::change::GitChange;
+use crate::git::objects::id::GitId;
 use crate::git::objects::status::GitFileStatus;
 use crate::ssh::objects::url::SshUrl;
 
@@ -27,17 +28,18 @@ fn test_pretty_repo_change() {
 
     let url = "ssh://git@github.com:22/hbons/Twinkle".parse::<SshUrl>().unwrap();
     let branch = "main".to_string();
-    let hash = "97b9e";
+    let id = "3e1e0256967194f0aa3abae31114f56f034965b3".parse::<GitId>().unwrap();
     let dot = util::cli_dimmed("•");
     let letter = format_file_status(&change.status_x.clone().unwrap());
 
-    let s = format_repo_change(&url, &branch, hash, &change, "!").unwrap();
+    let s = format_repo_change(&url, &branch, &id, &change, "!").unwrap();
+    let short_id = id.to_short_str();
 
-    assert_eq!(s, format!("github.com:hbons/Twinkle ! {hash} {dot} {letter} `test.txt`"));
+    assert_eq!(s, format!("github.com:hbons/Twinkle ! {short_id} {dot} {letter} `test.txt`"));
 
 
     let change = GitChange::default();
-    let r = format_repo_change(&url, &branch, hash, &change, "!");
+    let r = format_repo_change(&url, &branch, &id, &change, "!");
 
     assert!(r.is_none());
 }

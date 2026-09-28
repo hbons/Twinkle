@@ -12,6 +12,7 @@ use std::sync::Arc;
 use std::sync::atomic::{ AtomicBool, Ordering };
 
 use crate::git::objects::environment::GitEnvironment;
+use crate::git::objects::id::GitId;
 use crate::git::objects::reference::GitReference;
 
 
@@ -61,7 +62,7 @@ impl TwinkleRepository {
 
 
     /// Current long commit hash
-    pub fn current_head(&self) -> Result<GitReference, Box<dyn Error>> {
+    pub fn current_head(&self) -> Result<GitId, Box<dyn Error>> {
         self.git.rev_parse(&"HEAD".into())
     }
 

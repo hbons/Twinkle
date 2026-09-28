@@ -5,16 +5,21 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
+use std::fmt;
 use std::str;
 
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Default, PartialEq, Eq)]
 pub struct GitId(String);
 
 
 impl GitId {
     pub fn as_str(&self) -> &str {
         &self.0
+    }
+
+    pub fn to_short_str(&self) -> &str {
+        &self.0[..5]
     }
 }
 
@@ -30,9 +35,16 @@ impl str::FromStr for GitId {
         }
 
         match s.len() {
-            64 => Ok(Self(s.into())), // SHA256
-            40 => Ok(Self(s.into())), // SHA1
+            64 => Ok(Self(s)), // SHA256
+            40 => Ok(Self(s)), // SHA1
             _ => Err("Invalid id length".into()),
         }
+    }
+}
+
+
+impl fmt::Display for GitId {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
     }
 }

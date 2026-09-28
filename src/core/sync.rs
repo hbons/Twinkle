@@ -263,11 +263,10 @@ fn sync_up(
         match push {
             Ok(_)  => {
                 let url = repo.remote_url().ok_or("Missing remote url")?;
-                let hash = repo.git.rev_parse(&"HEAD".into())?;
-                let hash = &hash[..5];
+                let id = repo.git.rev_parse(&"HEAD".into())?;
 
                 for change in changes {
-                    if let Some(s) = pretty::format_repo_change(&url, &branch, hash, &change, "↑") {
+                    if let Some(s) = pretty::format_repo_change(&url, &branch, &id, &change, "↑") {
                         println!("{s}");
                     }
                 }
@@ -332,10 +331,9 @@ fn sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
 
     for commit in repo.git.log_since(&last_commit)? {
         let url = repo.remote_url().ok_or("Missing remote url")?;
-        let hash = commit.short_id();
 
         for change in &commit.changes {
-            if let Some(s) = pretty::format_repo_change(&url, &branch, hash, change, "↓") {
+            if let Some(s) = pretty::format_repo_change(&url, &branch, &commit.id, change, "↓") {
                 println!("{s}");
             }
         }

@@ -12,6 +12,7 @@ use chrono::{ DateTime, Local };
 
 use crate::cli::util;
 use crate::git::objects::change::GitChange;
+use crate::git::objects::id::GitId;
 use crate::git::objects::reference::GitReference;
 use crate::git::objects::status::GitFileStatus;
 use crate::ssh::objects::url::SshUrl;
@@ -96,7 +97,7 @@ pub fn format_commit_message(changes: &[GitChange]) -> Option<String> {
 pub fn format_repo_change(
     url: &SshUrl,
     _branch: &GitReference,
-    hash: &str, // TODO: GitId
+    id: &GitId,
     change: &GitChange,
     symbol: &str,
 ) -> Option<String>
@@ -106,11 +107,12 @@ pub fn format_repo_change(
         .strip_prefix("git@")
         .unwrap_or(&host);
 
+    let id = id.to_short_str();
     let dot = util::cli_dimmed("•");
     let letter = format_file_status(&change.status_x.clone()?);
     let change = format_change(change);
 
-    Some(format!("{host} {symbol} {hash} {dot} {letter} {change}"))
+    Some(format!("{host} {symbol} {id} {dot} {letter} {change}"))
 }
 
 

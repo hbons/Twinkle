@@ -11,13 +11,14 @@ use std::os::unix::ffi::OsStrExt;
 use std::path::{ Path, PathBuf };
 
 use super::objects::environment::GitEnvironment;
+use super::objects::id::GitId;
 use super::objects::reference::GitReference;
 
 
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-rev-parse
 
-    pub fn rev_parse(&self, reference: &GitReference) -> Result<String, Box<dyn Error>> {  // TODO: return GitID
+    pub fn rev_parse(&self, reference: &GitReference) -> Result<GitId, Box<dyn Error>> {
         let rev_parse = self.run("rev-parse", &[
             OsStr::new("--verify"),
             OsStr::new(&reference),
@@ -25,7 +26,10 @@ impl GitEnvironment {
 
         match rev_parse {
             Err(_) => Err("No commits yet".into()), // FIXME: non-git dirs also error...
-            Ok(output) => Ok(Self::lossy_and_trim(&output.stdout)),
+            Ok(output) => Ok(
+                Self::lossy_and_trim(&output.stdout)
+                    .parse::<GitId>()?
+            ),
         }
     }
 

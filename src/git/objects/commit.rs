@@ -9,23 +9,17 @@ use chrono::{ DateTime, Utc };
 
 use super::change::GitChange;
 use super::commit_message::GitCommitMessage;
+use super::id::GitId;
 use super::user::GitUser;
 
 
 #[derive(Debug, Default)]
 pub struct GitCommit {
-    pub id: String, // TODO: GitId
+    pub id: GitId,
     pub timestamp: DateTime<Utc>,
     pub signature: Option<String>,
 
     pub author: GitUser,
     pub message: GitCommitMessage,
     pub changes: Vec<GitChange>,
-}
-
-
-impl GitCommit {
-    pub fn short_id(&self) -> &str {
-        &self.id[..5]
-    }
 }
