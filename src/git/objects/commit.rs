@@ -14,7 +14,7 @@ use super::user::GitUser;
 
 #[derive(Debug, Default)]
 pub struct GitCommit {
-    pub id: String,
+    pub id: String, // TODO: GitId
     pub timestamp: DateTime<Utc>,
     pub signature: Option<String>,
 

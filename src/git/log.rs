@@ -8,7 +8,6 @@
 use std::error::Error;
 use std::ffi::{ OsStr, OsString };
 use std::os::unix::ffi::OsStrExt;
-use std::str::FromStr;
 
 use chrono::{ DateTime, Utc };
 
@@ -24,6 +23,7 @@ use super::objects::user::GitUser;
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-log
 
+    /// Note: Data returned by the log functions are lossy UTF-8 for now
     pub fn log(
         &self,
         max: Option<i32>,
@@ -33,10 +33,6 @@ impl GitEnvironment {
     }
 
 
-    pub fn log_since_merge(&self) -> Result<Vec<GitCommit>, Box<dyn Error>> {
-        self.log_internal(Some("ORIG_HEAD.."), None)
-    }
-
     pub fn log_since(
         &self,
         reference: &str, // TODO: GitId
@@ -44,6 +40,13 @@ impl GitEnvironment {
     {
         self.log_internal(Some(&format!("{reference}..")), None)
     }
+
+    // pub fn log_since_merge(
+    //     &self,
+    // ) -> Result<Vec<GitCommit>, Box<dyn Error>>
+    // {
+    //     self.log_internal(Some("ORIG_HEAD.."), None)
+    // }
 
 
     fn log_internal(
@@ -110,7 +113,12 @@ impl GitEnvironment {
 //     Message body (optional and multiline)
 //
 // R097^@src/file.rs^@src/file 2.rs^@M^@src/file3.rs^@M^@src/file4.rs
-fn parse_line(line: &OsStr, commit: &mut GitCommit, message: &mut String) -> Result<(), Box<dyn Error>> {
+fn parse_line(
+    line: &OsStr,
+    commit: &mut GitCommit,
+    message: &mut String,
+) -> Result<(), Box<dyn Error>>
+{
     let lossy_line = &line
         .to_string_lossy()
         .to_string();
@@ -128,7 +136,7 @@ fn parse_line(line: &OsStr, commit: &mut GitCommit, message: &mut String) -> Res
         s if s.starts_with("Merge:") => (),
         s if s.starts_with("Author:") => {
             let lossy_line = lossy_line.strip_prefix("Author:").ok_or("Error parsing author")?;
-            commit.author = GitUser::from_str(lossy_line)?;
+            commit.author = lossy_line.parse::<GitUser>()?;
         },
         s if s.starts_with("Date:") => {
             match parse_line_timestamp(lossy_line) {
