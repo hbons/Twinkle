@@ -43,6 +43,7 @@ mod git {
     mod test_git_object_commit_message;
     mod test_git_object_environment;
     mod test_git_object_file_status;
+    mod test_git_object_id;
     mod test_git_object_merge_status;
     mod test_git_object_user;
     mod test_git_object_version;

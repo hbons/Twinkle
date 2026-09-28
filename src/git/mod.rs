@@ -17,6 +17,7 @@ pub mod objects {
     pub mod environment;
     pub mod error;
     pub mod file_status;
+    pub mod id;
     pub mod ignore_reason;
     pub mod merge_status;
     pub mod reference;
