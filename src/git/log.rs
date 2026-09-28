@@ -66,38 +66,32 @@ impl GitEnvironment {
             OsStr::new(reference.unwrap_or("HEAD")),
         ])?;
 
-        let mut first = true;
         let mut log = Vec::new();
-        let mut commit = GitCommit::default();
-        let mut message = String::new();
 
-        let stdout = String::from_utf8_lossy(&output.stdout);
-        let lines: Vec<&OsStr> = stdout
+        let stdout = String::from_utf8_lossy(&output.stdout); // TODO: Don't convert, keep bytes/osstr
+
+        let entries: Vec<&str> = stdout
             .split("\0\0") // Commits are separated by a double NUL
-            .flat_map(|commit| commit.split('\n'))
-            .filter(|line| !line.is_empty())
-            .map(|line| OsStr::from_bytes(line.as_bytes()))
             .collect();
 
-        for line in lines {
-            let lossy_line = line.to_string_lossy();
+        for entry in &entries {
+            let lines: Vec<&str> = entry
+                .split('\n')
+                .filter(|line| !line.is_empty()) // TODO: Needed? Could mess up message body
+                .collect();
 
-            if lossy_line.starts_with("commit") && !first {
-                commit.message = message.parse::<GitCommitMessage>()?;
-                log.push(commit);
+            let mut commit = GitCommit::default();
+            let mut message = String::new();
 
-                commit = GitCommit::default();
-                message = String::new();
-            } else {
-                first = false;
+            for line in lines {
+                parse_line(OsStr::new(line), &mut commit, &mut message)?;
             }
 
-            parse_line(line, &mut commit, &mut message)?;
+            if !commit.changes.is_empty() {
+                commit.message = message.parse::<GitCommitMessage>()?;
+                log.push(commit);
+            }
         }
-
-        // Don't forget the last commit
-        commit.message = message.parse::<GitCommitMessage>()?;
-        log.push(commit);
 
         Ok(log)
     }
