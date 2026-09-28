@@ -9,7 +9,7 @@ use std::fmt;
 use std::str;
 
 
-#[derive(Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct GitId(String);
 
 
