@@ -14,10 +14,10 @@ use super::objects::environment::GitEnvironment;
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-rev-list
 
-    pub fn rev_list_count(&self) -> Result<u32, Box<dyn Error>> {
+    pub fn rev_list_count_upstream(&self) -> Result<u32, Box<dyn Error>> {
         let output = self.run("rev-list", &[
             OsStr::new("--count"),
-            OsStr::new("@{u}..HEAD")
+            OsStr::new("@{upstream}..")
         ])?;
 
         Ok(
