@@ -344,7 +344,7 @@ fn sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
 
 
 fn has_unpushed_commits(repo: &TwinkleRepository) -> bool { // TODO: Move to Repository
-    match repo.git.rev_list_count() {
+    match repo.git.rev_list_count_upstream() {
         Ok(count) => count > 0,
         Err(_) => true,
     }
