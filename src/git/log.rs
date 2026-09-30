@@ -71,7 +71,7 @@ impl GitEnvironment {
             OsStr::new(reference.unwrap_or("HEAD")),
         ])?;
 
-        let mut log = Vec::new();
+        let mut log = vec![];
 
         let stdout = String::from_utf8_lossy(&output.stdout); // TODO: Don't convert, keep bytes/osstr
 
@@ -197,7 +197,7 @@ fn parse_line_name_status(line: &OsStr) -> Option<Vec<GitChange>> {
 
     while let Some(&chunk) = iter.next() {
         let x_byte = chunk.as_bytes();
-        let path = *iter.next().unwrap(); // TODO
+        let path = *iter.next()?;
 
         let bytes = [
             x_byte,
@@ -214,6 +214,7 @@ fn parse_line_name_status(line: &OsStr) -> Option<Vec<GitChange>> {
                     buf.push(chunk);
                     buf.push(OsStr::new("\0"));
                     buf.push(orig_path);
+
                     &buf
                 } else {
                     chunk
