@@ -27,19 +27,21 @@ fn test_pretty_repo_change() {
         };
 
     let url = "ssh://git@github.com:22/hbons/Twinkle".parse::<SshUrl>().unwrap();
-    let branch = "main".to_string();
     let id = "3e1e0256967194f0aa3abae31114f56f034965b3".parse::<GitId>().unwrap();
+    let is_merge = true;
     let dot = util::cli_dimmed("•");
+    let merge = format!(" {dot} {}", util::cli_cyan("merge"));
     let letter = format_file_status(&change.status_x.clone().unwrap());
-
-    let s = format_repo_change(&url, &branch, &id, &change, "!").unwrap();
     let short_id = id.to_short_str();
 
+    let s = format_repo_change(&url, &id, is_merge, &change, "!").unwrap();
+    assert_eq!(s, format!("github.com:hbons/Twinkle ! {short_id}{merge} {dot} {letter} `test.txt`"));
+
+    let is_merge = false;
+    let s = format_repo_change(&url, &id, is_merge, &change, "!").unwrap();
     assert_eq!(s, format!("github.com:hbons/Twinkle ! {short_id} {dot} {letter} `test.txt`"));
 
-
     let change = GitChange::default();
-    let r = format_repo_change(&url, &branch, &id, &change, "!");
-
+    let r = format_repo_change(&url, &id, is_merge, &change, "!");
     assert!(r.is_none());
 }
