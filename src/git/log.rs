@@ -45,6 +45,7 @@ impl GitEnvironment {
 
     pub fn log_unpushed(&self) -> Result<Vec<GitCommit>, Box<dyn Error>> {
         self.log_internal(Some("@{upstream}.."), None)
+            .or_else(|_| self.log_internal(None, None))
     }
 
 
