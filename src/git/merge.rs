@@ -9,9 +9,8 @@ use std::error::Error;
 use std::ffi::OsStr;
 use std::path::Path;
 
-use crate::git::objects::reference::GitReference;
-
 use super::objects::environment::GitEnvironment;
+use super::objects::reference::GitReference;
 use super::objects::user::GitUser;
 
 
@@ -34,11 +33,8 @@ impl GitEnvironment {
             OsStr::new(ref_str),
         ])?;
 
-        if output.status.success() {
-            Ok(())
-        } else {
-            Err("Merge failed".into())
-        }
+        output.status.success()
+            .ok_or_else(|| "Merge failed".into())
     }
 
 
