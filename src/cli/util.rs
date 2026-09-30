@@ -92,6 +92,16 @@ pub fn cli_red(s: &str) -> String {
     }
 }
 
+pub fn cli_cyan(s: &str) -> String {
+    let s = cli_bold(s);
+
+    if cli_no_color() {
+        s
+    } else {
+        format!("\x1b[36m{}\x1b[0m", s)
+    }
+}
+
 
 pub fn lossy_and_trim(output: &[u8]) -> String {
     String::from_utf8_lossy(
