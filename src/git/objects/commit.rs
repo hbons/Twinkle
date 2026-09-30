@@ -21,5 +21,6 @@ pub struct GitCommit {
 
     pub author: GitUser,
     pub message: GitCommitMessage,
+    pub is_merge: bool,
     pub changes: Vec<GitChange>,
 }
