@@ -74,7 +74,7 @@ pub fn default_git_settings()
 
         // Cross-platform compatiblity
         ("core.autocrlf", "input".into()), // Text files will keep original line endings when checked out, CRLF chars are normalized to LF when committed
-        ("core.fileMode", "false".into()), // Ignore permission changes
+        // ("core.fileMode", "false".into()), // Ignore executable bit  // TODO: Only set to false on Windows
         ("core.ignoreCase", "false".into()), // Be case sensitive explicitly to work on macOS
         ("core.precomposeUnicode", "true".into()), // Revert unicode filename decomposition by macOS
         ("core.quotePath", "false".into()), // Output Unicode characters: '"h\303\251"' becomes 'hé'

@@ -36,7 +36,8 @@ TWINKLE_ONCE=1 twinkle sync
 cd ..
 
 cd $REPO_NAME_2
-touch README2.md
+touch script.sh
+chmod +x script.sh
 TWINKLE_ONCE=1 twinkle sync
 
 cd ..
@@ -46,7 +47,7 @@ TWINKLE_ONCE=1 twinkle sync
 
 
 test -f README.md
-test -f README2.md
+test -x script.sh
 
 
 # TODO: Doesn't work...
