@@ -13,7 +13,6 @@ use chrono::{ DateTime, Local };
 use crate::cli::util;
 use crate::git::objects::change::GitChange;
 use crate::git::objects::id::GitId;
-use crate::git::objects::reference::GitReference;
 use crate::git::objects::status::GitFileStatus;
 use crate::ssh::objects::url::SshUrl;
 
@@ -93,11 +92,11 @@ pub fn format_commit_message(changes: &[GitChange]) -> Option<String> {
 }
 
 
-// github.com:hbons/notes ↓ 5cce3 • A `TWINKLE.md`
+// github.com:hbons/notes ↓ 5cce3 • merge • A `TWINKLE.md`
 pub fn format_repo_change(
     url: &SshUrl,
-    _branch: &GitReference,
     id: &GitId,
+    is_merge: bool,
     change: &GitChange,
     symbol: &str,
 ) -> Option<String>
@@ -109,10 +108,18 @@ pub fn format_repo_change(
 
     let id = id.to_short_str();
     let dot = util::cli_dimmed("•");
+
+    let merge =
+        if is_merge {
+            &format!(" {dot} {}", util::cli_cyan("merge"))
+        } else {
+            ""
+        };
+
     let letter = format_file_status(&change.status_x.clone()?);
     let change = format_change(change);
 
-    Some(format!("{host} {symbol} {id} {dot} {letter} {change}"))
+    Some(format!("{host} {symbol} {id}{merge} {dot} {letter} {change}"))
 }
 
 

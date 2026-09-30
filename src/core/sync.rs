@@ -231,7 +231,7 @@ fn sync_up(
             .unwrap_or_default(); // We need an empty Vec over None for the next block
 
         if let Some(message) = pretty::format_commit_message(&changes) {
-            let user = repo.user().ok_or("User not set")?;
+            let user = repo.user().ok_or("User not set")?; // TODO: Commit with default user?
 
             repo.set_user(&user)?;
             repo.git.commit(Some(user), &message)?;
@@ -258,20 +258,27 @@ fn sync_up(
             _ = repo.git.lfs_uninstall_pre_push_hook();
         }
 
+        let unpushed_commits = repo.git
+            .log_unpushed()?
+            .into_iter()
+            .rev();
+
         let push = repo.git.push(&remote, &branch);
 
         match push {
             Ok(_)  => {
                 let url = repo.remote_url().ok_or("Missing remote url")?;
-                let id = repo.git.rev_parse(&"HEAD".into())?;
 
-                for change in changes {
-                    if let Some(s) = pretty::format_repo_change(&url, &branch, &id, &change, "↑") {
-                        println!("{s}");
+                for commit in unpushed_commits {
+                    for change in commit.changes.iter().rev() {
+                        if let Some(s) = pretty::format_repo_change(&url, &commit.id, commit.is_merge, &change, "↑") {
+                            println!("{s}");
+                        }
                     }
                 }
             },
             Err(_) => {
+                // TODO: "Could not sync 7 local changes. Retrying in…"
                 log::debug("✗ Push failed. Fetching…");
                 let fetch = sync_down(repo);
 
@@ -317,27 +324,32 @@ fn sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
         repo.git.lfs_fetch()?;
     }
 
-    let last_commit = repo.git.rev_parse(&"HEAD".into())?;
+    let fetched_commits = repo.git
+        .log_fetched()?
+        .into_iter()
+        .rev();
+
+    for commit in fetched_commits {
+        let url = repo.remote_url()
+            .ok_or("Missing remote url")?;
+
+        for change in commit.changes.iter().rev() {
+            if let Some(s) = pretty::format_repo_change(&url, &commit.id, commit.is_merge, &change, "↓") {
+                println!("{s}");
+            }
+        }
+    }
 
     if OS == "macos" { repo.git.config_set(K_CORE_IGNORE_CASE, "true")?; }
+    let merge = repo.git.merge(&"FETCH_HEAD".into());
 
-    if repo.git.merge(&"FETCH_HEAD".into()).is_err() {
+    if merge.is_err() {
         resolve::resolve_changes(repo)?;
     }
 
     if OS == "macos" { repo.git.config_set(K_CORE_IGNORE_CASE, "false")?; }
 
     log::debug(&format!("✓ Fetched and merged. Now at {}", repo.current_head()?));
-
-    for commit in repo.git.log_since(&last_commit)? {
-        let url = repo.remote_url().ok_or("Missing remote url")?;
-
-        for change in &commit.changes {
-            if let Some(s) = pretty::format_repo_change(&url, &branch, &commit.id, change, "↓") {
-                println!("{s}");
-            }
-        }
-    }
 
     Ok(())
 }
