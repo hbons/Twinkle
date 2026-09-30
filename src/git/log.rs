@@ -42,12 +42,15 @@ impl GitEnvironment {
         self.log_internal(Some(&format!("{id}..")), None)
     }
 
-    // pub fn log_since_merge(
-    //     &self,
-    // ) -> Result<Vec<GitCommit>, Box<dyn Error>>
-    // {
-    //     self.log_internal(Some("ORIG_HEAD.."), None)
-    // }
+
+    pub fn log_unpushed(&self) -> Result<Vec<GitCommit>, Box<dyn Error>> {
+        self.log_internal(Some("@{upstream}.."), None)
+    }
+
+
+    pub fn log_fetched(&self) -> Result<Vec<GitCommit>, Box<dyn Error>> {
+        self.log_internal(Some("HEAD..FETCH_HEAD"), None)
+    }
 
 
     fn log_internal(
