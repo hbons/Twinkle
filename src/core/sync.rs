@@ -259,7 +259,7 @@ fn sync_up(
         }
 
         let unpushed_commits = repo.git
-            .log_unpushed()?
+            .log_unpushed()? // we don't have an upstream here yet on empty init repos
             .into_iter()
             .rev();
 
@@ -271,7 +271,7 @@ fn sync_up(
 
                 for commit in unpushed_commits {
                     for change in commit.changes.iter().rev() {
-                        if let Some(s) = pretty::format_repo_change(&url, &commit.id, commit.is_merge, &change, "↑") {
+                        if let Some(s) = pretty::format_repo_change(&url, &commit.id, commit.is_merge, change, "↑") {
                             println!("{s}");
                         }
                     }
@@ -334,7 +334,7 @@ fn sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
             .ok_or("Missing remote url")?;
 
         for change in commit.changes.iter().rev() {
-            if let Some(s) = pretty::format_repo_change(&url, &commit.id, commit.is_merge, &change, "↓") {
+            if let Some(s) = pretty::format_repo_change(&url, &commit.id, commit.is_merge, change, "↓") {
                 println!("{s}");
             }
         }
