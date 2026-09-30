@@ -58,12 +58,12 @@ impl GitEnvironment {
     {
         let output = self.run("log", &[
             OsStr::new("-z"), // Single line, NUL-separated
+            OsStr::new("--cc"), // Show --name-status on merges
             OsStr::new("--date=unix"), // Seconds since epoch
             OsStr::new(&format!("--max-count={}", max.unwrap_or(i32::MAX))),
             OsStr::new("--name-status"), // List files with change type
             OsStr::new("--no-color"),
             OsStr::new("--no-decorate"), // Don't show the (tracking) branch
-            OsStr::new("--no-merges"), // Merges don't have a --name-status
             OsStr::new(reference.unwrap_or("HEAD")),
         ])?;
 
@@ -124,11 +124,13 @@ fn parse_line(
         },
         s if s.starts_with("commit") => {
             match parse_line_id(lossy_line) {
-                Some(s) => commit.id = s.parse::<GitId>()?,
+                Some(id) => commit.id = id,
                 None => return Err("Error parsing commit id".into()),
             }
         },
-        s if s.starts_with("Merge:") => (),
+        s if s.starts_with("Merge:") => {
+            commit.is_merge = true;
+        },
         s if s.starts_with("Author:") => {
             let lossy_line = lossy_line.strip_prefix("Author:").ok_or("Error parsing author")?;
             commit.author = lossy_line.parse::<GitUser>()?;
@@ -156,12 +158,12 @@ fn parse_line(
 
 
 // 'commit ab83b62f5027c66be4826c73f07daeb25fd04219'
-fn parse_line_id(line: &str) -> Option<&str> {
-    Some(
-        line
-            .strip_prefix("commit")?
-            .trim()
-    )
+fn parse_line_id(line: &str) -> Option<GitId> {
+    line
+        .strip_prefix("commit")?
+        .trim()
+        .parse::<GitId>()
+        .ok()
 }
 
 
