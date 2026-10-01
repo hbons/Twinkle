@@ -42,7 +42,7 @@ rm README.md
 TWINKLE_ONCE=1 twinkle sync
 
 
-! git rev-parse MERGE_HEAD
+! test -f .git/MERGE_HEAD
 ! test -f README.md
 
 
