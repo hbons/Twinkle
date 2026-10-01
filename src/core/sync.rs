@@ -92,12 +92,18 @@ pub fn start(
         repo.set_has_local_changes(true);
     }
 
+    // TODO: Use tokio async
     let repo_c1 = repo.clone();
     let repo_c2 = repo.clone();
-    let mut repo_c3 = repo.clone();
-    thread::spawn(move || { _ = notify::watch(&repo_c1); });
-    thread::spawn(move || { _ = watch_local(&repo_c2); });
-    thread::spawn(move || { _ = watch_remote(&mut repo_c3, interval); });
+    let repo_c3 = repo.clone();
+
+    // Local
+    thread::spawn(move || { _ = watch_local(&repo_c1); }); // Reliable, but slow
+    thread::spawn(move || { _ = notify::watch(&repo_c2.clone()); }); // Fast, but less reliable
+
+    // Remote
+    thread::spawn(move || { _ = watch_remote(&repo_c3, interval); }); // Reliable, but slow
+    // thread::spawn(move || { _ = push::subscribe(&repo_c4); }); // Fast, but less reliable
 
     let mut start_sync = false;
 
@@ -169,7 +175,7 @@ pub fn watch_local(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
 
 
 pub fn watch_remote(
-    repo: &mut TwinkleRepository,
+    repo: &TwinkleRepository,
     interval: Option<Duration>,
 ) -> Result<(), Box<dyn Error>>
 {
