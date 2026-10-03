@@ -13,10 +13,10 @@ pub mod defaults {
 }
 
 pub mod objects {
+    pub mod channel;
     pub mod repository;
     pub mod repository_files;
     pub mod repository_config;
-    pub mod repository_notify;
 }
 
 pub mod clone;
@@ -24,6 +24,7 @@ pub mod init;
 pub mod keys;
 pub mod lfs;
 pub mod notify;
+pub mod push;
 pub mod pretty;
 pub mod resolve;
 pub mod util;

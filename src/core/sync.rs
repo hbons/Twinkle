@@ -7,11 +7,13 @@
 
 use std::env::consts::OS;
 use std::error::Error;
+use std::sync::Arc;
 use std::thread;
 use std::time::Duration;
 
 use chrono::Utc;
 
+use crate::core::objects::channel::TwinkleChannel;
 use crate::git::objects::status::GitStatusFilter;
 use crate::git::config::K_CORE_IGNORE_CASE;
 
@@ -27,6 +29,7 @@ use super::lfs;
 use super::notify;
 use super::resolve;
 use super::pretty;
+use super::push;
 use super::util;
 
 
@@ -96,14 +99,29 @@ pub fn start(
     let repo_c1 = repo.clone();
     let repo_c2 = repo.clone();
     let repo_c3 = repo.clone();
+    let repo_c4 = Arc::new(repo.clone());
 
     // Local
-    thread::spawn(move || { _ = watch_local(&repo_c1); }); // Reliable, but slow
-    thread::spawn(move || { _ = notify::watch(&repo_c2.clone()); }); // Fast, but less reliable
+    thread::spawn(move || { _ = watch_local(&repo_c1); });  // Reliable, but slow
+    thread::spawn(move || { _ = notify::watch(&repo_c2.clone()); });  // Fast, but less reliable
 
     // Remote
-    thread::spawn(move || { _ = watch_remote(&repo_c3, interval); }); // Reliable, but slow
-    // thread::spawn(move || { _ = push::subscribe(&repo_c4); }); // Fast, but less reliable
+    thread::spawn(move || { _ = watch_remote(&repo_c3, interval); });  // Reliable, but slow
+
+    // if let Some(url) = repo.git.config_get(K_) { // TODO: get push.enabled and push.url here
+    // }
+
+    tokio::spawn(async move {  // Fast, but less reliable
+        let mut connection = push::connect("wss://notify.sparkleshare.org:443").await.unwrap();
+
+        if let Some(id) = repo_c4.id() {
+            if let Ok(channel) = id.parse::<TwinkleChannel>() {
+                _ = connection.listen(&channel, repo_c4).await;
+            }
+        }
+
+        // TODO: reconnect on disconnect
+    });
 
     let mut start_sync = false;
 
@@ -129,6 +147,18 @@ pub fn start(
 
                     let now = Utc::now().timestamp();
                     repo.set_last_synced(now)?;
+
+                    let repo_c5 = repo.clone();
+
+                    tokio::spawn(async move {  // Fast, but less reliable
+                        let connection = push::connect("wss://notify.sparkleshare.org:443").await.unwrap();
+
+                        if let Some(id) = repo_c5.id() {
+                            if let Ok(channel) = id.parse::<TwinkleChannel>() {
+                                _ = connection.notify(&channel, None).await;
+                            }
+                        }
+                    });
                 },
                 Err(e) => log::error(&e.to_string()),
             }
