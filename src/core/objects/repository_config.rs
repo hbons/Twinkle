@@ -37,6 +37,8 @@ use crate::core::defaults::config::{
     K_LFS_ENABLED,
     K_LFS_SIZE_THRESHOLD,
     K_POLLING_INTERVAL,
+    K_PUSH_ENABLED,
+    K_PUSH_URL,
     K_READONLY,
     key
 };
@@ -83,6 +85,44 @@ impl TwinkleRepository {
 }
 
 
+// push.enabled
+impl TwinkleRepository {
+    pub fn push_enabled(&self) -> bool {  // TODO: Also check .twinkle/config
+        if let Some(output) = self.git.config_get(&key(K_PUSH_ENABLED)) {
+            if let Ok(value) = output.parse::<bool>() {
+                return value;
+            }
+        }
+
+        false
+    }
+
+    pub fn set_push_enabled(&self, value: bool) -> Result<(), Box<dyn Error>>{
+        self.git.config_set(
+            &key(K_PUSH_ENABLED),
+            &value.to_string()
+        )?;
+
+        Ok(())
+    }
+}
+
+
+// push_url
+impl TwinkleRepository {
+    pub fn push_url(&self) -> Option<String> {
+        self.git.config_get(&key(K_PUSH_URL))
+    }
+
+    pub fn set_push_url(&self, value: String) -> Result<(), Box<dyn Error>>{
+        self.git.config_set(
+            &key(K_PUSH_URL),
+            &value,
+        )
+    }
+}
+
+
 // read_only
 impl TwinkleRepository {
     pub fn read_only(&self) -> bool {
@@ -99,9 +139,7 @@ impl TwinkleRepository {
         self.git.config_set(
             &key(K_READONLY),
             &value.to_string()
-        )?;
-
-        Ok(())
+        )
     }
 }
 

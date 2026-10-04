@@ -36,7 +36,7 @@ impl App {
         let mut repo = TwinkleRepository::new(&path)?;
 
         if !repo.enabled() {
-            return Err("Repository is disabled".into());
+            return Err("Sync not enabled on repository".into());
         }
 
         // TODO: Stop if no user set or let git commit fail?
