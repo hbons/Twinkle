@@ -5,11 +5,13 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-#![deny(clippy::all)]
-#![warn(clippy::cargo)]
-
 #![allow(clippy::ptr_arg)]
 #![allow(clippy::collapsible_if)]
+
+#![deny(clippy::expect_used)]
+#![deny(clippy::panic)]
+#![deny(clippy::unwrap_used)]
+
 
 pub mod app;
 pub mod cli;
@@ -32,7 +34,8 @@ use crate::app::{ App, app_runs_as_root };
 use crate::gui::Gui;
 
 
-fn main() -> Result<(), Box<dyn Error>> {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
     log::debug_base(&app_version());
     log::debug_base(&app_deps());
 
