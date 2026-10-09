@@ -14,6 +14,7 @@ use crate::app::App;
 
 use crate::core::objects::repository::TwinkleRepository;
 use crate::core::sync;
+use crate::log;
 
 
 impl App {
@@ -40,6 +41,15 @@ impl App {
         }
 
         // TODO: Stop if no user set or let git commit fail?
+        if repo.user().is_none() {
+            // Maybe a better message?
+            log::debug(
+                "Git user not set\n\
+                Set one with:\n\
+                git config --local user.name \"Your Name\"\n\
+                git config --local user.email \"your@email\"",
+            );
+        }
 
         let once = env::var("TWINKLE_ONCE").ok();
         sync::start(&mut repo, interval, once.is_some())
