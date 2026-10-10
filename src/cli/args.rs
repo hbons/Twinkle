@@ -15,7 +15,7 @@ use super::util::*;
 
 
 impl App {
-    pub fn cli_parse_args(
+    pub async fn cli_parse_args(
         &mut self,
         args: &[String],
     ) -> Result<(), Box<dyn Error>>
@@ -27,7 +27,7 @@ impl App {
         match command.as_str() {
             "clone"     => self.cli_command_clone(args)?,
             "init"      => self.cli_command_init(args)?,
-            "sync"      => self.cli_command_sync(args)?,
+            "sync"      => self.cli_command_sync(args).await?,
             "status"    => self.cli_command_status(args)?, // Not displayed
             "check"     => self.cli_command_check(args)?, // Not displayed
             "--help"    => self.cli_option_help(),

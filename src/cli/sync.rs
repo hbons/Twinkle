@@ -8,16 +8,20 @@
 use std::error::Error;
 use std::env;
 use std::path::Path;
+use std::sync::Arc;
 use std::time::Duration;
+
+use tokio::sync::Mutex;
 
 use crate::app::App;
 
 use crate::core::objects::repository::TwinkleRepository;
+use crate::core::push;
 use crate::core::sync;
 
 
 impl App {
-    pub fn cli_command_sync(
+    pub async fn cli_command_sync(
         &mut self,
         args: &[String],
     ) -> Result<(), Box<dyn Error>>
@@ -35,6 +39,13 @@ impl App {
 
         let mut repo = TwinkleRepository::new(&path)?;
 
+        let push_url = repo.push_url()
+            .unwrap_or(push::DEFAULT_SERVER.into());
+
+        let connection = Arc::new(Mutex::new(
+            push::connect(&push_url).await?
+        ));
+
         if !repo.enabled() {
             return Err("Sync not enabled on repository".into());
         }
@@ -42,6 +53,6 @@ impl App {
         // TODO: Stop if no user set or let git commit fail?
 
         let once = env::var("TWINKLE_ONCE").ok();
-        sync::start(&mut repo, interval, once.is_some())
+        sync::start(&mut repo, Some(connection), interval, once.is_some())
     }
 }

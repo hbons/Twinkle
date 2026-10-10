@@ -10,10 +10,12 @@ use std::error::Error;
 use std::sync::Arc;
 use std::thread;
 use std::time::Duration;
+use tokio::sync::Mutex;
 
 use chrono::Utc;
 
 use crate::core::objects::channel::TwinkleChannel;
+use crate::core::push::PushConnection;
 use crate::git::objects::status::GitStatusFilter;
 use crate::git::config::K_CORE_IGNORE_CASE;
 
@@ -29,7 +31,6 @@ use super::lfs;
 use super::notify;
 use super::resolve;
 use super::pretty;
-use super::push;
 use super::util;
 
 
@@ -80,6 +81,7 @@ pub fn prepare(
 
 pub fn start(
     repo: &mut TwinkleRepository,
+    connection: Option<Arc<Mutex<PushConnection>>>,
     interval: Option<Duration>,
     once: bool,
 ) -> Result<(), Box<dyn Error>>
@@ -109,21 +111,22 @@ pub fn start(
     thread::spawn(move || { _ = watch_remote(&repo_c3, interval); });  // Reliable, but slow
 
 
-    if repo.push_enabled() {
-        let url = repo.push_url()
-            .unwrap_or(push::DEFAULT_SERVER.into());
+    if let Some(ref connection) = connection {
+        let connection_c1 = Arc::clone(&connection);
 
-        tokio::spawn(async move {  // Fast, but less reliable
-            let mut connection = push::connect(&url).await.unwrap();
+        if repo.push_enabled() {
+            tokio::spawn(async move {  // Fast, but less reliable
+                let mut connection = connection_c1.lock().await;
 
-            if let Some(id) = repo_c4.id() {
-                if let Ok(channel) = id.parse::<TwinkleChannel>() {
-                    _ = connection.listen(&channel, repo_c4).await;
+                if let Some(id) = repo_c4.id() {
+                    if let Ok(channel) = id.parse::<TwinkleChannel>() {
+                        _ = connection.listen(&channel, repo_c4).await;
+                    }
                 }
-            }
 
-            // TODO: reconnect on disconnect
-        });
+                // TODO: reconnect on disconnect
+            });
+        }
     }
 
 
@@ -152,21 +155,21 @@ pub fn start(
                     let now = Utc::now().timestamp();
                     repo.set_last_synced(now)?;
 
-                    let repo_c5 = repo.clone();
+                        if repo.push_enabled() {
+                            let repo_c5 = repo.clone();
+                    if let Some(ref connection) = connection {
+                            let connection_c2 = Arc::clone(&connection);
 
-                    if repo.push_enabled() {
-                        let url = repo.push_url()
-                            .unwrap_or(push::DEFAULT_SERVER.into());
+                            tokio::spawn(async move {
+                                let connection = connection_c2.lock().await;
 
-                        tokio::spawn(async move {
-                            let connection = push::connect(&url).await.unwrap();
-
-                            if let Some(id) = repo_c5.id() {
-                                if let Ok(channel) = id.parse::<TwinkleChannel>() {
-                                    _ = connection.notify(&channel, None).await;
+                                if let Some(id) = repo_c5.id() {
+                                    if let Ok(channel) = id.parse::<TwinkleChannel>() {
+                                        _ = connection.notify(&channel, None).await;
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
                     }
                 },
                 Err(e) => log::error(&e.to_string()),
