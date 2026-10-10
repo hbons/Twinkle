@@ -53,7 +53,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let mut app = App::default();
     let args: Vec<String> = args().collect();
 
-    match app.cli_parse_args(&args) {
+    match app.cli_parse_args(&args).await {
         Ok(_)  => exit(0),
         Err(e) => log::error_and_exit(&e.to_string())
     };
