@@ -87,10 +87,10 @@ impl App {
 
         print_header("Sync");
         run_check(".twinkle/config", &is_twinkle_config_valid, path);
-        run_check("twinkle.id", &is_twinkle_id_set, path);
-        run_check("twinkle.enabled", &is_twinkle_enabled_set, path);
-        run_check("twinkle.lfs.enabled", &is_twinkle_lfs_enabled_set, path);
-        run_check("twinkle.push.enabled", &is_twinkle_push_enabled_set, path);
+        run_check("sync.id", &is_twinkle_id_set, path);
+        run_check("sync.enabled", &is_twinkle_enabled_set, path);
+        run_check("sync.lfs.enabled", &is_twinkle_lfs_enabled_set, path);
+        run_check("sync.push.enabled", &is_twinkle_push_enabled_set, path);
 
         // TODO: Find all git config options/filters/hooks that may have been added by the user
 

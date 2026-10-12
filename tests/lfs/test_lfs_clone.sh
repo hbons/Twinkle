@@ -42,7 +42,7 @@ cd $REPO_NAME
 grep $LARGE_FILE .gitattributes
 test -f $LARGE_FILE
 [ $(wc -c < $LARGE_FILE) -eq 1048576 ]
-git config twinkle.lfs.enabled
+git config sync.lfs.enabled
 git lfs ls-files | grep $LARGE_FILE
 
 source ../../common/test_synced.sh

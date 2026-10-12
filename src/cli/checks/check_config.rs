@@ -105,7 +105,7 @@ pub fn is_git_user_email_set(path: &Path) -> Outcome {
 // Sync
 
 pub fn is_twinkle_enabled_set(path: &Path) -> Outcome {
-    let check = get_from_config(path, "twinkle.enabled", Some("true"));
+    let check = get_from_config(path, "sync.enabled", Some("true"));
 
     match check {
         Outcome::Missing => Outcome::Fail(Some("missing".into())),

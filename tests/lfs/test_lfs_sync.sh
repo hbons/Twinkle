@@ -27,8 +27,8 @@ LARGE_FILE=large_file.bin
 touch $SMALL_FILE
 dd if=/dev/zero of=$LARGE_FILE bs=3M count=1
 
-git config twinkle.lfs.enabled true
-git config twinkle.lfs.sizeThreshold 3m
+git config sync.lfs.enabled true
+git config sync.lfs.sizeThreshold 3m
 TWINKLE_ONCE=1 twinkle sync
 
 

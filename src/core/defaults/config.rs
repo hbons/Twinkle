@@ -29,7 +29,7 @@ pub const K_LFS_SIZE_THRESHOLD: &str = "lfs.sizeThreshold";
 pub const K_LFS_MAX_FILE_SIZE: &str = "lfs.maxFileSize";
 
 
-const SECTION: &str = "twinkle"; // TODO: "sync"?
+const SECTION: &str = "sync";
 
 pub fn key(setting: &str) -> String {
     format!("{SECTION}.{setting}")
