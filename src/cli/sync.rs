@@ -63,6 +63,6 @@ impl App {
         }
 
         let once = env::var("TWINKLE_ONCE").ok();
-        sync::start(&mut repo, Some(connection), interval, once.is_some())
+        sync::start(&mut repo, Some(connection), interval, once.is_some()).await
     }
 }

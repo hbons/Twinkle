@@ -79,7 +79,7 @@ pub fn prepare(
 }
 
 
-pub fn start(
+pub async fn start(
     repo: &mut TwinkleRepository,
     connection: Option<Arc<Mutex<PushConnection>>>,
     interval: Option<Duration>,
@@ -101,7 +101,6 @@ pub fn start(
     let repo_c1 = repo.clone();
     let repo_c2 = repo.clone();
     let repo_c3 = repo.clone();
-    let repo_c4 = Arc::new(repo.clone());
 
     // Local
     thread::spawn(move || { _ = watch_local(&repo_c1); });  // Reliable, but slow
@@ -111,21 +110,14 @@ pub fn start(
     thread::spawn(move || { _ = watch_remote(&repo_c3, interval); });  // Reliable, but slow
 
 
-    if let Some(ref connection) = connection {
-        let connection_c1 = Arc::clone(&connection);
+    if repo.push_enabled() {
+        let repo_c4 = Arc::new(repo.clone());
 
-        if repo.push_enabled() {
-            tokio::spawn(async move {  // Fast, but less reliable
-                let mut connection = connection_c1.lock().await;
-
-                if let Some(id) = repo_c4.id() {
-                    if let Ok(channel) = id.parse::<TwinkleChannel>() {
-                        _ = connection.listen(&channel, repo_c4).await;
-                    }
-                }
-
-                // TODO: reconnect on disconnect
-            });
+        if let Some(ref connection) = connection {
+            _ = watch_remote_listen(
+                Arc::clone(&repo_c4),
+                Arc::clone(connection),
+            ).await;
         }
     }
 
@@ -156,20 +148,15 @@ pub fn start(
                     repo.set_last_synced(now)?;
 
                     if repo.push_enabled() {
-                        let repo_c5 = repo.clone();
+                        let repo_c5 = Arc::new(repo.clone());
 
+                        dbg!("1");
                         if let Some(ref connection) = connection {
-                            let connection_c2 = Arc::clone(&connection);
-
-                            tokio::spawn(async move {
-                                let connection = connection_c2.lock().await;
-
-                                if let Some(id) = repo_c5.id() {
-                                    if let Ok(channel) = id.parse::<TwinkleChannel>() {
-                                        _ = connection.notify(&channel, None).await;
-                                    }
-                                }
-                            });
+                            dbg!("2");
+                            _ = watch_remote_notify(
+                                Arc::clone(&repo_c5),
+                                Arc::clone(connection),
+                            ).await;
                         }
                     }
                 },
@@ -217,7 +204,7 @@ pub fn watch_local(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
 }
 
 
-pub fn watch_remote(
+fn watch_remote(
     repo: &TwinkleRepository,
     interval: Option<Duration>,
 ) -> Result<(), Box<dyn Error>>
@@ -238,6 +225,50 @@ pub fn watch_remote(
 
         thread::sleep(interval); // TODO: Compare to repo.last_checked() so we can detect wake from sleep
     }
+}
+
+
+// Fast, but less reliable
+async fn watch_remote_listen(
+    repo: Arc<TwinkleRepository>,
+    connection: Arc<Mutex<PushConnection>>,
+) -> Result<(), Box<dyn Error>>
+{
+    tokio::spawn(async move {
+        let mut connection = connection.lock().await;
+
+        if let Some(id) = repo.id() {
+            if let Ok(channel) = id.parse::<TwinkleChannel>() {
+                _ = connection.listen(&channel, repo).await;
+            }
+        }
+
+        // TODO: reconnect on disconnect
+    });
+
+    Ok(())
+}
+
+
+async fn watch_remote_notify(
+    repo: Arc<TwinkleRepository>,
+    connection: Arc<Mutex<PushConnection>>,
+) -> Result<(), Box<dyn Error>>
+{
+    dbg!("3");
+    // tokio::spawn(async move {
+        let connection = connection.lock().await;
+
+        if let Some(id) = repo.id() {
+            if let Ok(channel) = id.parse::<TwinkleChannel>() {
+                dbg!("4");
+                _ = connection.notify(&channel, None).await;
+                dbg!("5");
+            }
+        }
+    // });
+
+    Ok(())
 }
 
 
