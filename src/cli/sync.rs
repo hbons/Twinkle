@@ -41,8 +41,9 @@ impl App {
         let mut repo = TwinkleRepository::new(&path)?;
 
         let push_url = repo.push_url()
-            .unwrap_or(push::DEFAULT_SERVER.into());
+            .unwrap_or(push::URL_DEFAULT.into());
 
+        // TODO: Don't crash if we can't connect
         let connection = Arc::new(Mutex::new(
             push::connect(&push_url).await?
         ));
