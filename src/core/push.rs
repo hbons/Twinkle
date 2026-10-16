@@ -30,7 +30,7 @@ use super::objects::channel::TwinkleChannel;
 use super::objects::repository::TwinkleRepository;
 
 
-const PING_INTERVAL_S: u64 = 25;
+const PING_INTERVAL_S: u64 = 5;
 const RECONNECT_INTERVAL_S: usize = 20;
 
 pub const URL_DEFAULT: &str = "wss://push.sparkleshare.org:443";
@@ -223,7 +223,7 @@ pub async fn notify(
         if let Some(id) = repo.id() {
             if let Ok(channel) = id.parse::<TwinkleChannel>() {
                 _ = connection.notify(&channel, None).await
-                    .map_err(|e| log::error("message")); // TODO: show error
+                    .map_err(|e| log::error(&format!("booo! {e:?}"))); // TODO: show error
             }
         }
     });
