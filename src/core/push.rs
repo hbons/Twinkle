@@ -30,8 +30,8 @@ use super::objects::channel::TwinkleChannel;
 use super::objects::repository::TwinkleRepository;
 
 
-const PING_INTERVAL_S: u64 = 5;
-const RECONNECT_INTERVAL_S: usize = 20;
+const PING_INTERVAL_S: u64 = 25;
+const _RECONNECT_INTERVAL_S: usize = 20; // add randomness
 
 pub const URL_DEFAULT: &str = "wss://push.sparkleshare.org:443";
 
