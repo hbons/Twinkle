@@ -83,7 +83,7 @@ pub async fn connect(url: &str) -> Result<PushConnection, Box<dyn Error>> {
             tokio::select! {
                 // Read incoming messages
                 msg_result = read.next() => {
-                    match msg_result {
+                    match msg_result { // TODO: handle_message() fn
                         Some(Ok(msg)) => {
                             if let Message::Pong(_) = msg {
                                 log::debug(&format!("push | {url} | > Pong!"));
@@ -191,9 +191,7 @@ impl PushConnection {
 
 impl PushConnection {
     pub async fn ping(&self) -> Result<(), Box<dyn Error>> {
-        let msg = Message::Ping(
-            Bytes::new(),
-        );
+        let msg = Message::Ping(Bytes::new());
 
         self.write
             .lock().await
@@ -221,14 +219,20 @@ pub async fn notify(
 ) -> Result<(), Box<dyn Error>>
 {
     tokio::spawn(async move {
-        let connection = connection.lock().await;
+        let Some(id) = repo.id() else {
+            log::debug("Could not get repo id");
+            return;
+        };
 
-        if let Some(id) = repo.id() {
-            if let Ok(channel) = id.parse::<TwinkleChannel>() {
-                _ = connection.notify(&channel, None).await
-                    .map_err(|e| log::error(&format!("booo! {e:?}"))); // TODO: show error
-            }
-        }
+        let Ok(channel) = id.parse::<TwinkleChannel>() else {
+            log::debug("Could not get channel for id");
+            return;
+        };
+
+        _ = connection
+            .lock().await
+            .notify(&channel, None).await
+            .map_err(|e| log::error(&format!("booo! {e:?}"))); // TODO: show error
     });
 
     Ok(())
