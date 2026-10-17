@@ -14,7 +14,8 @@ use futures_util::stream::SplitSink;
 use tokio;
 use tokio::net::TcpStream;
 use tokio::sync::Mutex;
-use tokio::time::{ self, Duration };
+use tokio::time;
+use tokio::time::Duration;
 use tokio_tungstenite;
 use tokio_tungstenite::tungstenite::Bytes;
 use tokio_tungstenite::tungstenite::protocol::WebSocketConfig;
@@ -31,7 +32,8 @@ use super::objects::repository::TwinkleRepository;
 
 
 const PING_INTERVAL_S: u64 = 25;
-const _RECONNECT_INTERVAL_S: usize = 20; // add randomness
+const PING_TIMEOUT_S: u64 = 60;
+const _RECONNECT_INTERVAL_S: usize = 10; // add randomness
 
 pub const URL_DEFAULT: &str = "wss://push.sparkleshare.org:443";
 
@@ -129,6 +131,7 @@ pub async fn connect(url: &str) -> Result<PushConnection, Box<dyn Error>> {
 
                     if let Err(e) = write.lock().await.send(msg).await {
                         log::error(&format!("push | {url} | Ping fail: {:?}", e));
+                        // this never fires
                         break;
                     }
                 }
