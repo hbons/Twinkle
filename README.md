@@ -76,8 +76,8 @@ Twinkle supports the [Large File Storage](https://git-lfs.com) (LFS) extension. 
 ```sh
 git lfs --version  # Check if git-lfs is installed
 
-git config twinkle.lfs.enabled true
-git config twinkle.lfs.sizeThreshold 3m  # (k)b / (m)b / (g)b
+git config sync.lfs.enabled true
+git config sync.lfs.sizeThreshold 3m  # (k)b / (m)b / (g)b
 
 twinkle sync
 ```
@@ -129,9 +129,9 @@ When syncing between clients with the same user name:
 Twinkle currently has a few settings that can be changed using `git config`:
 
 ```sh
-git config twinkle.pollingInterval 3m  # (s)ec / (m)in / (h)our
-git config twinkle.lfs.enabled true
-git config twinkle.lfs.sizeThreshold 3m
+git config sync.pollingInterval 3m  # (s)ec / (m)in / (h)our
+git config sync.lfs.enabled true
+git config sync.lfs.sizeThreshold 3m
 ```
 
 ### 5.2. `.twinkle/config`
@@ -139,7 +139,7 @@ git config twinkle.lfs.sizeThreshold 3m
 Twinkle automatically adds `.twinkle/config` to the repository. This file contains a ***random id*** essential for Twinkle to function and will be recreated when missing:
 
 ```yml
-[twinkle]
+[sync]
     id = abf70479d5283900df3f4765fc4083801b46e8d41355136f778ede6812413f67
 ```
 
