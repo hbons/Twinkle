@@ -145,9 +145,25 @@ Twinkle automatically adds `.twinkle/config` to the repository. This file contai
 
 <br>
 
+## 6. Push Notifications
 
-## 6. Links
+Twinkle uses polling to detect new remote commits. This is relatively resource-intensive and might trigger host rate limits, so can't be done as often. Syncing from the remote may be delayed by a couple of minute or two.
+
+To sync faster, [**twinkle-pushd**](https://github.com/hbons/twinkle-pushd) exists. Using [Secure WebSockets (wss://)](https://developer.mozilla.org/docs/Glossary/WebSockets) it immediately alerts all clients to start syncing. This feature is ***optional*** and syncing will work just fine without it.
+
+Use `push.sparkleshare,org` or [host your own](https://github.com/hbons/twinkle-pushd) and set up your repositories like this:
+
+```bash
+git config --file=.twinkle/config sync.push.enabled true
+git config --file=.twinkle/config sync.push.url wss://push.sparkleshare.org:443
+```
+
+These settings will sync to everyone connected to the repository through the `.twinkle/config` file. No sensitive data is transmitted. Only a hash of `sync.id`.
+
+<br>
+
+## 7. Links
 
 * Fediverse ～ [@hbons@mastodon.social](https://mastodon.social/@hbons)
-* Matrix channel ～ [#sparkleshare:matrix.org](https://matrix.to/#/#sparkleshare:matrix.org)
+* Join the community on Matrix ～ [#sparkleshare:matrix.org](https://matrix.to/#/#sparkleshare:matrix.org)
 * Website ～ [sparkleshare.org](https://sparkleshare.org)
