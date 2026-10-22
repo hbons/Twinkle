@@ -19,9 +19,9 @@ pub const K_MAX_FILE_SIZE: &str = "maxFileSize";
 pub const K_CO_AUTHOR: &str = "coAuthor";
 
 
-// Notify
-pub const K_NOTIFY_ENABLED: &str = "notify.enabled";
-pub const K_NOTIFY_URL: &str = "notify.url";
+// Push
+pub const K_PUSH_ENABLED: &str = "push.enabled";
+pub const K_PUSH_URL: &str = "push.url";
 
 // LFS
 pub const K_LFS_ENABLED: &str = "lfs.enabled";
@@ -50,9 +50,9 @@ fn _default_settings()
         (key(K_LAST_SYNC), "0"),
         (key(K_LAST_CHECK), "0"),
 
-        // Notify
-        (key(K_NOTIFY_ENABLED), "true"),
-        (key(K_NOTIFY_URL), "wss://notify.sparkleshare.org"),
+        // Push
+        (key(K_PUSH_ENABLED), "false"),
+        (key(K_PUSH_URL), "wss://push.sparkleshare.org:443"),
 
         // LFS
         (key(K_LFS_ENABLED), "true"),
