@@ -7,11 +7,14 @@
 
 use std::env::consts::OS;
 use std::error::Error;
+use std::sync::Arc;
 use std::thread;
 use std::time::Duration;
+use tokio::sync::Mutex;
 
 use chrono::Utc;
 
+use crate::core::objects::push_connection::PushConnection;
 use crate::git::objects::status::GitStatusFilter;
 use crate::git::config::K_CORE_IGNORE_CASE;
 
@@ -24,9 +27,11 @@ use super::defaults::common::default_sync_up_delay_max;
 use super::defaults::common::default_sync_up_delay_bump;
 use super::keys;
 use super::lfs;
-use super::notify;
 use super::resolve;
+use super::watch_local;
+use super::watch_remote;
 use super::pretty;
+use super::push;
 use super::util;
 
 
@@ -75,8 +80,9 @@ pub fn prepare(
 }
 
 
-pub fn start(
+pub async fn start(
     repo: &mut TwinkleRepository,
+    connection: Option<Arc<Mutex<PushConnection>>>,
     interval: Option<Duration>,
     once: bool,
 ) -> Result<(), Box<dyn Error>>
@@ -92,12 +98,30 @@ pub fn start(
         repo.set_has_local_changes(true);
     }
 
+    // TODO: Use tokio async
     let repo_c1 = repo.clone();
     let repo_c2 = repo.clone();
-    let mut repo_c3 = repo.clone();
-    thread::spawn(move || { _ = notify::watch(&repo_c1); });
-    thread::spawn(move || { _ = watch_local(&repo_c2); });
-    thread::spawn(move || { _ = watch_remote(&mut repo_c3, interval); });
+    let repo_c3 = repo.clone();
+
+    // Local
+    thread::spawn(move || { _ = watch_local::local(&repo_c1); });  // Reliable, but slow
+    thread::spawn(move || { _ = watch_local::local_using_notify(&repo_c2.clone()); });  // Fast, but less reliable
+
+    // Remote
+    thread::spawn(move || { _ = watch_remote::remote(&repo_c3, interval); });  // Reliable, but slow
+
+
+    if repo.push_enabled() {
+        let repo = Arc::new(repo.clone());
+
+        if let Some(ref connection) = connection {
+            _ = watch_remote::remote_using_push(
+                Arc::clone(&repo),
+                Arc::clone(connection),
+            ).await;
+        }
+    }
+
 
     let mut start_sync = false;
 
@@ -123,6 +147,15 @@ pub fn start(
 
                     let now = Utc::now().timestamp();
                     repo.set_last_synced(now)?;
+
+                    if repo.push_enabled() {
+                        if let Some(ref connection) = connection {
+                            _ = push::send_notify(
+                                Arc::new(repo.clone()),
+                                Arc::clone(connection),
+                            ).await;
+                        }
+                    }
                 },
                 Err(e) => log::error(&e.to_string()),
             }
@@ -146,48 +179,6 @@ pub fn start(
         if once {
             return Ok(());
         }
-    }
-}
-
-
-const WATCH_INTERVAL: u64 = 60;
-
-pub fn watch_local(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
-    loop {
-        if !repo.is_busy() {
-            if repo.git.status(GitStatusFilter::All).is_some() {
-                repo.set_has_local_changes(true);
-                log::debug("Local changes detected…");
-            }
-        }
-
-        thread::sleep(
-            Duration::from_secs(WATCH_INTERVAL)
-        );
-    }
-}
-
-
-pub fn watch_remote(
-    repo: &mut TwinkleRepository,
-    interval: Option<Duration>,
-) -> Result<(), Box<dyn Error>>
-{
-    loop {
-        let interval = interval.unwrap_or(
-            repo.polling_interval()
-        );
-
-        if !repo.is_busy() {
-            if let Ok(true) = has_unfetched_commits(repo) {
-                repo.set_has_remote_changes(true);
-            }
-
-            let now = Utc::now().timestamp();
-            repo.set_last_checked(now)?;
-        }
-
-        thread::sleep(interval); // TODO: Compare to repo.last_checked() so we can detect wake from sleep
     }
 }
 
@@ -362,22 +353,6 @@ fn has_unpushed_commits(repo: &TwinkleRepository) -> bool { // TODO: Move to Rep
     }
 }
 
-
-fn has_unfetched_commits(repo: &TwinkleRepository) -> Result<bool, Box<dyn Error>> { // TODO: Move to Repository
-    let branch = repo.branch().ok_or("Not on a branch")?;
-    let remote = repo.remote(&branch);
-
-    if let Ok(remote_id) = repo.git.ls_remote(&remote, &branch) {
-        if !repo.git.merge_base(&remote_id, &branch)? {
-            repo.set_has_remote_changes(true);
-            log::debug("✓ Unfetched commits found");
-
-            return Ok(true);
-        }
-    }
-
-    Ok(false)
-}
 
 
 // pub enum TwinkleStatus {

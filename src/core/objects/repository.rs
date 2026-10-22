@@ -11,6 +11,7 @@ use std::path::{ Path, PathBuf };
 use std::sync::Arc;
 use std::sync::atomic::{ AtomicBool, Ordering };
 
+use crate::core::objects::channel::TwinkleChannel;
 use crate::git::objects::environment::GitEnvironment;
 use crate::git::objects::id::GitId;
 use crate::git::objects::reference::GitReference;
@@ -84,6 +85,11 @@ impl TwinkleRepository {
 
     pub fn is_empty(&self) -> bool {
         self.git.rev_parse(&"HEAD".into()).is_err()
+    }
+
+
+    pub fn channel(&self) -> Option<TwinkleChannel> {
+        self.id().and_then(|id| id.parse::<TwinkleChannel>().ok())
     }
 }
 

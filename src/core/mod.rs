@@ -27,5 +27,7 @@ pub mod lfs;
 pub mod push;
 pub mod pretty;
 pub mod resolve;
-pub mod util;
 pub mod sync;
+pub mod watch_local;
+pub mod watch_remote;
+pub mod util;
