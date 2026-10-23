@@ -147,7 +147,7 @@ Twinkle automatically adds `.twinkle/config` to the repository. This file contai
 
 ## 6. Push Notifications
 
-Twinkle uses polling to detect new remote commits. This is relatively resource-intensive and might trigger host rate limits, so can't be done as often. Syncing from the remote may be delayed by a couple of minute or two.
+Twinkle uses polling to detect new remote commits. This is relatively resource-intensive and might trigger host rate limits, so can't be done as often. Syncing from the remote may be delayed by a minute or two.
 
 To sync faster, [**twinkle-pushd**](https://github.com/hbons/twinkle-pushd) exists. Using [Secure WebSockets (wss://)](https://developer.mozilla.org/docs/Glossary/WebSockets) it immediately alerts all clients to start syncing. This feature is ***optional*** and syncing will work just fine without it.
 
