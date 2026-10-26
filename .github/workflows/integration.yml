@@ -17,8 +17,8 @@ jobs:
         variant:
           - arch: x86_64
             runner: ubuntu-24.04
-          - arch: aarch64
-            runner: macos-26
+          # - arch: aarch64
+            # runner: macos-26
       max-parallel: 1  # Avoid rate limits
 
     runs-on: ${{ matrix.variant.runner }}
