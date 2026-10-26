@@ -8,11 +8,11 @@
 use std::env::consts::OS;
 use std::error::Error;
 use std::sync::Arc;
-use std::thread;
 use std::time::Duration;
-use tokio::sync::Mutex;
 
 use chrono::Utc;
+use tokio::time;
+use tokio::sync::Mutex;
 
 use crate::core::objects::push_connection::PushConnection;
 use crate::git::objects::status::GitStatusFilter;
@@ -98,24 +98,23 @@ pub async fn start(
         repo.set_has_local_changes(true);
     }
 
-    // TODO: Use tokio async
+
     let repo_c1 = repo.clone();
     let repo_c2 = repo.clone();
     let repo_c3 = repo.clone();
 
     // Local
-    thread::spawn(move || { _ = watch_local::local(&repo_c1); });  // Reliable, but slow
-    thread::spawn(move || { _ = watch_local::local_using_notify(&repo_c2.clone()); });  // Fast, but less reliable
+    tokio::spawn(async move { _ = watch_local::using_polling(&repo_c1).await; });  // Reliable, but slow
+    tokio::spawn(async move { _ = watch_local::using_notify(&repo_c2.clone()).await; });  // Fast, but less reliable
 
     // Remote
-    thread::spawn(move || { _ = watch_remote::remote(&repo_c3, interval); });  // Reliable, but slow
-
+    tokio::spawn(async move { _ = watch_remote::using_polling(&repo_c3, interval).await; });  // Reliable, but slow
 
     if repo.push_enabled() {
         let repo = Arc::new(repo.clone());
 
         if let Some(ref connection) = connection {
-            _ = watch_remote::remote_using_push(
+            _ = watch_remote::using_push(
                 Arc::clone(&repo),
                 Arc::clone(connection),
             ).await;
@@ -132,7 +131,7 @@ pub async fn start(
         }
 
         if !start_sync {
-            thread::sleep(Duration::from_millis(500));
+            time::sleep(Duration::from_millis(500)).await;
             continue;
         }
 
@@ -141,7 +140,7 @@ pub async fn start(
         if repo.has_local_changes() {
             // TODO: Add (small) configurable delay)
 
-            match sync_up(repo) {
+            match sync_up(repo).await {
                 Ok(_) => {
                     repo.set_has_local_changes(false);
 
@@ -162,7 +161,7 @@ pub async fn start(
         }
 
         if repo.has_remote_changes() {
-            match sync_down(repo) {
+            match sync_down(repo).await {
                 Ok(_) => {
                     repo.set_has_remote_changes(false);
 
@@ -183,7 +182,7 @@ pub async fn start(
 }
 
 
-fn sync_up(
+async fn sync_up(
     repo: &mut TwinkleRepository,
 ) -> Result<(), Box<dyn Error>>
 {
@@ -213,7 +212,7 @@ fn sync_up(
                 _ = repo.git.add(&change.path); // TODO: error get eaten and may cause an infinite loop
             }
 
-            thread::sleep(Duration::from_millis(500)); // Allow file activity to settle
+            time::sleep(Duration::from_millis(500)).await; // Allow file activity to settle
         } // TODO: Prevent infinite loop here
 
         let branch = repo.git.branch_show_current()?;
@@ -271,12 +270,12 @@ fn sync_up(
             Err(_) => {
                 // TODO: "Could not sync 7 local changes. Retrying in…"
                 log::debug("✗ Push failed. Fetching…");
-                let fetch = sync_down(repo);
+                let fetch = sync_down(repo).await;
 
                 if fetch.is_err() { // TODO: Only delay on network errors?
                     let delay = sync_up_delay(attempt);
                     log::debug(&format!("Retrying in {}s…", delay.as_secs()));
-                    thread::sleep(delay);
+                    time::sleep(delay).await;
                 }
             }
         }
@@ -305,7 +304,7 @@ pub fn sync_up_delay(attempt: u64) -> Duration { // TODO: Ugly name and function
 }
 
 
-fn sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
+async fn sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
     let branch = repo.git.branch_show_current()?;
     let remote = repo.remote(&branch);
 
@@ -335,7 +334,7 @@ fn sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
     let merge = repo.git.merge(&"FETCH_HEAD".into());
 
     if merge.is_err() {
-        resolve::resolve_changes(repo)?;
+        resolve::resolve_changes(repo).await?;
     }
 
     if OS == "macos" { repo.git.config_set(K_CORE_IGNORE_CASE, "false")?; }

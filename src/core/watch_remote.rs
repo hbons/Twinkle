@@ -7,18 +7,18 @@
 
 use std::error::Error;
 use std::sync::Arc;
-use std::thread;
 use std::time::Duration;
 
 use chrono::Utc;
 use tokio::sync::Mutex;
+use tokio::time;
 
-use crate::core::objects::repository::TwinkleRepository;
 use crate::core::objects::push_connection::PushConnection;
+use crate::core::objects::repository::TwinkleRepository;
 use crate::log;
 
 
-pub fn remote(
+pub async fn using_polling(
     repo: &TwinkleRepository,
     interval: Option<Duration>,
 ) -> Result<(), Box<dyn Error>>
@@ -40,22 +40,23 @@ pub fn remote(
         // TODO: Compare to repo.last_checked() so
         // we can detect wake from sleep and start
         // checking remote immediately
-        thread::sleep(interval);
+        time::sleep(interval).await;
     }
 }
 
 
-pub async fn remote_using_push(
+pub async fn using_push(
     repo: Arc<TwinkleRepository>,
     connection: Arc<Mutex<PushConnection>>,
 ) -> Result<(), Box<dyn Error>>
 {
     tokio::spawn(async move {
-        let mut connection = connection.lock().await;
+        let Some(channel) = repo.channel() else {
+            return;
+        };
 
-        if let Some(channel) = repo.channel() {
-            _ = connection.listen(&channel, repo).await;
-        }
+        let mut connection = connection.lock().await;
+        _ = connection.listen(&channel, repo).await;
     });
 
     Ok(())

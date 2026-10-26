@@ -8,7 +8,6 @@
 use std::error::Error;
 use std::path::{ Path, PathBuf };
 use std::sync::mpsc::channel;
-use std::thread;
 use std::time::Duration;
 
 use notify::{
@@ -17,15 +16,17 @@ use notify::{
     RecursiveMode,
     Watcher,
 };
+use tokio;
+use tokio::time;
 
 use crate::core::objects::repository::TwinkleRepository;
 use crate::git::objects::status_filter::GitStatusFilter;
 use crate::log;
 
 
-const LOCAL_INTERVAL: u64 = 60;
+const LOCAL_INTERVAL: u64 = 60; // TODO: Read from config
 
-pub fn local( // TODO: Use tokio
+pub async fn using_polling(
     repo: &TwinkleRepository,
 ) -> Result<(), Box<dyn Error>>
 {
@@ -37,16 +38,16 @@ pub fn local( // TODO: Use tokio
             }
         }
 
-        thread::sleep(
+        time::sleep(
             Duration::from_secs(LOCAL_INTERVAL)
-        );
+        ).await;
     }
 }
 
 
 const LOCAL_TIMEOUT_MS: u64 = 500;
 
-pub fn local_using_notify(
+pub async fn using_notify(
     repo: &TwinkleRepository,
 ) -> Result<(), Box<dyn Error>>
 {
@@ -59,6 +60,7 @@ pub fn local_using_notify(
     let timeout = Duration::from_millis(LOCAL_TIMEOUT_MS);
 
     loop {
+        // TODO: Is this async?
         if let Ok(Ok(event)) = recv.recv_timeout(timeout) {
             if repo.is_busy() {
                 continue;

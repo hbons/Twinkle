@@ -8,21 +8,21 @@
 use std::error::Error;
 use std::fs;
 use std::path::{ Path, PathBuf };
-use std::thread;
 use std::time::Duration;
+
+use tokio::time;
 
 use crate::git::objects::change::GitChange;
 use crate::git::objects::status::GitMergeStatus;
 use crate::git::objects::status::GitStatusFilter;
 use crate::git::objects::user::GitUser;
-
 use crate::log;
 
 use super::lfs;
 use super::objects::repository::TwinkleRepository;
 
 
-pub fn resolve_changes(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
+pub async fn resolve_changes(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
     log::debug("Resolving conflicts…");
 
     while let Some(changes) = repo.git.status(GitStatusFilter::Unmerged) {
@@ -30,7 +30,7 @@ pub fn resolve_changes(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
             resolve(repo, &change)?;
         }
 
-        thread::sleep(Duration::from_millis(500)); // Allow file activity to settle
+        time::sleep(Duration::from_millis(500)).await; // Allow file activity to settle
     } // TODO: Prevent infinite loop here
 
     repo.git.commit(repo.user(), "Resolve conflicts")?;
