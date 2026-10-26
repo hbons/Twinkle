@@ -11,28 +11,26 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use chrono::Utc;
-use tokio::time;
 use tokio::sync::Mutex;
+use tokio::time;
 
+use crate::core::init;
 use crate::core::objects::push_connection::PushConnection;
-use crate::git::objects::status::GitStatusFilter;
 use crate::git::config::K_CORE_IGNORE_CASE;
-
+use crate::git::objects::status::GitStatusFilter;
 use crate::log;
 use crate::ssh;
-use crate::core::init;
 
-use super::objects::repository::TwinkleRepository;
-use super::defaults::common::default_sync_up_delay_max;
-use super::defaults::common::default_sync_up_delay_bump;
+use super::defaults::common;
 use super::keys;
 use super::lfs;
-use super::resolve;
-use super::watch_local;
-use super::watch_remote;
+use super::objects::repository::TwinkleRepository;
 use super::pretty;
 use super::push;
+use super::resolve;
 use super::util;
+use super::watch_local;
+use super::watch_remote;
 
 
 pub fn prepare(
@@ -294,8 +292,8 @@ async fn sync_up(
 
 
 pub fn sync_up_delay(attempt: u64) -> Duration { // TODO: Ugly name and function
-    let max  = default_sync_up_delay_max().as_secs();
-    let bump = default_sync_up_delay_bump().as_secs();
+    let max  = common::default_sync_up_delay_max().as_secs();
+    let bump = common::default_sync_up_delay_bump().as_secs();
 
     let attempt = attempt.saturating_sub(1);
     let delay = (attempt * bump).min(max);
