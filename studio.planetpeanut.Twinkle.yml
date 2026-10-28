@@ -89,7 +89,7 @@ modules:
       - /share/man
 
   - name: git-lfs
-    sources:
+    sources:  # TODO: Use git-lfs-vendor-v3.8.1.tar.gz to build from source
       - type: archive
         only-arches: [x86_64]
         url: https://github.com/git-lfs/git-lfs/releases/download/v3.7.1/git-lfs-linux-amd64-v3.7.1.tar.gz

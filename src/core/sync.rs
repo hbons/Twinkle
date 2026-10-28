@@ -207,7 +207,9 @@ async fn sync_up(
                     _ = lfs::track(repo, &change);
                 }
 
-                _ = repo.git.add(&change.path); // TODO: error get eaten and may cause an infinite loop
+                // TODO: Check file access rights to check in. Avoid infinite loop
+                // TODO: error get eaten and may cause an infinite loop
+                _ = repo.git.add(&change.path);
             }
 
             time::sleep(Duration::from_millis(500)).await; // Allow file activity to settle

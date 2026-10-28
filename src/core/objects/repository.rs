@@ -17,6 +17,10 @@ use crate::git::objects::id::GitId;
 use crate::git::objects::reference::GitReference;
 
 
+// TODO: Use states
+//     - Repository<Uninitialized>
+//     - Repository<Unsynced>
+//     - Repository<Synced>
 #[derive(Clone, Debug, Default)]
 pub struct TwinkleRepository {
     pub path: PathBuf,

@@ -201,3 +201,16 @@ pub fn init_welcome(url: &SshUrl) -> String {
         url.original
     )
 }
+
+// TODO:
+// # Hello!
+//
+// - Sync with [`github.com/hbons/notes`]() successfully set up
+// - Changes will automatically be synced to it
+// - Other SparkleShare clients will also get the changes
+//
+// # Next steps
+//
+// - Join the community – [Matrix](https://)
+// - Troubleshooting – [Docs]() | [Support](https://)
+// - Become a supporter – [Benefits](https://) | [Organizations](https://)
