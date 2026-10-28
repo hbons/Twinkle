@@ -28,19 +28,21 @@ pub async fn using_polling(
             repo.polling_interval()
         );
 
-        if !repo.is_busy() {
-            if let Ok(true) = has_unfetched_commits(repo) {
-                repo.set_has_remote_changes(true);
-            }
-
-            let now = Utc::now().timestamp();
-            repo.set_last_checked(now)?;
-        }
-
         // TODO: Compare to repo.last_checked() so
         // we can detect wake from sleep and start
         // checking remote immediately
         time::sleep(interval).await;
+
+        if repo.is_busy() {
+            continue;
+        }
+
+        if let Ok(true) = has_unfetched_commits(repo) {
+            repo.set_has_remote_changes(true);
+        }
+
+        let now = Utc::now().timestamp();
+        _ = repo.set_last_checked(now);
     }
 }
 

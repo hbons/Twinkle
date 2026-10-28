@@ -103,7 +103,7 @@ pub async fn start(
 
     // Local
     tokio::spawn(async move { _ = watch_local::using_polling(&repo_c1).await; });  // Reliable, but slow
-    tokio::spawn(async move { _ = watch_local::using_notify(&repo_c2.clone()).await; });  // Fast, but less reliable
+    tokio::spawn(async move { _ = watch_local::using_notify(&repo_c2).await; });  // Fast, but less reliable
 
     // Remote
     tokio::spawn(async move { _ = watch_remote::using_polling(&repo_c3, interval).await; });  // Reliable, but slow
@@ -254,7 +254,7 @@ async fn sync_up(
         let push = repo.git.push(&remote, &branch);
 
         match push {
-            Ok(_)  => {
+            Ok(_) => {
                 let url = repo.remote_url().ok_or("Missing remote url")?;
 
                 for commit in unpushed_commits {

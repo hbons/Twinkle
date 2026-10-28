@@ -30,7 +30,7 @@ impl GitEnvironment {
         let env = author.map(|user| vec![
             ("GIT_AUTHOR_NAME".into(), user.name().into()),
             ("GIT_AUTHOR_EMAIL".into(), user.email().into()),
-            ("GIT_COMMITTER_NAME".into(), user.name().into()),
+            ("GIT_COMMITTER_NAME".into(), user.name().into()), // TODO: "SparkleShare"?
             ("GIT_COMMITTER_EMAIL".into(), user.email().into()),
         ]).unwrap_or_default();
 

@@ -5,13 +5,17 @@
 //   under the terms of the GNU General Public License v3 or any later version.
 
 
-#[derive(Debug)]
-pub enum GitError {
-    NoConnection,
-    HostKeyChanged,
-    PermissionDenied,
-    UnreadableFiles,
-    NotFound,
-    DiskSpaceExceeded,
-    Other(String),
-}
+// TODO: Actually use these
+// #[derive(Debug)]
+// pub enum GitError {
+//     Unauthorized,
+//     InvalidFormat,
+//     NoConnection,
+//     HostKeyChanged,
+//     PermissionDenied,
+// 	   FastForwardError,
+//     UnreadableFiles,
+//     NotFound,
+//     DiskSpaceExceeded,
+//     Other(String),
+// }
