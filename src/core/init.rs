@@ -98,7 +98,7 @@ pub fn init_first_commit(
 {
     fs::write(
         repo.git.working_dir.join(COMMON_FIRST_FILE),
-        init_welcome(&repo.remote_url().ok_or("Missing remote.url")?)
+        welcome_message(&repo.remote_url().ok_or("Missing remote.url")?)
     )?;
 
     let config_file = Path::new(COMMON_CONFIG_FILE);
@@ -197,22 +197,26 @@ fn init_lfs(
 }
 
 
-pub fn init_welcome(url: &SshUrl) -> String {
-    format!(
-        "# Hello!\nSync with `{}` was successfully set up.",
-        url.original
+pub fn welcome_message(url: &SshUrl) -> String {
+    let app_name = "SparkleShare";
+    let matrix_url = "https://matrix.to/#/#sparkleshare:matrix.org";
+    let benefits_url = "https://planetpeanut.studio/sponsors";
+
+    let url_short = &url.to_string_alternate();
+    let url_original = &url.original;
+
+    format!("\
+# Ready to sync
+
+-  ✓  This directory now syncs with [`{url_short}`]({url_original})
+-  ✓  Other devices using `{app_name}` also get the changes
+-  ✓  Edit or delete this file to try it out…
+
+# Next steps
+
+1.  Join the community: [Matrix]({matrix_url})
+2.  Support the project: [Benefits]({benefits_url})"
     )
 }
 
-// TODO:
-// # Hello!
-//
-// - Sync with [`github.com/hbons/notes`]() successfully set up
-// - Changes will automatically be synced to it
-// - Other SparkleShare clients will also get the changes
-//
-// # Next steps
-//
-// - Join the community – [Matrix](https://)
-// - Troubleshooting – [Docs]() | [Support](https://)
-// - Become a supporter – [Benefits](https://) | [Organizations](https://)
+// TODO: 3.  Troubleshooting • [Docs](https://sparkleshare.org/docs) • [Support](https://sparkleshare.org/support)"

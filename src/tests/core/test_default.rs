@@ -12,7 +12,7 @@ use crate::ssh::objects::url::SshUrl;
 use crate::core::defaults::info::default_info_attributes;
 use crate::core::defaults::info::default_info_exclude;
 use crate::core::defaults::config::default_git_settings;
-use crate::core::init::init_welcome_message;
+use crate::core::init::welcome_message;
 
 
 #[test]
@@ -39,7 +39,7 @@ fn test_default_attribute_rules() {
 #[test]
 fn test_default_welcome() {
     let url = "git@github.com:hbons/Twinkle".parse::<SshUrl>().unwrap();
-    let message = init_welcome_message(&url);
+    let message = welcome_message(&url);
 
     assert!(message.contains(url.original.as_str()));
     assert!(message.len() > url.original.len());
