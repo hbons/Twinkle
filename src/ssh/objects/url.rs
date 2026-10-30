@@ -15,18 +15,20 @@ use std::str;
 
 #[derive(Clone, Debug, Default)]
 pub struct SshUrl {
-    pub original: String,
-    pub form: SshUrlType,
     pub user: String,
     pub host: String,
     pub port: Option<u16>,
     pub path: PathBuf,
+
+    pub form: SshUrlType,
+    pub original: String,
 }
+
 
 #[derive(Clone, Debug, Default, PartialEq)]
 pub enum SshUrlType {
-    #[default] Standard,
     Alternate,
+    #[default] Standard,
 }
 
 
@@ -34,9 +36,7 @@ impl str::FromStr for SshUrl {
     type Err = Box<dyn Error>;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let s = s.trim();
-
-        if s.starts_with("ssh://") {
+        if s.trim().starts_with("ssh://") {
             Self::from_string_standard(s)
         } else {
             Self::from_string_alternate(s)
@@ -51,9 +51,18 @@ impl SshUrl {
     /// ssh://git@[2001:adb8:85a4:0000:0000:8a1e:0e70:7034]/hbons/Twinkle
     /// ssh://git@[2001:adb8:85a4:0000:0000:8a1e:0e70:7034]:22/hbons/Twinkle
     pub fn from_string_standard(s: &str) -> Result<Self, Box<dyn Error>> {
-        let s = s.strip_prefix("ssh://").ok_or("No 'ssh://' found")?;
-        let (user, host_and_path) = s.split_once('@').ok_or("No 'user@' found")?;
-        let (host_and_port, path) = host_and_path.split_once('/').ok_or("No '/' found")?;
+        let s = s
+            .trim()
+            .strip_prefix("ssh://")
+            .ok_or("No 'ssh://' found")?;
+
+        let (user, host_and_path) = s
+            .split_once('@')
+            .ok_or("No 'user@' found")?;
+
+        let (host_and_port, path) = host_and_path
+            .split_once('/')
+            .ok_or("No '/' found")?;
 
         if user.is_empty() {
             return Err("No user found".into());
@@ -83,8 +92,14 @@ impl SshUrl {
     /// git@github.com:hbons/Twinkle
     /// git@[2001:adb8:85a4:0000:0000:8a1e:0e70:7034]:hbons/Twinkle
     pub fn from_string_alternate(s: &str) -> Result<Self, Box<dyn Error>> {
-        let (user, host_and_path) = s.split_once('@').ok_or("No 'user@' found")?;
-        let (host, path) = host_and_path.rsplit_once(':').ok_or("No ':' found")?;
+        let (user, host_and_path) = s
+            .trim()
+            .split_once('@')
+            .ok_or("No 'user@' found")?;
+
+        let (host, path) = host_and_path
+            .rsplit_once(':')
+            .ok_or("No ':' found")?;
 
         if user.is_empty() {
             return Err("No user found".into());
@@ -149,7 +164,7 @@ impl SshUrl {
     }
 
 
-    /// github.com:/hbons/Twinkle
+    /// github.com:hbons/Twinkle
     pub fn to_string_pretty(&self) -> String {
         let host = self.host.clone();
         let path = self.path.display().to_string();
