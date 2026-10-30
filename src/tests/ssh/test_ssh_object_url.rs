@@ -154,21 +154,6 @@ fn test_ssh_url_to_string_standard() {
 
 
 #[test]
-fn test_ssh_url_to_string_with_port() {
-    let url = "ssh://git@github.com:22/hbons/Twinkle".to_string();
-    let url = url.parse::<SshUrl>().unwrap();
-
-    assert_eq!(url.to_string_with_port(), url.to_string_standard());
-
-
-    let url = "ssh://git@github.com/hbons/Twinkle".to_string();
-    let url = url.parse::<SshUrl>().unwrap();
-
-    assert_eq!(url.to_string_with_port(), url.to_string_alternate());
-}
-
-
-#[test]
 fn test_ssh_url_to_string_alternate() {
     let url = SshUrl {
         form: SshUrlType::Alternate,
@@ -192,4 +177,28 @@ fn test_ssh_url_to_string_alternate() {
     };
 
     assert_eq!(url.to_string(), url.original);
+}
+
+
+#[test]
+fn test_ssh_url_to_string_with_port() {
+    let url = "ssh://git@github.com:22/hbons/Twinkle".to_string();
+    let url = url.parse::<SshUrl>().unwrap();
+
+    assert_eq!(url.to_string_with_port(), url.to_string_standard());
+
+
+    let url = "ssh://git@github.com/hbons/Twinkle".to_string();
+    let url = url.parse::<SshUrl>().unwrap();
+
+    assert_eq!(url.to_string_with_port(), url.to_string_alternate());
+}
+
+
+#[test]
+fn test_ssh_url_to_string_pretty() {
+    let url = "ssh://git@github.com:22/hbons/Twinkle.git".to_string();
+    let url = url.parse::<SshUrl>().unwrap();
+
+    assert_eq!(url.to_string_pretty(), "github.com:hbons/Twinkle");
 }

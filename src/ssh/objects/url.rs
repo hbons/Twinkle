@@ -147,4 +147,14 @@ impl SshUrl {
             None    => self.to_string_alternate(),
         }
     }
+
+
+    /// github.com:/hbons/Twinkle
+    pub fn to_string_pretty(&self) -> String {
+        let host = self.host.clone();
+        let path = self.path.display().to_string();
+        let path = path.strip_suffix(".git").unwrap_or(&path);
+
+        format!("{host}:{path}")
+    }
 }
