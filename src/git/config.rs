@@ -16,19 +16,6 @@ use super::objects::environment::GitEnvironment;
 use super::objects::version::GitVersion;
 
 
-pub const K_CORE_IGNORE_CASE: &str = "core.ignoreCase";
-pub const K_CORE_SSH_COMMAND: &str = "core.sshCommand";
-
-pub const K_REMOTE_ORIGIN_URL: &str = "remote.origin.url";
-
-pub const K_USER_NAME: &str = "user.name";
-pub const K_USER_EMAIL: &str = "user.email";
-pub const K_USER_SIGNING_KEY: &str = "user.signingKey";
-
-pub const K_COMMIT_GPG_SIGN: &str = "commit.gpgSign";
-pub const K_TAG_GPG_SIGN: &str = "tag.gpgSign";
-
-
 impl GitEnvironment {
     // Docs: https://git-scm.com/docs/git-config
     //       https://git-scm.com/docs/git-config#_deprecated_modes

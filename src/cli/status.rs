@@ -38,8 +38,8 @@ impl App {
         println!("        {} {}", cli_dimmed("LFS:"), pretty::format_bool(repo.lfs_enabled()));
         // println!("       {} {}", cli_dimmed("User:"), repo.user().unwrap_or("default"));
         println!();
-        println!(" {} {}", cli_dimmed("Last check:"), pretty::format_datetime(repo.last_checked().unwrap_or(0)));
-        println!("  {} {}", cli_dimmed("Last sync:"), pretty::format_datetime(repo.last_synced().unwrap_or(0)));
+        println!(" {} {}", cli_dimmed("Last check:"), pretty::format_datetime(repo.last_check().unwrap_or(0)));
+        println!("  {} {}", cli_dimmed("Last sync:"), pretty::format_datetime(repo.last_sync().unwrap_or(0)));
         println!("   {} {}s", cli_dimmed("Interval:"), repo.polling_interval().as_secs());
         println!();
 

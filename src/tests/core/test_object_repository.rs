@@ -7,8 +7,10 @@
 //   ～ Lovingly Handcrafted Code ～
 
 
-use crate::core::objects::repository_config::parse_lfs_size;
-use crate::core::objects::repository_config::parse_polling_interval;
+use std::time::Duration;
+
+use crate::core::objects::repository_options_sync::parse_lfs_size;
+use crate::core::objects::repository_options_sync::parse_polling_interval;
 
 
 #[test]
@@ -30,17 +32,17 @@ fn test_object_repository_parse_lfs_size() {
 
 #[test]
 fn test_object_repository_parse_polling_interval() {
-    assert_eq!(parse_polling_interval("-1"), 0);
-    assert_eq!(parse_polling_interval(""), 0);
-    assert_eq!(parse_polling_interval("0"), 0);
-    assert_eq!(parse_polling_interval("1"), 1);
-    assert_eq!(parse_polling_interval("1s"), 1);
-    assert_eq!(parse_polling_interval("1S"), 1);
-    assert_eq!(parse_polling_interval("-1s"), 0);
-    assert_eq!(parse_polling_interval("s"), 0);
-    assert_eq!(parse_polling_interval("S"), 0);
-    assert_eq!(parse_polling_interval("2s"), 2);
-    assert_eq!(parse_polling_interval("1m"), 60);
-    assert_eq!(parse_polling_interval("2m"), 60 * 2);
-    assert_eq!(parse_polling_interval("1h"), 60 * 60);
+    assert_eq!(parse_polling_interval("-1"), Duration::from_secs(0));
+    assert_eq!(parse_polling_interval(""), Duration::from_secs(0));
+    assert_eq!(parse_polling_interval("0"), Duration::from_secs(0));
+    assert_eq!(parse_polling_interval("1"), Duration::from_secs(1));
+    assert_eq!(parse_polling_interval("1s"), Duration::from_secs(1));
+    assert_eq!(parse_polling_interval("1S"), Duration::from_secs(1));
+    assert_eq!(parse_polling_interval("-1s"), Duration::from_secs(0));
+    assert_eq!(parse_polling_interval("s"), Duration::from_secs(0));
+    assert_eq!(parse_polling_interval("S"), Duration::from_secs(0));
+    assert_eq!(parse_polling_interval("2s"), Duration::from_secs(2));
+    assert_eq!(parse_polling_interval("1m"), Duration::from_secs(60));
+    assert_eq!(parse_polling_interval("2m"), Duration::from_secs(60 * 2));
+    assert_eq!(parse_polling_interval("1h"), Duration::from_secs(60 * 60));
 }

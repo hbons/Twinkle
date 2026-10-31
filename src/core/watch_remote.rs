@@ -44,7 +44,7 @@ pub async fn using_polling(
         }
 
         let now = Utc::now().timestamp();
-        _ = repo.set_last_checked(now);
+        _ = repo.set_last_check(now);
     }
 }
 

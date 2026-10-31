@@ -16,10 +16,13 @@ pub mod defaults {
 
 pub mod objects {
     pub mod channel;
+    pub mod config_option;
     pub mod push_connection;
     pub mod repository;
     pub mod repository_files;
-    pub mod repository_config;
+    pub mod repository_options;
+    pub mod repository_options_common;
+    pub mod repository_options_sync;
 }
 
 pub mod clone;

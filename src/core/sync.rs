@@ -18,7 +18,6 @@ use tokio::time;
 
 use crate::core::init;
 use crate::core::objects::push_connection::PushConnection;
-use crate::git::config::K_CORE_IGNORE_CASE;
 use crate::git::objects::status::GitStatusFilter;
 use crate::log;
 use crate::ssh;
@@ -145,7 +144,7 @@ pub async fn start(
                     repo.set_has_local_changes(false);
 
                     let now = Utc::now().timestamp();
-                    repo.set_last_synced(now)?;
+                    repo.set_last_sync(now)?;
 
                     if repo.push_enabled() {
                         if let Some(ref connection) = connection {
@@ -166,7 +165,7 @@ pub async fn start(
                     repo.set_has_remote_changes(false);
 
                     let now = Utc::now().timestamp();
-                    repo.set_last_synced(now)?;
+                    repo.set_last_sync(now)?;
                 },
                 Err(e) => log::error(&e.to_string()),
             }
@@ -332,14 +331,14 @@ async fn sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
         }
     }
 
-    if OS == "macos" { repo.git.config_set(K_CORE_IGNORE_CASE, "true")?; }
+    if OS == "macos" { repo.set_core_ignore_case(true)?; }
     let merge = repo.git.merge(&"FETCH_HEAD".into());
 
     if merge.is_err() {
         resolve::resolve_changes(repo).await?;
     }
 
-    if OS == "macos" { repo.git.config_set(K_CORE_IGNORE_CASE, "false")?; }
+    if OS == "macos" { repo.set_core_ignore_case(false)?; }
 
     log::debug(&format!("✓ Fetched and merged. Now at {}", repo.current_head()?));
 
