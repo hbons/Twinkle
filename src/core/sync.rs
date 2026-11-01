@@ -278,6 +278,8 @@ async fn sync_up(
                     log::debug(&format!("Retrying in {}s…", delay.as_secs()));
                     time::sleep(delay).await;
                 }
+
+                // the problem is here. but happens even in the init test. so it's a server issue
             }
         }
 

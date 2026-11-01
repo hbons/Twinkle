@@ -6,60 +6,42 @@
 #   This program is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU General Public License v3 or any later version.
 
+#   ～ Lovingly Handcrafted Code ～
+
 
 set -euo pipefail
-source ./common/config.sh
-source ./common/install_keys.sh
+source ./common/test_begin.sh
 
-REPO_NAME="test_sync_$TAG"
+
+REPO_NAME="repo_empty_5"
 REPO_NAME_1="${REPO_NAME}_1"
 REPO_NAME_2="${REPO_NAME}_2"
 
-gh repo create \
-    $REPO_NAME \
-    --private
-
+twinkle clone \
+    "$HOST/$REPO_NAME" \
+    "$REPO_NAME_1"
 
 twinkle clone \
-    git@github.com:$ACCOUNT/$REPO_NAME \
-    $REPO_NAME_1
+    "$HOST/$REPO_NAME" \
+    "$REPO_NAME_2"
 
-twinkle clone \
-    git@github.com:$ACCOUNT/$REPO_NAME \
-    $REPO_NAME_2
-
-
-cd $REPO_NAME_1
+cd "$REPO_NAME_1"
 touch README.md
 TWINKLE_ONCE=1 twinkle sync
-
 cd ..
 
-cd $REPO_NAME_2
+cd "$REPO_NAME_2"
 touch script.sh
 chmod +x script.sh
 TWINKLE_ONCE=1 twinkle sync
-
 cd ..
 
-cd $REPO_NAME_1
+cd "$REPO_NAME_1"
 TWINKLE_ONCE=1 twinkle sync
-
 
 test -f README.md
 test -x script.sh
 
 
-# TODO: Doesn't work...
-# source ../common/test_synced.sh
-LOCAL=$(git rev-parse HEAD)
-REMOTE=$(git ls-remote origin HEAD | cut -f1)
-[[ "$LOCAL" == "$REMOTE" ]]
-
-
-rm -Rf "$REPO_NAME"
-rm -Rf "$REPO_NAME_1"
-rm -Rf "$REPO_NAME_2"
-
 cd ..
-source ./common/cleanup.sh
+source ./common/test_end.sh

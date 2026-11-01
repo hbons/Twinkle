@@ -6,25 +6,22 @@
 #   This program is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU General Public License v3 or any later version.
 
+#   ～ Lovingly Handcrafted Code ～
+
 
 set -euo pipefail
-source ../common/config.sh
-source ../common/install_keys.sh
-
-REPO_NAME=test_lfs_sync_$TAG
-
-gh repo create \
-    $REPO_NAME \
-    --private \
-    --add-readme
+source ../common/test_begin.sh
 
 
-twinkle clone git@github.com:$ACCOUNT/$REPO_NAME
-cd $REPO_NAME
+REPO_NAME="repo_readme_33"
+
+
+twinkle clone "$HOST/$REPO_NAME"
+cd "$REPO_NAME"
 
 SMALL_FILE=small_file.txt
 LARGE_FILE=large_file.bin
-touch $SMALL_FILE
+touch "$SMALL_FILE"
 dd if=/dev/zero of=$LARGE_FILE bs=3M count=1
 
 git config sync.lfs.enabled true
@@ -32,17 +29,16 @@ git config sync.lfs.sizeThreshold 3m
 TWINKLE_ONCE=1 twinkle sync
 
 
-! grep $SMALL_FILE .gitattributes
-grep $LARGE_FILE .gitattributes
-test -f $SMALL_FILE
-test -f $LARGE_FILE
-[ $(wc -c < $SMALL_FILE) -eq 0 ]
-[ $(wc -c < $LARGE_FILE) -eq 3145728 ]
-! git lfs ls-files | grep $SMALL_FILE
-git lfs ls-files | grep $LARGE_FILE
+! grep "$SMALL_FILE" .gitattributes
+grep "$LARGE_FILE" .gitattributes
+test -f "$SMALL_FILE"
+test -f "$LARGE_FILE"
+[ $(wc -c < "$SMALL_FILE") -eq 0 ]
+[ $(wc -c < "$LARGE_FILE") -eq 3145728 ]
+! git lfs ls-files | grep "$SMALL_FILE"
+git lfs ls-files | grep "$LARGE_FILE"
 test -f .git/hooks/pre-push
 
 
-source ../../common/test_synced.sh
 cd ..
-source ../common/cleanup.sh
+source ./common/test_end.sh
