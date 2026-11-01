@@ -6,9 +6,15 @@
 #   This program is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU General Public License v3 or any later version.
 
+#   ～ Lovingly Handcrafted Code ～
+
 
 set -euo pipefail
-source ./common/config.sh
+source ./common/test_begin.sh
+
 
 ! test -d .git
 ! TWINKLE_ONCE=1 twinkle sync
+
+
+source ./common/test_end.sh

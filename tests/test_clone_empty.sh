@@ -6,26 +6,22 @@
 #   This program is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU General Public License v3 or any later version.
 
+#   ～ Lovingly Handcrafted Code ～
+
 
 set -euo pipefail
-source ./common/config.sh
-source ./common/install_keys.sh
-
-REPO_NAME=test_clone_empty_$TAG
-
-gh repo create \
-    $REPO_NAME \
-    --private
+source ./common/test_begin.sh
 
 
-twinkle clone git@github.com:$ACCOUNT/$REPO_NAME
+REPO_NAME=repo_empty_2
+
+twinkle clone "$HOST/$REPO_NAME"
 
 cd $REPO_NAME
 TWINKLE_ONCE=1 twinkle sync
 
-! twinkle clone git@github.com:$ACCOUNT/$REPO_NAME
+! twinkle clone "$HOST/$REPO_NAME"
 
 
-source ../common/test_synced.sh
 cd ..
-source ./common/cleanup.sh
+source ./common/test_end.sh

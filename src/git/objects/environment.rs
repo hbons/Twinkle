@@ -12,7 +12,7 @@ use std::ffi::OsStr;
 use std::path::{ Path, PathBuf };
 use std::process::{ Command, Output };
 
-// use crate::log;
+use crate::log;
 use super::version::GitVersion;
 
 
@@ -103,7 +103,7 @@ impl GitEnvironment {
         env: &[(String, String)],
     ) -> Result<Output, Box<dyn Error>>
     {
-        crate::log::debug(
+        log::debug(
             &format!("git {} {}",
                 command,
                 args.iter()

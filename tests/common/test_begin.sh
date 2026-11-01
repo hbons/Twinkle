@@ -6,9 +6,15 @@
 #   This program is free software: you can redistribute it and/or modify it
 #   under the terms of the GNU General Public License v3 or any later version.
 
+#   ～ Lovingly Handcrafted Code ～
 
-LOCAL=$(git rev-parse HEAD)
-REMOTE=$(git ls-remote origin HEAD | cut -f1)
-[[ "$LOCAL" == "$REMOTE" ]]
 
-DEBUG=0 twinkle check
+export DEBUG=1
+export HOST=ssh://git@localhost:2222
+export KEY_FILE=~/.ssh/ed25519
+
+eval "$(ssh-agent -k)" 2>/dev/null || true
+eval "$(ssh-agent -s)"
+
+sleep 3
+ssh-add $KEY_FILE

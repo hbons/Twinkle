@@ -199,11 +199,10 @@ fn init_lfs(
 
 pub fn welcome_message(url: &SshUrl) -> String {
     let app_name = "SparkleShare";
+    let url_short = url.to_string_pretty();
+    let url_original = url.original.clone();
     let matrix_url = "https://matrix.to/#/#sparkleshare:matrix.org";
     let benefits_url = "https://planetpeanut.studio/sponsors";
-
-    let url_short = &url.to_string_alternate();
-    let url_original = &url.original;
 
     format!("\
 # Ready to sync
