@@ -6,7 +6,7 @@ The command-line version of [SparkleShare](https://sparkleshare.org). Sync your 
 
 <br>
 
-[![Flatpak](https://github.com/hbons/Twinkle/actions/workflows/tests.yml/badge.svg)](https://github.com/hbons/Twinkle/actions/workflows/tests.yml)
+[![Flatpak](https://github.com/hbons/Twinkle/actions/workflows/integration.yml/badge.svg)](https://github.com/hbons/Twinkle/actions/workflows/integration.yml)
 
 <br>
 
