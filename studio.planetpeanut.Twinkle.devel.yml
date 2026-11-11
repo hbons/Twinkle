@@ -20,7 +20,6 @@ finish-args:
   - --socket=fallback-x11
 
 modules:
-modules:
   - name: openssh
     sources:
       - type: archive
