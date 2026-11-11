@@ -23,8 +23,8 @@ modules:
   - name: openssh
     sources:
       - type: archive
-        url: https://ftp.jaist.ac.jp/pub/OpenBSD/OpenSSH/portable/openssh-10.4p1.tar.gz
-        sha256: ef6026dd2aea8d56059638d5d3262902c892ceba9f88395835e0d06d3fb63238
+        url: https://ftp.jaist.ac.jp/pub/OpenBSD/OpenSSH/portable/openssh-10.6p2.tar.gz
+        sha256: 9ae44872090cf2f06b3cf9ff147e7f16f309671340763ed2f99248398ae29d5b
     build-options:
       strip: true
     config-opts:
@@ -53,8 +53,8 @@ modules:
   - name: git
     sources:
       - type: archive
-        url: https://www.kernel.org/pub/software/scm/git/git-2.55.0.tar.xz
-        sha256: 457fdb04dc8728e007d4688695e6912e6f680727920f2a40bf11eacc17505357
+        url: https://www.kernel.org/pub/software/scm/git/git-2.56.1.tar.xz
+        sha256: f0b0bf89264b9bd2e1c640363e7529643989da76281600473c50745cd34a607f
     buildsystem: simple
     build-commands:
       - make configure
@@ -92,12 +92,12 @@ modules:
     sources:  # TODO: Use git-lfs-vendor-v3.8.1.tar.gz to build from source
       - type: archive
         only-arches: [x86_64]
-        url: https://github.com/git-lfs/git-lfs/releases/download/v3.7.1/git-lfs-linux-amd64-v3.7.1.tar.gz
-        sha256: 1c0b6ee5200ca708c5cebebb18fdeb0e1c98f1af5c1a9cba205a4c0ab5a5ec08
+        url: https://github.com/git-lfs/git-lfs/releases/download/v3.8.1/git-lfs-linux-amd64-v3.8.1.tar.gz
+        sha256: e72cf723a4a660438862282e8aecf3885fc8123e88bfcad534cf6b941a354b75
       - type: archive
         only-arches: [aarch64]
-        url: https://github.com/git-lfs/git-lfs/releases/download/v3.7.1/git-lfs-linux-arm64-v3.7.1.tar.gz
-        sha256: 73a9c90eeb4312133a63c3eaee0c38c019ea7bfa0953d174809d25b18588dd8d
+        url: https://github.com/git-lfs/git-lfs/releases/download/v3.8.1/git-lfs-linux-arm64-v3.8.1.tar.gz
+        sha256: 67895dd77b63329796bc5efdd47b57f218e1f7b98717ebaf936a8238dbcaec0f
     buildsystem: simple
     build-commands:
       - cp git-lfs /app/libexec/git-core/
