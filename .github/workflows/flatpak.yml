@@ -26,7 +26,7 @@ jobs:
     - uses: actions/checkout@v7
     - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
       with:
-        bundle: studio.planetpeanut.SparkleShare-${{ matrix.variant.arch }}.flatpak
+        bundle: studio.planetpeanut.SparkleShare.flatpak
         manifest-path: studio.planetpeanut.SparkleShare.yml
         cache-key: flatpak-builder-${{ github.sha }}
         arch: ${{ matrix.variant.arch }}
@@ -43,6 +43,6 @@ jobs:
         tag_name: flatpak-nightly
         name: "Flatpak: Nightly"
         body: "Latest build for testing."
-        files: sparkleshare-${{ matrix.variant.arch }}.flatpak
+        files: studio.planetpeanut.SparkleShare-${{ matrix.variant.arch }}.flatpak
         prerelease: true
         make_latest: false
