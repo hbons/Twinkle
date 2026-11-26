@@ -1,4 +1,4 @@
-![The SparkleShare app icon](data/icons/scalable/studio.planetpeanut.SparkleShare.svg)
+![The SparkleShare app icon](data/icons/hicolor/scalable/apps/studio.planetpeanut.SparkleShare.svg)
 
 # [SparkleShare](https://sparkleshare.org) ～ *Sync files with Git*
 
@@ -40,7 +40,7 @@ Options:
 ## 2. Setup
 
 > [!CAUTION]
-> ***SparkleShare is still in preview***. Data loss is unlikely but possible. Run commands with `DEBUG=1 sparkleshare <COMMAND>` to see what's going on under the hood and run `sparkleshare check` to diagnose setup problems.
+> ***SparkleShare is still in preview***. Data loss is unlikely but possible. Run commands with `DEBUG=1 sparkleshare <COMMAND>` to see what's going on under the hood and run `sparkleshare check` to diagnose setup problems. Use `git reflog` to inspect lost commits.
 
 
 ### 2.1. Starting with a remote repository

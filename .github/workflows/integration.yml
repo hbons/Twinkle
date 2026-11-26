@@ -30,8 +30,8 @@ jobs:
 
     - name: Versions
       run: |
-        sparkleshare --deps
         sparkleshare --version
+        sparkleshare --deps
 
     - name: Set up mock Git host
       run: cd tests && sudo ./common/git-host.sh
