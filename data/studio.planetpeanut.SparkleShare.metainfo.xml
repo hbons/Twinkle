@@ -2,7 +2,7 @@
 <component type="desktop-application">
     <name>SparkleShare</name>
     <summary>Sync files with Git</summary>
-    <id>studio.planetpeanut.sparkleshare</id>
+    <id>studio.planetpeanut.SparkleShare</id>
     <project_license>GPL-3.0+</project_license>
 
     <developer id="studio.planetpeanut">
@@ -16,7 +16,7 @@
         <color type="primary" scheme_preference="dark">#12868F</color>
     </branding>
 
-    <url type="homepage">https://planetpeanut.studio/sparkleshare</url>
+    <url type="homepage">https://sparkleshare.org</url>
     <url type="bugtracker">https://github.com/hbons/SparkleShare/issues</url>
     <url type="donation">https://github.com/sponsors/hbons</url>
 
