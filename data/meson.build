@@ -1,24 +1,22 @@
-# apps_dir = join_paths(get_option('prefix'), 'share', 'applications')
+# .desktop
 
-# if get_option('nightly')
-#   install_data(
-#     sources: 'studio.planetpeanut.SparkleShare.Nightly.desktop',
-#     install_dir: apps_dir,
-#     rename: 'studio.planetpeanut.SparkleShare.desktop'
-#   )
-# else
-#   install_data(
-#     sources: 'studio.planetpeanut.SparkleShare.desktop',
-#     install_dir: apps_dir
-#   )
-# endif
+install_data(
+  ('@0@.desktop').format(application_id),
+  install_dir: get_option('prefix') / 'share/applications'
+)
 
-# install_data(
-#   sources: 'SparkleShare.Autostart.desktop',
-#   install_dir: apps_dir
-# )
+
+# .metainfo.xml
+
+install_data(
+  ('@0@.metainfo.xml').format(application_id),
+  install_dir: get_option('datadir') / 'metainfo'
+)
+
+
+# .gschema.xml
 
 # install_data(
-#   sources: 'studio.planetpeanut.SparkleShare.appdata.xml',
-#   install_dir: join_paths(get_option('prefix'), 'share', 'metainfo')
+#   ('@0@.gschema.xml').format(application_id),
+#   install_dir: get_option('datadir') / 'glib-2.0/schemas'
 # )

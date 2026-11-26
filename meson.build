@@ -1,14 +1,12 @@
 project(
   'SparkleShare',
   'rust',
-  version: '50.0.0',
+  version: '51.0.0',
   meson_version: '>=1.1'
 )
 
 command_name = 'sparkleshare'
-configuration = configuration_data()
-configuration.set('SPARKLESHARE_APP_ID', 'studio.planetpeanut.SparkleShare')
-
+application_id = 'studio.planetpeanut.SparkleShare'
 
 gnome = import('gnome')
 dependency('gtk4')
