@@ -43,6 +43,6 @@ jobs:
         tag_name: flatpak-nightly
         name: "Flatpak: Nightly"
         body: "Latest build for testing."
-        files: studio.planetpeanut.SparkleShare-${{ matrix.variant.arch }}.flatpak
+        files: studio.planetpeanut.SparkleShare.flatpak
         prerelease: true
         make_latest: false
