@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -11,18 +11,18 @@ use std::error::Error;
 use std::str::FromStr;
 
 use crate::core::defaults::common::COMMON_CONFIG_FILE;
-use crate::core::objects::repository::TwinkleRepository;
+use crate::core::objects::repository::Repository;
 use super::config_option::ConfigOption;
 
 
-impl TwinkleRepository {
+impl Repository {
     pub fn get_option(&self, name: ConfigOption) -> Option<String> {
         let file = self.path.join(COMMON_CONFIG_FILE);
 
         // Repositories are allowed to override some options
         if name.allows_override() {
             self.git
-                .config_get_with_file(&name.to_string(), &file) // `.twinkle/config`
+                .config_get_with_file(&name.to_string(), &file) // `.sparkleshare/config`
                 .or(self.git.config_get(&name.to_string())) // `.git/config`
         } else {
             self.git.config_get(&name.to_string()) // `.git/config`
@@ -41,7 +41,7 @@ impl TwinkleRepository {
 }
 
 
-impl TwinkleRepository {
+impl Repository {
     pub fn set_option(
         &self,
         name: ConfigOption,

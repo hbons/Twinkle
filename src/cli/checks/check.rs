@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -88,11 +88,11 @@ impl Runtime {
         // ("core.safecrlf", "false"),
 
         print_header("Sync");
-        run_check(".twinkle/config", &is_twinkle_config_valid, path);
-        run_check("sync.id", &is_twinkle_id_set, path);
-        run_check("sync.enabled", &is_twinkle_enabled_set, path);
-        run_check("sync.lfs.enabled", &is_twinkle_lfs_enabled_set, path);
-        run_check("sync.push.enabled", &is_twinkle_push_enabled_set, path);
+        run_check(".sparkleshare/config", &is_sparkleshare_config_valid, path);
+        run_check("sync.id", &is_sparkleshare_id_set, path);
+        run_check("sync.enabled", &is_sparkleshare_enabled_set, path);
+        run_check("sync.lfs.enabled", &is_sparkleshare_lfs_enabled_set, path);
+        run_check("sync.push.enabled", &is_sparkleshare_push_enabled_set, path);
 
         // TODO: Find all git config options/filters/hooks that may have been added by the user
 

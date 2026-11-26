@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -13,13 +13,13 @@ use crate::git::objects::status::GitFileStatus;
 use crate::git::objects::change::GitChange;
 use crate::log;
 
-use super::objects::repository::TwinkleRepository;
+use super::objects::repository::Repository;
 
 
 pub const LFS_THRESHOLD: u64 = 1024 * 1024 * 3; // 3 MB;
 
 pub fn track(
-    repo: &TwinkleRepository,
+    repo: &Repository,
     change: &GitChange,
 ) -> Result<(), Box<dyn Error>>
 {

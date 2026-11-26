@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -13,12 +13,12 @@ use std::time::Duration;
 use crate::core::lfs::LFS_THRESHOLD;
 use crate::core::defaults::common::default_polling_interval;
 
-use super::repository::TwinkleRepository;
+use super::repository::Repository;
 use super::config_option::ConfigOption;
 
 
 // SyncId
-impl TwinkleRepository {
+impl Repository {
     pub fn id(&self) -> Option<String> { // TODO: Option<Sha256>
         self.get_option_as(ConfigOption::SyncId)
     }
@@ -30,7 +30,7 @@ impl TwinkleRepository {
 
 
 // SyncEnabled
-impl TwinkleRepository {
+impl Repository {
     pub fn enabled(&self) -> bool {
         self.get_option_as::<bool>(ConfigOption::SyncEnabled)
             .unwrap_or_default()
@@ -43,7 +43,7 @@ impl TwinkleRepository {
 
 
 // SyncReadOnly
-impl TwinkleRepository {
+impl Repository {
     pub fn read_only(&self) -> bool {
         self.get_option_as::<bool>(ConfigOption::SyncReadOnly)
             .unwrap_or_default()
@@ -56,7 +56,7 @@ impl TwinkleRepository {
 
 
 // SyncLastCheck and SyncLastSync
-impl TwinkleRepository {
+impl Repository {
     pub fn last_check(&self) -> Option<i64> {
         self.get_option_as::<i64>(ConfigOption::SyncLastCheck)
     }
@@ -77,7 +77,7 @@ impl TwinkleRepository {
 
 
 // SyncPushEnabled and SyncPushUrl
-impl TwinkleRepository {
+impl Repository {
     pub fn push_enabled(&self) -> bool {
         self.get_option_as::<bool>(ConfigOption::SyncPushEnabled)
             .unwrap_or_default()
@@ -99,7 +99,7 @@ impl TwinkleRepository {
 
 
 // SyncLfsEnabled and SyncLfsSizeThreshold
-impl TwinkleRepository {
+impl Repository {
     pub fn lfs_enabled(&self) -> bool {
         self.get_option_as::<bool>(ConfigOption::SyncLfsEnabled).unwrap_or_default()
     }
@@ -132,7 +132,7 @@ pub fn parse_lfs_size(s: &str) -> u64 {
 
 
 // SyncPollingInterval
-impl TwinkleRepository {
+impl Repository {
     pub fn polling_interval(&self) -> Duration {
         let Some(s) = self.get_option(ConfigOption::SyncPollingInterval) else {
             return default_polling_interval()

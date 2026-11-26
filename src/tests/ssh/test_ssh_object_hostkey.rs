@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -17,7 +17,7 @@ use crate::ssh::objects::url::SshUrl;
 
 #[test]
 fn test_ssh_hostkey_for_host() {
-    let url = "git@github.com:hbons/Twinkle".parse::<SshUrl>().unwrap();
+    let url = "git@github.com:hbons/SparkleShare".parse::<SshUrl>().unwrap();
     let host_key = HostKey::for_known_host(&url, KeyType::ED25519).unwrap();
 
     assert_eq!(host_key.key_type, KeyType::ED25519);
@@ -26,7 +26,7 @@ fn test_ssh_hostkey_for_host() {
 
 #[test]
 fn test_ssh_hostkey_to_string() {
-    let url = "git@github.com:hbons/Twinkle".parse::<SshUrl>().unwrap();
+    let url = "git@github.com:hbons/SparkleShare".parse::<SshUrl>().unwrap();
     let mut host_key = HostKey::for_known_host(&url, KeyType::ED25519).unwrap();
 
     assert!(host_key.to_string().starts_with("github.com ssh-ed25519 "));
@@ -37,7 +37,7 @@ fn test_ssh_hostkey_to_string() {
 
 #[test]
 fn test_ssh_hostkey_to_file_name() {
-    let url = "git@github.com:hbons/Twinkle".parse::<SshUrl>().unwrap();
+    let url = "git@github.com:hbons/SparkleShare".parse::<SshUrl>().unwrap();
     let host_key = HostKey::for_known_host(&url, KeyType::ED25519).unwrap();
 
     assert_eq!(host_key.to_file_name(), Path::new("github.com.ed25519.key.host"));
@@ -46,7 +46,7 @@ fn test_ssh_hostkey_to_file_name() {
 
 #[test]
 fn test_ssh_hostkey_from_file() {
-    let url = "git@github.com:hbons/Twinkle".parse::<SshUrl>().unwrap();
+    let url = "git@github.com:hbons/SparkleShare".parse::<SshUrl>().unwrap();
     let host_key = HostKey::for_known_host(&url, KeyType::ED25519).unwrap();
 
     let key_path = Path::new("./src/tests/.tmp/github.com.ed25519.key.host");

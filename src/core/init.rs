@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -25,7 +25,7 @@ use super::defaults::config;
 use super::defaults::config::{ K_ID, key };
 use super::defaults::info;
 
-use super::objects::repository::TwinkleRepository;
+use super::objects::repository::Repository;
 use super::util;
 
 
@@ -33,7 +33,7 @@ pub fn init_repo(
     path: &Path,
     url: &SshUrl,
     key_pair: Option<&KeyPair>,
-) -> Result<TwinkleRepository, Box<dyn Error>>
+) -> Result<Repository, Box<dyn Error>>
 {
     let branch = {
         let git = GitEnvironment::new(path);
@@ -45,7 +45,7 @@ pub fn init_repo(
         git.init()?
     };
 
-    let repo = TwinkleRepository::new(path)?;
+    let repo = Repository::new(path)?;
     let remote = repo.remote(&branch);
 
     repo.git.remote_add(&remote, url)?;
@@ -58,14 +58,14 @@ pub fn init_repo(
 }
 
 
-pub fn init_id( // TODO: Move to TwinkleRepository
-    repo: &TwinkleRepository,
+pub fn init_id( // TODO: Move to SparkleShareRepository
+    repo: &Repository,
 ) -> Result<(), Box<dyn Error>>
 {
     let config_file = Path::new(COMMON_CONFIG_FILE);
     let abs_config_file = repo.git.working_dir.join(config_file);
 
-    let id = // TODO: validate type, twinkleID/SHA256
+    let id = // TODO: validate type, sparkleshareID/SHA256
         if abs_config_file.exists() {
             repo.git.config_get_with_file(
                 &key(K_ID),
@@ -93,7 +93,7 @@ pub fn init_id( // TODO: Move to TwinkleRepository
 
 
 pub fn init_first_commit(
-    repo: &TwinkleRepository,
+    repo: &Repository,
 ) -> Result<(), Box<dyn Error>>
 {
     fs::write(
@@ -117,7 +117,7 @@ pub fn init_first_commit(
 
 
 pub fn init_common(
-    repo: &TwinkleRepository,
+    repo: &Repository,
     key_pair: Option<&KeyPair>,
 ) -> Result<(), Box<dyn Error>>
 {
@@ -144,7 +144,7 @@ pub fn init_common(
 
 /// .git/config
 fn init_config(
-    repo: &TwinkleRepository,
+    repo: &Repository,
 ) -> Result<(), Box<dyn Error>>
 {
     for (option, value) in config::default_git_settings() {
@@ -157,7 +157,7 @@ fn init_config(
 
 /// .git/info/attributes
 fn init_info_attributes(
-    repo: &TwinkleRepository,
+    repo: &Repository,
 ) -> Result<(), Box<dyn Error>>
 {
     let rules = info::default_info_attributes();
@@ -167,7 +167,7 @@ fn init_info_attributes(
 
 /// .git/info/exclude
 fn init_info_exclude(
-    repo: &TwinkleRepository,
+    repo: &Repository,
 ) -> Result<(), Box<dyn Error>>
 {
     let rules = info::default_info_exclude();
@@ -177,7 +177,7 @@ fn init_info_exclude(
 
 /// LFS
 fn init_lfs(
-    repo: &TwinkleRepository,
+    repo: &Repository,
 ) -> Result<(), Box<dyn Error>>
 {
     let git_ssh_command =

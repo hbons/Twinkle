@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -38,7 +38,7 @@ fn test_default_attribute_rules() {
 
 #[test]
 fn test_default_welcome() {
-    let url = "git@github.com:hbons/Twinkle".parse::<SshUrl>().unwrap();
+    let url = "git@github.com:hbons/SparkleShare".parse::<SshUrl>().unwrap();
     let message = welcome_message(&url);
 
     assert!(message.contains(url.original.as_str()));

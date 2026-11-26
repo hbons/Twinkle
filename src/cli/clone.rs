@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -14,12 +14,12 @@ use crate::runtime::Runtime;
 use crate::log;
 use crate::ssh::objects::url::SshUrl;
 
-use crate::core::clone::{ self, TwinkleCloneError };
+use crate::core::clone::{ self, SparkleShareCloneError };
 
 
 impl Runtime {
     fn cli_command_clone_usage() {
-        println!("Usage: twinkle clone <user@host:path> [path]");
+        println!("Usage: sparkleshare clone <user@host:path> [path]");
         println!("               clone <ssh://user@host[:port]/path> [path]");
         println!();
     }
@@ -57,11 +57,11 @@ impl Runtime {
 
         // loop {
         //     match clone::prepare(&ssh_url, &self.app_keys_dir) {
-        //         Err(e) => match e.downcast_ref::<TwinkleCloneError>() {
-        //             Some(TwinkleCloneError::NeedsNetwork) => {
+        //         Err(e) => match e.downcast_ref::<SparkleShareCloneError>() {
+        //             Some(SparkleShareCloneError::NeedsNetwork) => {
         //                 println!("Could not connect to {}", ssh_url.host);
         //             },
-        //             Some(TwinkleCloneError::NeedsTrust(host_key)) => {
+        //             Some(SparkleShareCloneError::NeedsTrust(host_key)) => {
         //                 let fingerprint = host_key.fingerprint.clone().unwrap_or_else(|| {
         //                     log::error_and_exit("No host key fingerprint");
         //                 });
@@ -72,7 +72,7 @@ impl Runtime {
         //                 io::stdout().flush()?;
         //                 hostkey_trust(host_key, &self.app_keys_dir)?;
         //             },
-        //             Some(TwinkleCloneError::NeedsAuth(host_key, key_pair)) => {
+        //             Some(SparkleShareCloneError::NeedsAuth(host_key, key_pair)) => {
         //                 let url = settings_url_for(host_key.host.clone());
         //                 let url = url.unwrap_or(&host_key.host);
         //                 let settings_url = cli_link(url, None);
@@ -106,7 +106,7 @@ impl Runtime {
 }
 
 
-impl TwinkleCloneError {
+impl SparkleShareCloneError {
     pub fn to_exit_code(&self) -> u8 {
         match self {
             Self::NeedsNetwork => 1,

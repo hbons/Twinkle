@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -16,12 +16,12 @@ use tokio::sync::Mutex;
 use tokio::time;
 
 use crate::core::objects::push_connection::PushConnection;
-use crate::core::objects::repository::TwinkleRepository;
+use crate::core::objects::repository::Repository;
 use crate::log;
 
 
 pub async fn using_polling(
-    repo: &TwinkleRepository,
+    repo: &Repository,
     interval: Option<Duration>,
 ) -> Result<(), Box<dyn Error>>
 {
@@ -48,7 +48,7 @@ pub async fn using_polling(
 
 
 pub async fn using_push(
-    repo: Arc<TwinkleRepository>,
+    repo: Arc<Repository>,
     connection: Arc<Mutex<PushConnection>>,
 ) -> Result<(), Box<dyn Error>>
 {
@@ -66,7 +66,7 @@ pub async fn using_push(
 
 
 fn has_unfetched_commits(
-    repo: &TwinkleRepository,
+    repo: &Repository,
 ) -> Result<bool, Box<dyn Error>>
 { // TODO: Move to Repository
     let branch = repo.branch().ok_or("Not on a branch")?;

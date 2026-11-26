@@ -1,6 +1,6 @@
-app-id: studio.planetpeanut.Twinkle
+app-id: studio.planetpeanut.SparkleShare
 branch: stable
-command: twinkle
+command: sparkleshare
 runtime: org.gnome.Platform
 runtime-version: '50'
 
@@ -13,7 +13,7 @@ build-options:
     RUST_BACKTRACE: '1'
 
 finish-args:
-  - --filesystem=xdg-documents/Twinkle:create  # TODO: xdg-projects: https://github.com/flatpak/flatpak/issues/6719
+  - --filesystem=xdg-documents/SparkleShare:create  # TODO: xdg-projects: https://github.com/flatpak/flatpak/issues/6719
   - --share=ipc
   - --share=network
   - --socket=wayland
@@ -102,7 +102,7 @@ modules:
     build-commands:
       - cp git-lfs /app/libexec/git-core/
 
-  - name: twinkle
+  - name: sparkleshare
     buildsystem: meson
     builddir: true
     build-options:

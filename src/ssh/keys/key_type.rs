@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -45,7 +45,7 @@ impl str::FromStr for KeyType {
 
 
 impl KeyType {
-    // "ssh-ed25519 AAAAC3NzaC1lZDI1N… Twinkle"
+    // "ssh-ed25519 AAAAC3NzaC1lZDI1N… SparkleShare"
     pub fn from_public_key(s: &str) -> Result<Self, String> {
         let key_type = s.split_whitespace().next().ok_or("Invalid public key string")?;
         let key_type = key_type.strip_prefix("ssh-").unwrap_or(key_type);

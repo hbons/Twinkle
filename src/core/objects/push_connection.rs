@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -22,8 +22,8 @@ use tokio_tungstenite::{ MaybeTlsStream, WebSocketStream };
 use tokio_tungstenite::tungstenite::{ Bytes, Message };
 
 use crate::log;
-use super::channel::TwinkleChannel;
-use super::repository::TwinkleRepository;
+use super::channel::SparkleShareChannel;
+use super::repository::Repository;
 
 
 #[derive(Debug)]
@@ -37,7 +37,7 @@ pub struct PushConnection {
     pub write: SplitSink<WebSocketStream<MaybeTlsStream<TcpStream>>, Message>,
 
     /// List of repositories that are listening over this connection
-    pub repos: Vec<Arc<TwinkleRepository>>,
+    pub repos: Vec<Arc<Repository>>,
 }
 
 
@@ -60,8 +60,8 @@ impl PushConnection {
 impl PushConnection {
     pub async fn listen(
         &mut self,
-        channel: &TwinkleChannel,
-        repo: Arc<TwinkleRepository>,
+        channel: &SparkleShareChannel,
+        repo: Arc<Repository>,
     ) -> Result<(), Box<dyn Error>>
     {
         let msg = format!("LISTEN {channel}");
@@ -83,7 +83,7 @@ impl PushConnection {
 
     pub async fn notify(
         &mut self,
-        channel: &TwinkleChannel,
+        channel: &SparkleShareChannel,
         token: Option<&str>,
     ) -> Result<(), Box<dyn Error>>
     {

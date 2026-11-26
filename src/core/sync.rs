@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -25,7 +25,7 @@ use crate::ssh;
 use super::defaults::common;
 use super::keys;
 use super::lfs;
-use super::objects::repository::TwinkleRepository;
+use super::objects::repository::Repository;
 use super::pretty;
 use super::push;
 use super::resolve;
@@ -35,7 +35,7 @@ use super::watch_remote;
 
 
 pub fn prepare(
-    repo: &mut TwinkleRepository,
+    repo: &mut Repository,
 ) -> Result<(), Box<dyn Error>>
 {
     if repo.lfs_enabled() &&
@@ -80,7 +80,7 @@ pub fn prepare(
 
 
 pub async fn start(
-    repo: &mut TwinkleRepository,
+    repo: &mut Repository,
     connection: Option<Arc<Mutex<PushConnection>>>,
     interval: Option<Duration>,
     once: bool,
@@ -182,7 +182,7 @@ pub async fn start(
 
 
 async fn sync_up(
-    repo: &mut TwinkleRepository,
+    repo: &mut Repository,
 ) -> Result<(), Box<dyn Error>>
 {
     let mut attempt = 1;
@@ -307,7 +307,7 @@ pub fn sync_up_delay(attempt: u64) -> Duration { // TODO: Ugly name and function
 }
 
 
-async fn sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
+async fn sync_down(repo: &mut Repository) -> Result<(), Box<dyn Error>> {
     let branch = repo.git.branch_show_current()?;
     let remote = repo.remote(&branch);
 
@@ -348,7 +348,7 @@ async fn sync_down(repo: &mut TwinkleRepository) -> Result<(), Box<dyn Error>> {
 }
 
 
-fn has_unpushed_commits(repo: &TwinkleRepository) -> bool { // TODO: Move to Repository
+fn has_unpushed_commits(repo: &Repository) -> bool { // TODO: Move to Repository
     match repo.git.rev_list_count_upstream() {
         Ok(count) => count > 0,
         Err(_) => true,
@@ -357,20 +357,20 @@ fn has_unpushed_commits(repo: &TwinkleRepository) -> bool { // TODO: Move to Rep
 
 
 
-// pub enum TwinkleStatus {
+// pub enum SparkleShareStatus {
 //     UpToDate(i64), //(last check)
 //     Error(String),
 //     UnpushedChanges,
 // }
 
-// pub enum TwinklePushError {
+// pub enum SparkleSharePushError {
 //     NoNetwork(String),
 //     NoAuth(String),
 //     RemoteAhead(String),
 //     Unknown(String),
 // }
 
-pub enum TwinkleFetchError {
+pub enum SparkleShareFetchError {
     NoNetwork(String),
     NoAuth(String),
     NoRepository(String),

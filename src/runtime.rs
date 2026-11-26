@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -40,14 +40,14 @@ pub struct Runtime {
     pub app_data_home:   PathBuf,
     pub app_cache_home:  PathBuf,
 
-    // pub config: TwinkleConfig,
+    // pub config: SparkleShareConfig,
 }
 
 
 #[allow(clippy::expect_used)]
 impl Default for Runtime {
     fn default() -> Self {
-        let app_id = "studio.planetpeanut.Twinkle";
+        let app_id = "studio.planetpeanut.SparkleShare";
 
         let app_name     = env!("CARGO_PKG_NAME");
         let command_name = env!("CARGO_BIN_NAME");
@@ -77,7 +77,7 @@ impl Default for Runtime {
 
         // // Config
         // let config_path = xdg_config_home.join(format!("{command_name}/repos.json"));
-        // let mut config = TwinkleConfig::new(&config_path);
+        // let mut config = SparkleShareConfig::new(&config_path);
         // _ = config.load();
 
         Runtime {

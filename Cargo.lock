@@ -3,8 +3,8 @@
 version = 4
 
 [[package]]
-name = "Twinkle"
-version = "50.0.0"
+name = "SparkleShare"
+version = "51.0.0"
 dependencies = [
  "chrono",
  "futures-util",

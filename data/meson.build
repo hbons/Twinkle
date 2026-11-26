@@ -2,23 +2,23 @@
 
 # if get_option('nightly')
 #   install_data(
-#     sources: 'studio.planetpeanut.Twinkle.Nightly.desktop',
+#     sources: 'studio.planetpeanut.SparkleShare.Nightly.desktop',
 #     install_dir: apps_dir,
-#     rename: 'studio.planetpeanut.Twinkle.desktop'
+#     rename: 'studio.planetpeanut.SparkleShare.desktop'
 #   )
 # else
 #   install_data(
-#     sources: 'studio.planetpeanut.Twinkle.desktop',
+#     sources: 'studio.planetpeanut.SparkleShare.desktop',
 #     install_dir: apps_dir
 #   )
 # endif
 
 # install_data(
-#   sources: 'Twinkle.Autostart.desktop',
+#   sources: 'SparkleShare.Autostart.desktop',
 #   install_dir: apps_dir
 # )
 
 # install_data(
-#   sources: 'studio.planetpeanut.Twinkle.appdata.xml',
+#   sources: 'studio.planetpeanut.SparkleShare.appdata.xml',
 #   install_dir: join_paths(get_option('prefix'), 'share', 'metainfo')
 # )

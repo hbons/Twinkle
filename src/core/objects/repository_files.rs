@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -11,11 +11,11 @@ use std::error::Error;
 use std::fs::File;
 use std::io::Write;
 
-use crate::core::objects::repository::TwinkleRepository;
+use crate::core::objects::repository::Repository;
 use crate::log;
 
 
-impl TwinkleRepository {
+impl Repository {
     pub fn ignored_files(&self) -> Vec<String> {
         vec![]
     }
@@ -33,7 +33,7 @@ impl TwinkleRepository {
 }
 
 
-impl TwinkleRepository {
+impl Repository {
     pub fn write_attribute_rules(&self, rules: &[String]) -> Result<(), Box<dyn Error>> {
         let attributes_path = self.git.working_dir.join(".git/info/attributes");
         let mut buffer = File::create(&attributes_path)?;

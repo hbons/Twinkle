@@ -1,6 +1,6 @@
-app-id: studio.planetpeanut.Twinkle
+app-id: studio.planetpeanut.SparkleShare
 branch: stable
-command: twinkle
+command: sparkleshare
 runtime: org.gnome.Platform
 runtime-version: '50'
 
@@ -102,7 +102,7 @@ modules:
     build-commands:
       - cp git-lfs /app/libexec/git-core/
 
-  - name: twinkle
+  - name: sparkleshare
     buildsystem: meson
     builddir: true
     build-options:

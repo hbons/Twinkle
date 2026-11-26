@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#   Twinkle, automatic syncing with Git
+#   SparkleShare, sync files with Git
 #   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 #
 #   This program is free software: you can redistribute it and/or modify it
@@ -16,7 +16,7 @@ source ../common/test_begin.sh
 REPO_NAME="repo_readme_33"
 
 
-twinkle clone "$HOST/$REPO_NAME"
+sparkleshare clone "$HOST/$REPO_NAME"
 cd "$REPO_NAME"
 
 SMALL_FILE=small_file.txt
@@ -26,7 +26,7 @@ dd if=/dev/zero of=$LARGE_FILE bs=3M count=1
 
 git config sync.lfs.enabled true
 git config sync.lfs.sizeThreshold 3m
-TWINKLE_ONCE=1 twinkle sync
+SPARKLESHARE_ONCE=1 sparkleshare sync
 
 
 ! grep "$SMALL_FILE" .gitattributes

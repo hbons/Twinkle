@@ -1,12 +1,12 @@
-![The SparkleShare app icon](data/icons/scalable/studio.planetpeanut.Twinkle.svg)
+![The SparkleShare app icon](data/icons/scalable/studio.planetpeanut.SparkleShare.svg)
 
-# [Twinkle](https://sparkleshare.org) ～ *Sync files with Git*
+# [SparkleShare](https://sparkleshare.org) ～ *Sync files with Git*
 
 The command-line version of [SparkleShare](https://sparkleshare.org). Sync your files with any Git repository. Collaborate using services like [GitHub](https://github.com), [GitLab](https://gitlab.com) and [Codeberg](https://codeberg.org) or host your own using [Forgejo](https://forgejo.org). No special server software required and its only dependencies are `openssh`, `git`, and (optionally) `git-lfs`.
 
 <br>
 
-[![Flatpak](https://github.com/hbons/Twinkle/actions/workflows/integration.yml/badge.svg)](https://github.com/hbons/Twinkle/actions/workflows/integration.yml)
+[![Flatpak](https://github.com/hbons/SparkleShare/actions/workflows/integration.yml/badge.svg)](https://github.com/hbons/SparkleShare/actions/workflows/integration.yml)
 
 <br>
 
@@ -17,10 +17,10 @@ The command-line version of [SparkleShare](https://sparkleshare.org). Sync your 
 cargo install --path .
 ```
 
-Or get the [nightly Flatpak](https://github.com/hbons/Twinkle/releases/tag/flatpak-nightly).
+Or get the [nightly Flatpak](https://github.com/hbons/SparkleShare/releases/tag/flatpak-nightly).
 
 ```shell
-Usage: twinkle <command> [args…]
+Usage: sparkleshare <command> [args…]
 
 Commands:
     clone <user@host:path> [path]
@@ -40,30 +40,30 @@ Options:
 ## 2. Setup
 
 > [!CAUTION]
-> ***Twinkle is still in preview***. Data loss is unlikely but possible. Run commands with `DEBUG=1 twinkle <COMMAND>` to see what's going on under the hood and run `twinkle check` to diagnose setup problems.
+> ***SparkleShare is still in preview***. Data loss is unlikely but possible. Run commands with `DEBUG=1 sparkleshare <COMMAND>` to see what's going on under the hood and run `sparkleshare check` to diagnose setup problems.
 
 
 ### 2.1. Starting with a remote repository
 
 ```sh
-twinkle clone ssh://git@codeberg.org/user/repo
+sparkleshare clone ssh://git@codeberg.org/user/repo
 
 cd repo
 git config --local user.name "Your Name"
 git config --local user.email "your@email"
 
-twinkle sync
+sparkleshare sync
 ```
 
 ### 2.2. Starting with local files
 
 ```sh
-twinkle init ssh://git@codeberg.org/user/repo
+sparkleshare init ssh://git@codeberg.org/user/repo
 
 git config --local user.name "Your Name"
 git config --local user.email "your@email"
 
-twinkle sync
+sparkleshare sync
 ```
 
 <br>
@@ -71,7 +71,7 @@ twinkle sync
 
 ## 3. Git LFS
 
-Twinkle supports the [Large File Storage](https://git-lfs.com) (LFS) extension. When a file larger than `size_threshold` is added, `git lfs track <FILE>` is called automatically. To enable LFS:
+SparkleShare supports the [Large File Storage](https://git-lfs.com) (LFS) extension. When a file larger than `size_threshold` is added, `git lfs track <FILE>` is called automatically. To enable LFS:
 
 ```sh
 git lfs --version  # Check if git-lfs is installed
@@ -79,7 +79,7 @@ git lfs --version  # Check if git-lfs is installed
 git config sync.lfs.enabled true
 git config sync.lfs.sizeThreshold 3m  # (k)b / (m)b / (g)b
 
-twinkle sync
+sparkleshare sync
 ```
 
 In addition to the threshold, you can still add your own patterns to `.gitattributes`:
@@ -94,7 +94,7 @@ git lfs track *.mp4
 ## 4. Merge Strategy
 
 > [!IMPORTANT]
-> Twinkle keeps a ***linear commit history*** by using `git-rebase` to merge commits.
+> SparkleShare keeps a ***linear commit history*** by using `git-rebase` to merge commits.
 
 All files are [treated as binary](https://git-scm.com/docs/gitattributes#_marking_files_as_binary), so during merge conflicts Git won't try to resolve anything. Instead, both diverging versions of the file are checked out next to the original, so the users of the repository can decide what to keep.
 
@@ -121,12 +121,12 @@ When syncing between clients with the same user name:
 ## 5. Configuration
 
 > [!IMPORTANT]
-> For predictability and portability reasons, Twinkle
+> For predictability and portability reasons, SparkleShare
 > ***ignores the global and system Git configuration files***.
 > Settings are stored in and read from the local repository's `.git/config`.
 
 ### 5.1. `.git/config`
-Twinkle currently has a few settings that can be changed using `git config`:
+SparkleShare currently has a few settings that can be changed using `git config`:
 
 ```sh
 git config sync.pollingInterval 3m  # (s)ec / (m)in / (h)our
@@ -134,9 +134,9 @@ git config sync.lfs.enabled true
 git config sync.lfs.sizeThreshold 3m
 ```
 
-### 5.2. `.twinkle/config`
+### 5.2. `.sparkleshare/config`
 
-Twinkle automatically adds `.twinkle/config` to the repository. This file contains a ***random id*** essential for Twinkle to function and will be recreated when missing:
+SparkleShare automatically adds `.sparkleshare/config` to the repository. This file contains a ***random id*** essential for SparkleShare to function and will be recreated when missing:
 
 ```yml
 [sync]
@@ -147,18 +147,18 @@ Twinkle automatically adds `.twinkle/config` to the repository. This file contai
 
 ## 6. Push Notifications
 
-Twinkle uses polling to detect new remote commits. This is relatively resource-intensive and might trigger host rate limits, so can't be done as often. Syncing from the remote may be delayed by a minute or two.
+SparkleShare uses polling to detect new remote commits. This is relatively resource-intensive and might trigger host rate limits, so can't be done as often. Syncing from the remote may be delayed by a minute or two.
 
-To sync faster, [**twinkle-pushd**](https://github.com/hbons/twinkle-pushd) exists. Using [Secure WebSockets (wss://)](https://developer.mozilla.org/docs/Glossary/WebSockets) it immediately alerts all clients to start syncing. This feature is ***optional*** and syncing will work just fine without it.
+To sync faster, [**sparkleshare-pushd**](https://github.com/hbons/sparkleshare-pushd) exists. Using [Secure WebSockets (wss://)](https://developer.mozilla.org/docs/Glossary/WebSockets) it immediately alerts all clients to start syncing. This feature is ***optional*** and syncing will work just fine without it.
 
-Use `push.sparkleshare,org` or [host your own](https://github.com/hbons/twinkle-pushd) and set up your repositories like this:
+Use `push.sparkleshare,org` or [host your own](https://github.com/hbons/sparkleshare-pushd) and set up your repositories like this:
 
 ```bash
-git config --file=.twinkle/config sync.push.enabled true
-git config --file=.twinkle/config sync.push.url wss://push.sparkleshare.org:443
+git config --file=.sparkleshare/config sync.push.enabled true
+git config --file=.sparkleshare/config sync.push.url wss://push.sparkleshare.org:443
 ```
 
-These settings will sync to everyone connected to the repository through the `.twinkle/config` file. No sensitive data is transmitted. Only a hash of `sync.id`.
+These settings will sync to everyone connected to the repository through the `.sparkleshare/config` file. No sensitive data is transmitted. Only a hash of `sync.id`.
 
 <br>
 

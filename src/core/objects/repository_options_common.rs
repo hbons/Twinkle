@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -15,11 +15,11 @@ use crate::ssh::objects::config::SshConfig;
 use crate::ssh::objects::url::SshUrl;
 
 use super::config_option::ConfigOption;
-use super::repository::TwinkleRepository;
+use super::repository::Repository;
 
 
 // RemoteOriginUrl
-impl TwinkleRepository {
+impl Repository {
     pub fn remote_url(&self) -> Option<SshUrl> { // TODO: use .remote()
         self.get_option_as::<SshUrl>(ConfigOption::RemoteOriginUrl)
     }
@@ -27,7 +27,7 @@ impl TwinkleRepository {
 
 
 // UserName, UserEmail, and UserSigningKey
-impl TwinkleRepository {
+impl Repository {
     pub fn user(&self) -> Option<GitUser> {
         GitUser::from(&self.path)
     }
@@ -52,7 +52,7 @@ impl TwinkleRepository {
 
 
 // CoreIgnoreCase
-impl TwinkleRepository {
+impl Repository {
     pub fn core_ignore_case(&self) -> bool {
         self.get_option_as::<bool>(ConfigOption::CoreIgnoreCase)
             .unwrap_or_default()
@@ -65,7 +65,7 @@ impl TwinkleRepository {
 
 
 // CommitGpgSign and CommitGpgSign
-impl TwinkleRepository {
+impl Repository {
     pub fn set_commit_gpg_sign(&self, value: bool) -> Result<(), Box<dyn Error>>{
         self.set_option(ConfigOption::CommitGpgSign, &value.to_string())
     }
@@ -77,7 +77,7 @@ impl TwinkleRepository {
 
 
 // CoreSshCommand
-impl TwinkleRepository {
+impl Repository {
     // Write a minimal SSH command to the .git/config for debugging purposes
     pub fn set_core_ssh_command(&self, key_pair: Option<&KeyPair>) -> Result<(), Box<dyn Error>>{
         let config = match key_pair {

@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -23,7 +23,7 @@ use crate::ssh::keys::key_pair::KeyPair;
 use crate::ssh::keys::key_type::KeyType;
 use crate::ssh::objects::url::SshUrl;
 
-use super::objects::repository::TwinkleRepository;
+use super::objects::repository::Repository;
 use super::keys;
 use super::util;
 
@@ -40,7 +40,7 @@ pub fn prepare_keys(
     )?;
 
     let mut host_key = match keys::hostkey_for(url, KeyType::default(), keys_dir) {
-        Err(_) => { return Err(Box::new(TwinkleCloneError::NeedsNetwork)); }
+        Err(_) => { return Err(Box::new(SparkleShareCloneError::NeedsNetwork)); }
         Ok(host_key) => host_key,
     };
 
@@ -50,10 +50,10 @@ pub fn prepare_keys(
     }
 
     if !host_key.is_trusted {
-        Err(Box::new(TwinkleCloneError::NeedsTrust(host_key)))
+        Err(Box::new(SparkleShareCloneError::NeedsTrust(host_key)))
     } else {
         match ssh::util::test_connection(url, &host_key, Some(&key_pair)) {
-            Err(_) => Err(Box::new(TwinkleCloneError::NeedsAuth(host_key, key_pair))),
+            Err(_) => Err(Box::new(SparkleShareCloneError::NeedsAuth(host_key, key_pair))),
             Ok(_) => Ok(key_pair),
         }
     }
@@ -64,7 +64,7 @@ pub fn start(
     url: &SshUrl,
     key_pair: Option<&KeyPair>,
     path: Option<&Path>,
-) -> Result<TwinkleRepository, Box<dyn Error>>
+) -> Result<Repository, Box<dyn Error>>
 {
     let git = GitEnvironment {
         working_dir: env::current_dir()?,
@@ -85,7 +85,7 @@ pub fn start(
 
     let target_git = git.clone(url, &dir)?;
 
-    let mut repo = TwinkleRepository::new(&target_git.working_dir)?;
+    let mut repo = Repository::new(&target_git.working_dir)?;
     repo.git = target_git;
 
     if let Ok(lfs_files) = repo.git.lfs_ls_files() {
@@ -101,7 +101,7 @@ pub fn start(
 
 
 pub fn complete(
-    repo: &mut TwinkleRepository,
+    repo: &mut Repository,
     key_pair: Option<&KeyPair>,
 ) -> Result<(), Box<dyn Error>>
 {
@@ -120,20 +120,20 @@ pub fn complete(
 
 
 #[derive(Debug)]
-pub enum TwinkleCloneError {
+pub enum SparkleShareCloneError {
     NeedsNetwork,
     NeedsTrust(HostKey),
     NeedsAuth(HostKey, KeyPair),
 }
 
-impl fmt::Display for TwinkleCloneError {
+impl fmt::Display for SparkleShareCloneError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            TwinkleCloneError::NeedsNetwork => write!(f, "No network connection"),
-            TwinkleCloneError::NeedsTrust(host_key) => write!(f, "Host key not trusted: {}", host_key),
-            TwinkleCloneError::NeedsAuth(_host_key, _key_pair) => write!(f, "Authentication failed with host key and key pair"),
+            SparkleShareCloneError::NeedsNetwork => write!(f, "No network connection"),
+            SparkleShareCloneError::NeedsTrust(host_key) => write!(f, "Host key not trusted: {}", host_key),
+            SparkleShareCloneError::NeedsAuth(_host_key, _key_pair) => write!(f, "Authentication failed with host key and key pair"),
         }
     }
 }
 
-impl Error for TwinkleCloneError {}
+impl Error for SparkleShareCloneError {}

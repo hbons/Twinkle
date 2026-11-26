@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -50,10 +50,10 @@ pub fn is_git_config_valid(path: &Path) -> Outcome {
     }
 }
 
-pub fn is_twinkle_config_valid(path: &Path) -> Outcome {
+pub fn is_sparkleshare_config_valid(path: &Path) -> Outcome {
     let config_path = &path.join(
         format!(".{}/config",
-            env::var("CARGO_BIN_NAME").unwrap_or("twinkle".into())
+            env::var("CARGO_BIN_NAME").unwrap_or("sparkleshare".into())
         )
     );
 
@@ -106,7 +106,7 @@ pub fn is_git_user_email_set(path: &Path) -> Outcome {
 
 // Sync
 
-pub fn is_twinkle_enabled_set(path: &Path) -> Outcome {
+pub fn is_sparkleshare_enabled_set(path: &Path) -> Outcome {
     let check = get_from_config(path, "sync.enabled", Some("true"));
 
     match check {
@@ -115,17 +115,17 @@ pub fn is_twinkle_enabled_set(path: &Path) -> Outcome {
     }
 }
 
-pub fn is_twinkle_id_set(path: &Path) -> Outcome {
+pub fn is_sparkleshare_id_set(path: &Path) -> Outcome {
     let name = env!("CARGO_BIN_NAME");
     get_from_config(path, &format!("{name}.id"), None)
 }
 
-pub fn is_twinkle_lfs_enabled_set(path: &Path) -> Outcome {
+pub fn is_sparkleshare_lfs_enabled_set(path: &Path) -> Outcome {
     let name = env!("CARGO_BIN_NAME");
     get_from_config(path, &format!("{name}.lfs.enabled"), Some("true"))
 }
 
-pub fn is_twinkle_push_enabled_set(path: &Path) -> Outcome {
+pub fn is_sparkleshare_push_enabled_set(path: &Path) -> Outcome {
     let name = env!("CARGO_BIN_NAME");
     get_from_config(path, &format!("{name}.push.enabled"), Some("true"))
 }

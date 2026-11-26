@@ -4,10 +4,10 @@
          xmlns:gnome="http://api.gnome.org/doap-extensions#"
          xmlns="http://usefulinc.com/ns/doap#">
 
-  <name xml:lang="en">Twinkle</name>
+  <name xml:lang="en">SparkleShare</name>
   <shortdesc xml:lang="en">Sync files with Git</shortdesc>
-  <homepage rdf:resource="https://planetpeanut.studio/twinkle" />
-  <bug-database rdf:resource="https://github.com/hbons/Twinkle/issues"/>
+  <homepage rdf:resource="https://planetpeanut.studio/sparkleshare" />
+  <bug-database rdf:resource="https://github.com/hbons/SparkleShare/issues"/>
 
   <programming-language>Rust</programming-language>
   <platform>GTK 4</platform>
@@ -19,7 +19,7 @@
       <foaf:mbox rdf:resource="mailto:hello@planetpeanut.studio" />
       <foaf:account>
         <foaf:OnlineAccount>
-          <foaf:accountServiceHomepage rdf:resource="https://github.com/hbons/Twinkle"/>
+          <foaf:accountServiceHomepage rdf:resource="https://github.com/hbons/SparkleShare"/>
           <foaf:accountName>hbons</foaf:accountName>
         </foaf:OnlineAccount>
       </foaf:account>

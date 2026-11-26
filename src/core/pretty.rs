@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -94,7 +94,7 @@ pub fn format_commit_message(changes: &[GitChange]) -> Option<String> {
 }
 
 
-// github.com:hbons/notes ↓ 5cce3 • merge • A `TWINKLE.md`
+// github.com:hbons/notes ↓ 5cce3 • merge • A `SPARKLESHARE.md`
 pub fn format_repo_change(
     url: &SshUrl,
     id: &GitId,

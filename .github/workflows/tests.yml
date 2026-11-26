@@ -30,8 +30,8 @@ jobs:
       with:
         build-bundle: false
         manifest-path: ${{ github.ref_type == 'tag'
-          && 'studio.planetpeanut.Twinkle.yml'
-          || 'studio.planetpeanut.Twinkle.devel.yml' }}
+          && 'studio.planetpeanut.SparkleShare.yml'
+          || 'studio.planetpeanut.SparkleShare.devel.yml' }}
         cache-key: flatpak-builder-${{ github.sha }}
         arch: ${{ matrix.variant.arch }}
         run-tests: true

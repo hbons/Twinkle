@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -46,10 +46,10 @@ impl str::FromStr for SshUrl {
 
 
 impl SshUrl {
-    /// ssh://git@github.com/hbons/Twinkle
-    /// ssh://git@github.com:22/hbons/Twinkle
-    /// ssh://git@[2001:adb8:85a4:0000:0000:8a1e:0e70:7034]/hbons/Twinkle
-    /// ssh://git@[2001:adb8:85a4:0000:0000:8a1e:0e70:7034]:22/hbons/Twinkle
+    /// ssh://git@github.com/hbons/SparkleShare
+    /// ssh://git@github.com:22/hbons/SparkleShare
+    /// ssh://git@[2001:adb8:85a4:0000:0000:8a1e:0e70:7034]/hbons/SparkleShare
+    /// ssh://git@[2001:adb8:85a4:0000:0000:8a1e:0e70:7034]:22/hbons/SparkleShare
     pub fn from_string_standard(s: &str) -> Result<Self, Box<dyn Error>> {
         let s = s
             .trim()
@@ -89,8 +89,8 @@ impl SshUrl {
     }
 
 
-    /// git@github.com:hbons/Twinkle
-    /// git@[2001:adb8:85a4:0000:0000:8a1e:0e70:7034]:hbons/Twinkle
+    /// git@github.com:hbons/SparkleShare
+    /// git@[2001:adb8:85a4:0000:0000:8a1e:0e70:7034]:hbons/SparkleShare
     pub fn from_string_alternate(s: &str) -> Result<Self, Box<dyn Error>> {
         let (user, host_and_path) = s
             .trim()
@@ -129,8 +129,8 @@ impl fmt::Display for SshUrl {
 }
 
 impl SshUrl {
-    /// ssh://git@github.com/hbons/Twinkle
-    /// ssh://git@github.com:22/hbons/Twinkle
+    /// ssh://git@github.com/hbons/SparkleShare
+    /// ssh://git@github.com:22/hbons/SparkleShare
     pub fn to_string_standard(&self) -> String {
         let port_str =
             match self.port {
@@ -146,7 +146,7 @@ impl SshUrl {
     }
 
 
-    /// git@github.com:hbons/Twinkle
+    /// git@github.com:hbons/SparkleShare
     pub fn to_string_alternate(&self) -> String {
         format!("{user}@{host}:{path}",
             user = self.user,
@@ -155,7 +155,7 @@ impl SshUrl {
     }
 
 
-    /// ssh://git@github.com:22/hbons/Twinkle
+    /// ssh://git@github.com:22/hbons/SparkleShare
     pub fn to_string_with_port(&self) -> String {
         match self.port {
             Some(_) => self.to_string_standard(),
@@ -164,7 +164,7 @@ impl SshUrl {
     }
 
 
-    /// github.com:hbons/Twinkle
+    /// github.com:hbons/SparkleShare
     pub fn to_string_pretty(&self) -> String {
         let host = self.host.clone();
         let path = self.path.display().to_string();

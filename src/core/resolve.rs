@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -21,10 +21,10 @@ use crate::git::objects::user::GitUser;
 use crate::log;
 
 use super::lfs;
-use super::objects::repository::TwinkleRepository;
+use super::objects::repository::Repository;
 
 
-pub async fn resolve_changes(repo: &TwinkleRepository) -> Result<(), Box<dyn Error>> {
+pub async fn resolve_changes(repo: &Repository) -> Result<(), Box<dyn Error>> {
     log::debug("Resolving conflicts…");
 
     while let Some(changes) = repo.git.status(GitStatusFilter::Unmerged) {
@@ -43,7 +43,7 @@ pub async fn resolve_changes(repo: &TwinkleRepository) -> Result<(), Box<dyn Err
 
 
 pub fn resolve(
-    repo: &TwinkleRepository,
+    repo: &Repository,
     change: &GitChange,
 ) -> Result<(), Box<dyn Error>>
 {

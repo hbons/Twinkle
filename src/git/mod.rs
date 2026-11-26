@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -8,7 +8,7 @@
 
 
 //  This is not meant to be a full implementation of Git, just the
-//  parts needed by Twinkle and an opportunity for me to learn Rust.
+//  parts needed by SparkleShare and an opportunity for me to learn Rust.
 //
 //  – Hylke
 

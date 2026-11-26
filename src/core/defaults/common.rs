@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -9,14 +9,14 @@
 
 use std::time::Duration;
 
-pub const COMMON_APP_NAME: &str = "Twinkle";
+pub const COMMON_APP_NAME: &str = "SparkleShare";
 pub const COMMON_MAINTAINER_NAME: &str = "Hylke";
 pub const COMMON_MAINTAINER_URL: &str = "https://mastodon.social/@hbons";
 
-pub const COMMON_CONFIG_FILE: &str = ".twinkle/config";
+pub const COMMON_CONFIG_FILE: &str = ".sparkleshare/config";
 
-pub const COMMON_FIRST_FILE: &str = "TWINKLE.md";
-pub const COMMON_FIRST_COMMIT_MESSAGE: &str = "Set up Twinkle";
+pub const COMMON_FIRST_FILE: &str = "SPARKLESHARE.md";
+pub const COMMON_FIRST_COMMIT_MESSAGE: &str = "Set up SparkleShare";
 
 
 // Durations

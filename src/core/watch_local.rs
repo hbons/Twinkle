@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -21,7 +21,7 @@ use notify::{
 use tokio;
 use tokio::time;
 
-use crate::core::objects::repository::TwinkleRepository;
+use crate::core::objects::repository::Repository;
 use crate::git::objects::status_filter::GitStatusFilter;
 use crate::log;
 
@@ -29,7 +29,7 @@ use crate::log;
 const LOCAL_INTERVAL: u64 = 60; // TODO: Read from config
 
 pub async fn using_polling(
-    repo: &TwinkleRepository,
+    repo: &Repository,
 ) -> Result<(), Box<dyn Error>>
 {
     loop {
@@ -50,7 +50,7 @@ pub async fn using_polling(
 const LOCAL_TIMEOUT_MS: u64 = 500;
 
 pub async fn using_notify(
-    repo: &TwinkleRepository,
+    repo: &Repository,
 ) -> Result<(), Box<dyn Error>>
 {
     let (send, recv) = channel();

@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -13,14 +13,14 @@ use std::str;
 use sha2::{ Digest, Sha256 };
 
 
-pub struct TwinkleChannel(String);
+pub struct SparkleShareChannel(String);
 
 
-impl str::FromStr for TwinkleChannel {
+impl str::FromStr for SparkleShareChannel {
     type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(TwinkleChannel(
+        Ok(SparkleShareChannel(
             Sha256::digest(s)
                 .iter()
                 .map(|b| format!("{:02x}", b))
@@ -31,7 +31,7 @@ impl str::FromStr for TwinkleChannel {
 }
 
 
-impl fmt::Display for TwinkleChannel {
+impl fmt::Display for SparkleShareChannel {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.0)
     }

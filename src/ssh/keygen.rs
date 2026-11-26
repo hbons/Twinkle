@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -45,7 +45,7 @@ pub fn generate_keypair(
         "-t", &key_type.to_string(), // Key type
         "-b", &key_size.to_string(), // Key size in bits
         "-P", "", // No passphrase
-        "-C", "Twinkle", // Key comment
+        "-C", "SparkleShare", // Key comment
         "-f", key_path.to_str().ok_or("Invalid key path")?, // File name
     ];
 

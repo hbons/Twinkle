@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -14,7 +14,7 @@ use std::time::Duration;
 
 use crate::runtime::Runtime;
 
-use crate::core::objects::repository::TwinkleRepository;
+use crate::core::objects::repository::Repository;
 use crate::core::push;
 use crate::core::sync;
 use crate::log;
@@ -37,7 +37,7 @@ impl Runtime {
             .and_then(|s| s.parse::<u64>().ok())
             .map(Duration::from_secs);
 
-        let mut repo = TwinkleRepository::new(&path)?;
+        let mut repo = Repository::new(&path)?;
 
         if !repo.enabled() {
             return Err("Missing `sync.enabled = true` in git config".into());
@@ -64,7 +64,7 @@ impl Runtime {
             );
         }
 
-        let once = env::var("TWINKLE_ONCE").ok().is_some();
+        let once = env::var("SPARKLESHARE_ONCE").ok().is_some();
 
         sync::start(
             &mut repo,

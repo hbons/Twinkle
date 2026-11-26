@@ -26,14 +26,14 @@ jobs:
     - uses: actions/checkout@v7
     - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
       with:
-        bundle: twinkle-${{ matrix.variant.arch }}.flatpak
-        manifest-path: studio.planetpeanut.Twinkle.yml
+        bundle: sparkleshare-${{ matrix.variant.arch }}.flatpak
+        manifest-path: studio.planetpeanut.SparkleShare.yml
         cache-key: flatpak-builder-${{ github.sha }}
         arch: ${{ matrix.variant.arch }}
 
     - name: Tag
       run: |
-        git config --global --add safe.directory /__w/Twinkle/Twinkle
+        git config --global --add safe.directory /__w/SparkleShare/SparkleShare
         git tag -f flatpak-nightly
         git push origin flatpak-nightly --force
 
@@ -43,6 +43,6 @@ jobs:
         tag_name: flatpak-nightly
         name: "Flatpak: Nightly"
         body: "Latest build for testing."
-        files: twinkle-${{ matrix.variant.arch }}.flatpak
+        files: sparkleshare-${{ matrix.variant.arch }}.flatpak
         prerelease: true
         make_latest: false

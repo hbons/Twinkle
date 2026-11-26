@@ -1,8 +1,8 @@
 [Desktop Entry]
-Name=Twinkle
+Name=SparkleShare
 Type=Application
-Exec=twinkle
-Icon=studio.planetpeanut.Twinkle
+Exec=sparkleshare
+Icon=studio.planetpeanut.SparkleShare
 Terminal=false
 Categories=Network;FileTransfer;GNOME;GTK;
 X-GNOME-UsesNotifications=true

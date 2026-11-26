@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -11,7 +11,7 @@ use std::error::Error;
 use std::path::Path;
 
 use crate::runtime::Runtime;
-use crate::core::objects::repository::TwinkleRepository;
+use crate::core::objects::repository::Repository;
 use crate::core::pretty;
 
 use super::util::*;
@@ -25,7 +25,7 @@ impl Runtime {
         let path = Path::new(args.get(2).unwrap_or(&default_path));
         let path = self.cli_prepare_path(path)?;
 
-        let repo = TwinkleRepository::new(&path)?;
+        let repo = Repository::new(&path)?;
         let path = pretty::format_dir(&path);
 
         println!();

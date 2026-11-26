@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -26,7 +26,7 @@ use tokio_tungstenite::{ MaybeTlsStream, WebSocketStream };
 
 use crate::log;
 use super::objects::push_connection::PushConnection;
-use super::objects::repository::TwinkleRepository;
+use super::objects::repository::Repository;
 
 
 pub const URL_DEFAULT: &str = "wss://push.sparkleshare.org:443";
@@ -218,7 +218,7 @@ async fn handle_message(
 
 
 pub async fn send_notify(
-    repo: Arc<TwinkleRepository>,
+    repo: Arc<Repository>,
     connection: Arc<Mutex<PushConnection>>,
 ) -> Result<(), Box<dyn Error>>
 {

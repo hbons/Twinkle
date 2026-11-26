@@ -1,9 +1,9 @@
 [package]
-name = "Twinkle"
-version = "50.0.0"
+name = "SparkleShare"
+version = "51.0.0"
 description = "Sync files with Git"
-homepage = "https://planetpeanut.studio/twinkle"
-repository = "https://www.github.com/hbons/Twinkle"
+homepage = "https://sparkleshare.org"
+repository = "https://www.github.com/hbons/SparkleShare"
 authors = ["Hylke Bons <hello@planetpeanut.studio>"]
 license = "GPL-3.0-or-later"
 readme = "README.md"
@@ -11,6 +11,10 @@ edition = "2024"
 keywords = ["dropbox", "git", "gtk", "network", "sync"]
 categories = ["command-line-utilities", "development-tools",
     "filesystem", "game-development", "network-programming"]
+
+[package.metadata.flatpak]
+id = "studio.planetpeanut.SparkleShare"
+
 
 [dependencies]
 # From the Recommended Crate Directory – https://blessed.rs/
@@ -34,8 +38,9 @@ gnome = [
     # "dep:libsecret",
 ]
 
+
 [[bin]]
-name = "twinkle"
+name = "sparkleshare"
 path = "src/main.rs"
 
 [profile.release]

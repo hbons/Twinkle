@@ -1,0 +1,9 @@
+# TODO: Let org.freedesktop.portal.Background handle this
+[Desktop Entry]
+Name=SparkleShare
+Type=Application
+Exec=sh -c "type -P sparkleshare &>/dev/null && sparkleshare || flatpak run studio.planetpeanut.SparkleShare"
+Icon=studio.planetpeanut.SparkleShare
+Terminal=false
+X-GNOME-Autostart-enabled=true
+X-AppStream-Ignore=true

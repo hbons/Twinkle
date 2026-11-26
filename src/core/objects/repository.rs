@@ -1,4 +1,4 @@
-//   Twinkle, sync files with Git
+//   SparkleShare, sync files with Git
 //   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
@@ -13,7 +13,7 @@ use std::path::{ Path, PathBuf };
 use std::sync::Arc;
 use std::sync::atomic::{ AtomicBool, Ordering };
 
-use crate::core::objects::channel::TwinkleChannel;
+use crate::core::objects::channel::SparkleShareChannel;
 use crate::git::objects::environment::GitEnvironment;
 use crate::git::objects::id::GitId;
 use crate::git::objects::reference::GitReference;
@@ -24,7 +24,7 @@ use crate::git::objects::reference::GitReference;
 //     - Repository<Unsynced>
 //     - Repository<Synced>
 #[derive(Clone, Debug, Default)]
-pub struct TwinkleRepository {
+pub struct Repository {
     pub path: PathBuf,
     pub git: GitEnvironment,
 
@@ -34,7 +34,7 @@ pub struct TwinkleRepository {
 }
 
 
-impl TwinkleRepository {
+impl Repository {
     pub fn new(path: &Path) -> Result<Self, Box<dyn Error>> {
         let git = GitEnvironment::new(path);
         git.rev_parse_show_toplevel()?;
@@ -49,7 +49,7 @@ impl TwinkleRepository {
 
 
 // Convenience
-impl TwinkleRepository {
+impl Repository {
     /// Current branch
     pub fn branch(&self) -> Option<GitReference> {
         if self.git.symbolic_ref().is_err() {
@@ -94,14 +94,14 @@ impl TwinkleRepository {
     }
 
 
-    pub fn channel(&self) -> Option<TwinkleChannel> {
-        self.id().and_then(|id| id.parse::<TwinkleChannel>().ok())
+    pub fn channel(&self) -> Option<SparkleShareChannel> {
+        self.id().and_then(|id| id.parse::<SparkleShareChannel>().ok())
     }
 }
 
 
 // Sync
-impl TwinkleRepository {
+impl Repository {
     pub fn is_busy(&self) -> bool {
         self.is_busy.load(Ordering::Acquire)
     }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#   Twinkle, automatic syncing with Git
+#   SparkleShare, sync files with Git
 #   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 #
 #   This program is free software: you can redistribute it and/or modify it
@@ -32,7 +32,7 @@ git push origin main
 cd ..
 rm -Rf "$REPO_NAME"
 
-twinkle clone "$HOST/$REPO_NAME"
+sparkleshare clone "$HOST/$REPO_NAME"
 cd "$REPO_NAME"
 
 grep "$LARGE_FILE" .gitattributes
