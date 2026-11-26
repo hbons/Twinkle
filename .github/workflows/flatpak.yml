@@ -36,13 +36,3 @@ jobs:
         git config --global --add safe.directory "$GITHUB_WORKSPACE"
         git tag -f flatpak-nightly
         git push origin flatpak-nightly --force
-
-    - name: "Upload to `Flatpak: Nightly` release"
-      uses: softprops/action-gh-release@v3
-      with:
-        tag_name: flatpak-nightly
-        name: "Flatpak: Nightly"
-        body: "Latest build for testing."
-        files: studio.planetpeanut.SparkleShare.flatpak
-        prerelease: true
-        make_latest: false
