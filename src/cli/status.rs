@@ -10,14 +10,14 @@
 use std::error::Error;
 use std::path::Path;
 
-use crate::app::App;
+use crate::runtime::Runtime;
 use crate::core::objects::repository::TwinkleRepository;
 use crate::core::pretty;
 
 use super::util::*;
 
 
-impl App {
+impl Runtime {
     pub fn cli_command_status(&mut self, args: &[String]) -> Result<(), Box<dyn Error>> {
         self.cli_require_args(1, args)?;
 

@@ -17,7 +17,7 @@ use crate::ssh;
 
 
 #[derive(Debug)]
-pub struct App {
+pub struct Runtime {
     pub id:      String,
     pub name:    String,
     pub command: String,
@@ -45,7 +45,7 @@ pub struct App {
 
 
 #[allow(clippy::expect_used)]
-impl Default for App {
+impl Default for Runtime {
     fn default() -> Self {
         let app_id = "studio.planetpeanut.Twinkle";
 
@@ -80,14 +80,14 @@ impl Default for App {
         // let mut config = TwinkleConfig::new(&config_path);
         // _ = config.load();
 
-        App {
+        Runtime {
             id:      app_id.into(),
             name:    app_name.into(),
             command: command_name.into(),
             icon:    app_id.into(),
             version: version.into(),
 
-            is_flatpak: app_is_flatpak(),
+            is_flatpak: is_flatpak(),
 
             // Installation
             prefix:       prefix.into(),
@@ -108,7 +108,7 @@ impl Default for App {
 }
 
 
-pub fn app_runs_as_root() -> bool {
+pub fn runs_as_root() -> bool {
     match Command::new("id").arg("-nu").output() {
         Err(_) => true, // Assume root if we can't check
         Ok(output) => {
@@ -122,12 +122,12 @@ pub fn app_runs_as_root() -> bool {
 }
 
 
-pub fn app_version() -> String {
+pub fn version() -> String {
     let s = format!("{} {}",
         env!("CARGO_PKG_NAME"),
         env!("CARGO_PKG_VERSION"));
 
-    if app_is_flatpak() {
+    if is_flatpak() {
         format!("{s} (Flatpak)")
     } else {
         s
@@ -135,7 +135,7 @@ pub fn app_version() -> String {
 }
 
 
-pub fn app_deps() -> String {
+pub fn deps() -> String {
     let git = GitEnvironment::default();
 
     format!("{}\n{}\n{}",
@@ -151,7 +151,7 @@ pub fn app_deps() -> String {
 }
 
 
-pub fn app_is_flatpak() -> bool {
+pub fn is_flatpak() -> bool {
     // Docs: https://docs.flatpak.org/en/latest/flatpak-command-reference.html#flatpak-run
     env::var("FLATPAK_ID").is_ok()
 }

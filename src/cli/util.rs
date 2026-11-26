@@ -12,11 +12,11 @@ use std::env;
 use std::fs;
 use std::path::{ Path, PathBuf };
 
-use crate::app::App;
+use crate::runtime::Runtime;
 use crate::git::objects::environment::GitEnvironment;
 
 
-impl App {
+impl Runtime {
     /// Checks if the minimum amount of args have been passed
     pub fn cli_require_args(
         &self,

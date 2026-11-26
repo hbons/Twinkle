@@ -10,7 +10,7 @@
 use std::error::Error;
 use std::path::Path;
 
-use crate::app::App;
+use crate::runtime::Runtime;
 use crate::cli::util::*;
 
 use super::check_config::*;
@@ -20,7 +20,7 @@ use super::check_ssh::*;
 use super::outcome::Outcome;
 
 
-impl App {
+impl Runtime {
     pub fn cli_command_check(
         &mut self,
         args: &[String],

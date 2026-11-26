@@ -16,14 +16,14 @@
 // #![deny(clippy::arithmetic_side_effects)]
 
 
-pub mod app;
+pub mod core;
 pub mod cli;
 pub mod git;
 pub mod gtk;
 pub mod gui;
 pub mod log;
+pub mod runtime;
 pub mod ssh;
-pub mod core;
 
 mod tests;
 
@@ -32,28 +32,27 @@ use std::env::args;
 use std::error::Error;
 use std::process::exit;
 
-use crate::app::{ app_deps, app_version };
-use crate::app::{ App, app_runs_as_root };
+use crate::runtime::Runtime;
 use crate::gui::Gui;
 
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    log::debug_base(&app_version());
-    log::debug_base(&app_deps());
+    log::debug_base(&runtime::version());
+    log::debug_base(&runtime::deps());
 
-    if app_runs_as_root() {
+    if runtime::runs_as_root() {
         log::error_and_exit("Cannot run as root")
     }
 
     if let Some(arg) = args().nth(1) {
         if arg == "gui" {
-            let app = App::default();
+            let app = Runtime::default();
             app.gui_run()?;
         }
     }
 
-    let mut app = App::default();
+    let mut app = Runtime::default();
     let args: Vec<String> = args().collect();
 
     match app.cli_parse_args(&args).await {

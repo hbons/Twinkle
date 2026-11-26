@@ -10,14 +10,14 @@
 use std::error::Error;
 use std::path::Path;
 
-use crate::app::App;
+use crate::runtime::Runtime;
 use crate::log;
 use crate::ssh::objects::url::SshUrl;
 
 use crate::core::clone::{ self, TwinkleCloneError };
 
 
-impl App {
+impl Runtime {
     fn cli_command_clone_usage() {
         println!("Usage: twinkle clone <user@host:path> [path]");
         println!("               clone <ssh://user@host[:port]/path> [path]");

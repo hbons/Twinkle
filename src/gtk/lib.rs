@@ -20,11 +20,11 @@ use std::path::Path;
 // use zbus::blocking::Proxy;
 // use zvariant::Value;
 
-use crate::app::App;
+use crate::runtime::Runtime;
 use crate::gui::Gui;
 
 
-impl Gui for App {
+impl Gui for Runtime {
     // Docs: https://docs.gtk.org/gtk4/
     //       https://docs.rs/zbus/latest/zbus/
 

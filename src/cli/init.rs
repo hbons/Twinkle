@@ -10,12 +10,12 @@
 use std::env::current_dir;
 use std::error::Error;
 
-use crate::app::App;
+use crate::runtime::Runtime;
 use crate::ssh::objects::url::SshUrl;
 use crate::core::init;
 
 
-impl App {
+impl Runtime {
     pub fn cli_command_init(&self, args: &[String]) -> Result<(), Box<dyn Error>>{
         self.cli_require_args(2, args).map_err(|_| {
             Self::cli_command_init_usage();

@@ -10,13 +10,13 @@
 use std::env;
 use std::error::Error;
 
-use crate::app::{ self, App };
+use crate::runtime::{ self, Runtime };
 use crate::git::objects::environment::GitEnvironment;
 
 use super::util::*;
 
 
-impl App {
+impl Runtime {
     pub async fn cli_parse_args(
         &mut self,
         args: &[String],
@@ -69,14 +69,14 @@ impl App {
     }
 }
 
-impl App {
+impl Runtime {
     pub fn cli_option_version(&self) {
-        println!("{}", app::app_version());
+        println!("{}", runtime::version());
     }
 
 
     pub fn cli_option_deps(&self) {
-        println!("{}", app::app_deps());
+        println!("{}", runtime::deps());
     }
 
 

@@ -12,7 +12,7 @@ use std::env;
 use std::path::Path;
 use std::time::Duration;
 
-use crate::app::App;
+use crate::runtime::Runtime;
 
 use crate::core::objects::repository::TwinkleRepository;
 use crate::core::push;
@@ -20,7 +20,7 @@ use crate::core::sync;
 use crate::log;
 
 
-impl App {
+impl Runtime {
     pub async fn cli_command_sync(
         &mut self,
         args: &[String],
