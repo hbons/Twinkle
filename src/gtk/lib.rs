@@ -24,6 +24,16 @@ use crate::runtime::Runtime;
 use crate::gui::Gui;
 
 
+use gio::ApplicationFlags;
+use gtk4::prelude::*;
+use libadwaita::Application;
+
+// use crate::app::App;
+// use crate::gtk::actions::prelude::*;
+
+// use crate::gui::Gui;
+use crate::gtk::windows::window::window_new;
+
 impl Gui for Runtime {
     // Docs: https://docs.gtk.org/gtk4/
     //       https://docs.rs/zbus/latest/zbus/
@@ -38,6 +48,44 @@ impl Gui for Runtime {
 
     fn gui_run(&self) -> Result<(), Box<dyn Error>> {
         // gtk::main();
+
+        let app = Application::builder()
+            .application_id(&self.id)
+            .flags(ApplicationFlags::HANDLES_OPEN)
+            .build();
+
+        app.connect_open(move |app, files, _| {
+            for file in files {
+                if let Some(path) = file.path() &&
+                   let Some(window) = app.windows().iter()
+                       .find(|w| w.widget_name().to_string() == path.to_string_lossy())
+                {
+                    window.present();
+                } else {
+                    let window = window_new(app).unwrap();
+                    window.present();
+                }
+            }
+        });
+
+        app.connect_activate(|app| {
+            if let Some(window) = app.active_window() {
+                window.present();
+            } else if let Ok(window) = window_new(app) {
+                window.present();
+            }
+        });
+
+
+        // let settings = gio::Settings::new("studio.planetpeanut.Bobby"); // TODO
+
+
+
+        // app.add_action(&about_action(&app));
+
+
+        app.run();
+
         Ok(())
     }
 

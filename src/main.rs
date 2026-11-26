@@ -48,7 +48,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     if let Some(arg) = args().nth(1) {
         if arg == "gui" {
             let app = Runtime::default();
+            dbg!("1");
             app.gui_run()?;
+            dbg!("2");
+            exit(0);
         }
     }
 

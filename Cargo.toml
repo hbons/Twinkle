@@ -26,15 +26,16 @@ tokio = { version = "1.52.3", features = ["full"] }
 tokio-tungstenite = { version = "0.30.0", features = ["native-tls"] }
 
 # From the GNOME Project – https://gnome.org/
-# gtk4 = { version = "0.10.1", optional = true }
-# libadwaita = { version = "0.8.0", optional = true }
+gio = "0.22.9"
+gtk4 = { version = "0.11.4", features = ["gnome_50"], optional = true }
+libadwaita = { version = "0.9.2", features = ["v1_9"], optional = true }
 # libsecret = { version = "0.8.0", optional = true }
 
 [features]
 default = []
 gnome = [
-    # "dep:gtk4",
-    # "dep:libadwaita",
+    "dep:gtk4",
+    "dep:libadwaita",
     # "dep:libsecret",
 ]
 
