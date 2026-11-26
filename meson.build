@@ -15,7 +15,6 @@ dependency('libadwaita-1')
 
 subdir('data')
 subdir('data/icons')
-subdir('src')
 
 summary(
   {
@@ -28,7 +27,7 @@ summary(
 
 cargo = find_program('cargo', required: true)
 
-cargo_build = custom_target(
+custom_target(
   command_name,
   command: [
     'sh', '-c',
@@ -53,6 +52,12 @@ test('cargo_test',
 
 gnome.post_install(
     # glib_compile_schemas: true,
-    # gtk_update_icon_cache: true,
-    # update_desktop_database: true,
+    gtk_update_icon_cache: true,
+    update_desktop_database: true,
+)
+
+meson.add_dist_script(
+  'build-aux/dist-vendor.sh',
+  meson.project_source_root(),
+  meson.project_build_root() / 'meson-dist' / '@0@-@1@'.format(meson.project_name(), meson.project_version()),
 )
