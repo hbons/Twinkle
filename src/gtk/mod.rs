@@ -9,6 +9,15 @@
 
 pub mod lib;
 
+pub mod actions {
+    pub mod app_about;
+    pub mod prelude;
+}
+
+pub mod dialogs {
+    pub mod about;
+}
+
 pub mod windows {
     pub mod window;
 }

@@ -29,7 +29,7 @@ use gtk4::prelude::*;
 use libadwaita::Application;
 
 // use crate::app::App;
-// use crate::gtk::actions::prelude::*;
+use crate::gtk::actions::prelude::*;
 
 // use crate::gui::Gui;
 use crate::gtk::windows::window::window_new;
@@ -81,7 +81,7 @@ impl Gui for Runtime {
 
 
 
-        // app.add_action(&about_action(&app));
+        app.add_action(&about_action(&app));
 
 
         app.run();

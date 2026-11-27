@@ -1,23 +1,27 @@
-//   Bobby, browse SQLite files
-//   Copyright (C) 2025  Hylke Bons (hello@planetpeanut.studio)
+//   SparkleShare, sync files with Git
+//   Copyright (C) 2026  Hylke Bons (hello@planetpeanut.studio)
 //
 //   This program is free software: you can redistribute it and/or modify it
 //   under the terms of the GNU General Public License v3 or any later version.
 
+//   ～ Lovingly Handcrafted Code ～
+
 
 use std::error::Error;
 
+use gio::{
+    Menu,
+    SimpleAction,
+};
 
 use gtk4::prelude::*;
-
 use gtk4::{
-    // gdk::Display,
     Align,
     Button,
-    // MenuButton,
-    // ToggleButton,
-    Widget,
+    MenuButton,
     Orientation,
+    PopoverMenu,
+    Widget,
     Window,
 };
 
@@ -27,13 +31,11 @@ use libadwaita::{
     ApplicationWindow,
     Clamp,
     HeaderBar,
+    StatusPage,
     ToolbarStyle,
     ToolbarView,
-    StatusPage,
 };
 
-
-pub const IS_EMPTY_WINDOW: &str = "1";
 
 pub fn window_new(
     application: &Application,
@@ -54,12 +56,10 @@ pub fn window_new(
     let toolbar_view = ToolbarView::new();
     toolbar_view.set_widget_name("toolbar_view");
     toolbar_view.add_top_bar(&header);
-    // toolbar_view.add_top_bar(&bar);
     toolbar_view.set_top_bar_style(ToolbarStyle::Flat);
     window.add_css_class("flat");
 
     window.set_content(Some(&toolbar_view));
-    // window.add_controller(drop_target_new(&window));
     // window.add_action(&close_action(&window));
 
     let app_window = window.clone();
@@ -94,13 +94,13 @@ pub fn window_show_empty_state(
         .halign(Align::Fill)
         .build();
 
-
-    let clamp = Clamp::new();
     let layout = gtk4::Box::new(Orientation::Vertical, 0);
     layout.append(&button);
     layout.append(&button2);
-    clamp.set_child(Some(&layout));
+
+    let clamp = Clamp::new();
     clamp.set_maximum_size(200);
+    clamp.set_child(Some(&layout));
 
     let page = StatusPage::builder()
         .icon_name("studio.planetpeanut.SparkleShare")
@@ -116,18 +116,6 @@ pub fn window_show_empty_state(
 
     Ok(())
 }
-
-
-use gio::{
-    Menu,
-    SimpleAction,
-};
-
-use gtk4::prelude::*;
-use gtk4::{
-    MenuButton,
-    PopoverMenu
-};
 
 
 pub fn main_menu_new(app: &Application) -> MenuButton {
@@ -148,8 +136,8 @@ pub fn main_menu_new(app: &Application) -> MenuButton {
 
     let menu = Menu::new();
     menu.append(Some("Preferences"), Some("app.preferences"));
-    menu.append(Some("Keyboard Shortcuts"), Some("app.shortcuts"));
-    menu.append(Some("About Bobby"), Some("app.about"));
+    // menu.append(Some("Keyboard Shortcuts"), Some("app.shortcuts"));
+    menu.append(Some("About SparkleShare"), Some("app.about"));
 
     button.set_popover(
         Some(&PopoverMenu::from_model(Some(&menu)))
@@ -162,7 +150,7 @@ pub fn main_menu_new(app: &Application) -> MenuButton {
 pub fn add_menu_new(app: &Application) -> MenuButton {
     let button = MenuButton::new();
     button.set_icon_name("list-add-symbolic");
-    button.set_tooltip_text(Some("Main Menu"));
+    button.set_tooltip_text(Some("Add"));
     button.set_always_show_arrow(true);
 
     let button_clone = button.clone();
@@ -174,12 +162,10 @@ pub fn add_menu_new(app: &Application) -> MenuButton {
     });
 
     app.add_action(&action);
-    app.set_accels_for_action("app.open-menu", &["F10"]);
 
     let menu = Menu::new();
-    menu.append(Some("Preferences"), Some("app.preferences"));
-    menu.append(Some("Keyboard Shortcuts"), Some("app.shortcuts"));
-    menu.append(Some("About Bobby"), Some("app.about"));
+    menu.append(Some("_Remote Repository…"), Some("app.remote-repository"));
+    menu.append(Some("_Local Folder…"), Some("app.local-folder"));
 
     button.set_popover(
         Some(&PopoverMenu::from_model(Some(&menu)))
