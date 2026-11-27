@@ -82,6 +82,7 @@ impl Gui for Runtime {
 
 
         app.add_action(&about_action(&app));
+        app.add_action(&preferences_action(&app));
 
 
         app.run();

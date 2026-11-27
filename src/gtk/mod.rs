@@ -11,11 +11,13 @@ pub mod lib;
 
 pub mod actions {
     pub mod app_about;
+    pub mod app_preferences;
     pub mod prelude;
 }
 
 pub mod dialogs {
     pub mod about;
+    pub mod preferences;
 }
 
 pub mod windows {

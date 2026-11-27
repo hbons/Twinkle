@@ -16,7 +16,7 @@ install_data(
 
 # .gschema.xml
 
-# install_data(
-#   ('@0@.gschema.xml').format(application_id),
-#   install_dir: get_option('datadir') / 'glib-2.0/schemas'
-# )
+install_data(
+  ('@0@.gschema.xml').format(application_id),
+  install_dir: get_option('datadir') / 'glib-2.0/schemas'
+)

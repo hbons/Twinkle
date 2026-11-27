@@ -8,3 +8,4 @@
 
 
 pub use crate::gtk::actions::app_about::about_action;
+pub use crate::gtk::actions::app_preferences::preferences_action;

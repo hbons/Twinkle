@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+    <schema id="studio.planetpeanut.SparkleShare" path="/studio/planetpeanut/SparkleShare/">
+        <!-- Rows & Columns -->
+        <key name="row-numbers" type="b">
+            <default>true</default>
+        </key>
+        <key name="row-order" type="s">
+            <choices>
+                <choice value="newest-first"/>
+                <choice value="oldest-first"/>
+            </choices>
+            <default>'newest-first'</default>
+        </key>
+        <key name="column-separator" type="s">
+            <choices>
+                <choice value="tabs"/>
+                <choice value="spaces"/>
+                <choice value="commas"/>
+                <choice value="markdown"/>
+            </choices>
+            <default>'tabs'</default>
+        </key>
+
+        <!-- Appearance -->
+        <key name="monospace-font" type="b">
+            <default>false</default>
+        </key>
+    </schema>
+</schemalist>
