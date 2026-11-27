@@ -17,6 +17,7 @@ pub mod actions {
 
 pub mod dialogs {
     pub mod about;
+    pub mod avatar;
     pub mod preferences;
 }
 

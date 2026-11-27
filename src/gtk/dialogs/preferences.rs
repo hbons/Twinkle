@@ -7,20 +7,24 @@
 //   ～ Lovingly Handcrafted Code ～
 
 
-use gio::{
-    Settings,
-    SettingsSchemaSource
-};
+use gio::Settings;
 
 use gtk4::{
-    glib::Variant,
-    StringList,
-    Window
+    gdk::Texture,
+    Adjustment,
+    Align,
+    GestureClick,
+    Label,
+    ListBox,
+    Orientation,
+    SelectionMode,
+    Window,
 };
 
 use libadwaita::prelude::*;
 use libadwaita::{
-    ComboRow,
+    Avatar,
+    EntryRow,
     PreferencesDialog,
     PreferencesGroup,
     PreferencesPage,
@@ -28,35 +32,88 @@ use libadwaita::{
     SwitchRow,
 };
 
+use super::avatar::K_AUTHOR_AVATAR;
+use super::avatar::show_avatar_dialog;
+
+
+const K_AUTHOR_NAME: &str = "author-name";
+const K_AUTHOR_EMAIL: &str = "author-email";
+const K_POLLING_INTERVAL: &str = "polling-interval";
+const K_SYNC_IN_BACKGROUND: &str = "sync-in-background";
+const K_SYNC_ON_STARTUP: &str = "sync-on-startup";
+
 
 pub fn show_preferences_dialog(parent: &Window) {
     let settings = Settings::new("studio.planetpeanut.SparkleShare"); // TODO
-
 
     let page = PreferencesPage::builder()
         .title("Preferences")
         .icon_name("org.gnome.Settings-system-symbolic")
         .build();
 
-
     let group_author = PreferencesGroup::builder()
         .title("Author")
         .build();
 
-    group_author.add(&row_numbers(&settings));
-    group_author.add(&row_order(&settings));
+    let avatar = Avatar::new(96, Some("Hylke Bons"), false); // TODO: get settings author name
+    avatar.set_tooltip_text(Some("Select Avatar")); // TODO: pretty file path if set
+
+    let click = GestureClick::new();
+
+    let path = settings.string(K_AUTHOR_AVATAR);
+    let file = gio::File::for_uri(&path.clone());
+
+    match Texture::from_file(&file) {
+        Ok(texture) => avatar.set_custom_image(Some(&texture)),
+        Err(error) => eprintln!("Could not load avatar image: {error}"),
+    };
+
+    let settings2 = settings.clone();
+    let avatar2 = avatar.clone();
+    let parent2 = parent.clone();
+    click.connect_released(move |_, _, _, _| {
+        show_avatar_dialog(&parent2, &settings2, &avatar2);
+    });
+
+    avatar.add_controller(click);
+    avatar.set_cursor_from_name(Some("pointer"));
+
+
+    let rows = ListBox::new();
+    rows.set_selection_mode(SelectionMode::None);
+    rows.add_css_class("boxed-list");
+    rows.append(&row_name(&settings));
+    rows.append(&row_email(&settings));
+    rows.set_halign(Align::Fill);
+
+    let content = gtk4::Box::new(Orientation::Horizontal, 24);
+    content.append(&avatar);
+    content.append(&rows);
+    content.set_halign(Align::Fill);
+    content.set_valign(Align::Center);
+    content.set_hexpand(true);
+    content.set_vexpand(false);
+
+    rows.set_valign(Align::Start);
+    rows.set_hexpand(true);
+    rows.set_vexpand(false);
+
+    group_author.add(&content);
 
 
     let group_sync = PreferencesGroup::builder()
         .title("Sync")
         .build();
 
+    let group_sync2 = PreferencesGroup::new();
+
     group_sync.add(&row_polling_interval(&settings));
-    group_sync.add(&row_sync_in_background(&settings));
-    group_sync.add(&row_sync_on_startup(&settings));
+    group_sync2.add(&row_sync_in_background(&settings));
+    group_sync2.add(&row_sync_on_startup(&settings));
 
     page.add(&group_author);
     page.add(&group_sync);
+    page.add(&group_sync2);
 
 
     let preferences = PreferencesDialog::new();
@@ -66,73 +123,71 @@ pub fn show_preferences_dialog(parent: &Window) {
 }
 
 
-fn row_numbers(settings: &Settings) -> SwitchRow {
-    let switch = SwitchRow::builder()
-        .title("Row Numbers")
+fn row_name(settings: &Settings) -> EntryRow {
+    let entry = EntryRow::builder()
+        .title("Name")
         .build();
 
     settings.bind(
-        "row-numbers",
-        &switch,
-        "active"
+        K_AUTHOR_NAME,
+        &entry,
+        "text"
     ).build();
 
-    switch
+    entry
 }
 
-fn row_order(settings: &Settings) -> ComboRow {
-    combo_row_with_binding(
-        settings,
-        "row-order",
-        "Row Order",
-        None,
-        &["Newest First",
-        "Oldest First"],
-    )
-}
 
-fn row_separator(settings: &Settings) -> ComboRow {
-    combo_row_with_binding(
-        settings,
-        "column-separator",
-        "Column Separator",
-        Some("Used when copying rows to the clipboard"),
-        &["Tabs", "Spaces", "Commas", "Markdown"],
-    )
+fn row_email(settings: &Settings) -> EntryRow {
+    let entry = EntryRow::builder()
+        .title("Email")
+        .build();
+
+    settings.bind(
+        K_AUTHOR_EMAIL,
+        &entry,
+        "text"
+    ).build();
+
+    entry
 }
 
 
 fn row_polling_interval(settings: &Settings) -> SpinRow {
-    let adjustment = gtk4::Adjustment::builder()
-        .lower(0.0)
-        .upper(100.0)
-        .step_increment(1.0)
-        .value(3.0)
+    let adjustment = Adjustment::builder()
+        .lower(10.0)
+        .upper(3600.0)
+        .step_increment(10.0)
         .build();
 
-    let switch = SpinRow::builder()
+    let spin = SpinRow::builder()
         .title("Polling Interval")
+        .subtitle("How often to check for remote changes")
         .adjustment(&adjustment)
         .build();
 
     settings.bind(
-        "monospace-font",
-        &switch,
-        "active"
+        K_POLLING_INTERVAL,
+        &spin,
+        "value"
     ).build();
 
-    switch
+    let unit = Label::new(Some("seconds"));
+    unit.add_css_class("dimmed");
+    spin.add_suffix(&unit);
+
+    spin
 }
 
 
 fn row_sync_in_background(settings: &Settings) -> SwitchRow {
     let switch = SwitchRow::builder()
         .title("Sync in Background")
-        .subtitle("Continue sync when the window is closed")
+        .subtitle("Keep syncing after closing the app")
         .build();
 
     settings.bind(
-        "monospace-font",
+        K_SYNC_IN_BACKGROUND,
         &switch,
         "active"
     ).build();
@@ -144,74 +199,14 @@ fn row_sync_in_background(settings: &Settings) -> SwitchRow {
 fn row_sync_on_startup(settings: &Settings) -> SwitchRow {
     let switch = SwitchRow::builder()
         .title("Sync on Startup")
-        .subtitle("Start sync in the background on startup")
+        .subtitle("On startup sync in background automatically")
         .build();
 
     settings.bind(
-        "monospace-font",
+        K_SYNC_ON_STARTUP,
         &switch,
         "active"
     ).build();
 
     switch
-}
-
-
-fn combo_row_with_binding(
-    settings: &Settings,
-    key: &str,
-    title: &str,
-    subtitle: Option<&str>,
-    choices: &[&str],
-) -> ComboRow
-{
-    let value = settings.string(key).to_string();
-    let index = value_to_index(settings, key, &value);
-
-    let combo = ComboRow::builder()
-        .title(title)
-        .subtitle(subtitle.unwrap_or(""))
-        .model(&StringList::new(choices))
-        .build();
-
-    if let Some(i) = index {
-        combo.set_selected(i);
-    }
-
-    let key_handle = key.to_string();
-    let settings_handle = settings.clone();
-
-    combo.connect_notify_local(Some("selected"), move |row, _| {
-        let index = row.selected();
-
-        if let Some(value) = index_to_value(&settings_handle, &key_handle, index) {
-            _ = settings_handle.set_string(&key_handle, &value);
-        }
-    });
-
-    combo
-}
-
-
-fn choices_for_key(settings: &Settings, key: &str) -> Option<Vec<String>> {
-    let source = SettingsSchemaSource::default()?;
-    let schema = source.lookup(settings.schema_id()?.as_ref(), true)?;
-    let schema_key = schema.key(key);
-
-    let range = schema_key.range();
-    let (_kind, value): (String, Variant) = range.get()?;
-
-    value.get()
-}
-
-fn index_to_value(settings: &Settings, key: &str, index: u32) -> Option<String> {
-    let choices = choices_for_key(settings, key)?;
-    choices.get(index as usize).cloned()
-}
-
-fn value_to_index(settings: &Settings, key: &str, value: &str) -> Option<u32> {
-    let choices = choices_for_key(settings, key)?;
-    let index = choices.iter().position(|v| v == value)?;
-
-    Some(index as u32)
 }

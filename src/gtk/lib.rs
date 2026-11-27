@@ -62,7 +62,7 @@ impl Gui for Runtime {
                 {
                     window.present();
                 } else {
-                    let window = window_new(app).unwrap();
+                    let window = window_new(app).unwrap(); // TODO
                     window.present();
                 }
             }
@@ -76,14 +76,8 @@ impl Gui for Runtime {
             }
         });
 
-
-        // let settings = gio::Settings::new("studio.planetpeanut.Bobby"); // TODO
-
-
-
         app.add_action(&about_action(&app));
         app.add_action(&preferences_action(&app));
-
 
         app.run();
 
